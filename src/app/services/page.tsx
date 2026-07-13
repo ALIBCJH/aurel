@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/container";
 import { Reveal } from "@/components/ui/reveal";
 import { Button } from "@/components/ui/button";
 import { GemPanel } from "@/components/brand/gem-panel";
+import { ServiceIcon } from "@/components/brand/service-icons";
 import { services } from "@/config/services";
 import { cn } from "@/lib/utils";
 
@@ -37,10 +38,15 @@ export default function ServicesPage() {
                 <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                   {/* text */}
                   <div className={cn(flip && "lg:order-2")}>
-                    <span className="font-display text-5xl text-accent/25 sm:text-6xl">
-                      {service.index}
-                    </span>
-                    <h2 className="mt-4 text-3xl sm:text-4xl">{service.name}</h2>
+                    <div className="flex items-center gap-4">
+                      <span className="text-accent">
+                        <ServiceIcon slug={service.slug} width={36} height={36} />
+                      </span>
+                      <span className="font-display text-5xl text-accent/25 sm:text-6xl">
+                        {service.index}
+                      </span>
+                    </div>
+                    <h2 className="mt-5 text-3xl sm:text-4xl">{service.name}</h2>
                     <p className="mt-5 max-w-xl leading-relaxed text-muted">
                       {service.description}
                     </p>

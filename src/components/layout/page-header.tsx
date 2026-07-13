@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Section } from "@/components/layout/section";
 import { Reveal } from "@/components/ui/reveal";
+import { HeadlineReveal } from "@/components/motion/headline-reveal";
 
 /**
  * PageHeader — consistent premium header for interior pages.
@@ -33,9 +34,11 @@ export function PageHeader({
             <p className="text-eyebrow text-accent">{eyebrow}</p>
           </Reveal>
         )}
-        <Reveal delay={eyebrow ? 0.08 : 0}>
-          <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl">{title}</h1>
-        </Reveal>
+        <HeadlineReveal
+          className="mt-6 text-4xl sm:text-5xl lg:text-6xl"
+          delay={eyebrow ? 0.1 : 0}
+          lines={[title]}
+        />
         {description && (
           <Reveal delay={0.16}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">

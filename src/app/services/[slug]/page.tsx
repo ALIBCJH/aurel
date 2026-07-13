@@ -5,6 +5,7 @@ import { Section } from "@/components/layout/section";
 import { Reveal } from "@/components/ui/reveal";
 import { Button } from "@/components/ui/button";
 import { GemPanel } from "@/components/brand/gem-panel";
+import { ServiceIcon } from "@/components/brand/service-icons";
 import { getService, services } from "@/config/services";
 import { primaryCta } from "@/config/site";
 
@@ -39,6 +40,9 @@ export default async function ServiceDetailPage({ params }: Params) {
         <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <Reveal>
+              <span className="mb-6 inline-flex text-accent">
+                <ServiceIcon slug={service.slug} width={44} height={44} />
+              </span>
               <p className="text-lg leading-relaxed text-muted">
                 {service.description}
               </p>

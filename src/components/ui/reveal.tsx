@@ -19,12 +19,13 @@ type RevealProps = {
   as?: "div" | "span" | "li" | "section";
 };
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+// Brand easing — calm, confident ease-out (no bounce).
+const EASE = [0.2, 0.7, 0.2, 1] as const;
 
 export function Reveal({
   children,
   delay = 0,
-  y = 20,
+  y = 14,
   className,
   as = "div",
 }: RevealProps) {
@@ -35,7 +36,7 @@ export function Reveal({
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
+      transition={{ duration: 0.5, ease: EASE, delay }}
       className={className}
     >
       {children}

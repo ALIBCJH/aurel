@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils";
  * Size is controlled by the caller via `className` (e.g. `h-6 w-6`). Colour
  * defaults to the gold accent via `currentColor`.
  */
-const FACETS = [
+/** The gem's facet path data, shared with the animated variant. */
+export const GEM_PATH = [
   // outer triangle
   "M60 8 L12 112 L108 112 Z",
   // apex fans to the crossbar ends (primary gem facets)
@@ -50,7 +51,7 @@ export function GemMark({ className, strokeWidth = 2, title }: GemMarkProps) {
       className={cn("text-accent", className)}
     >
       <path
-        d={FACETS}
+        d={GEM_PATH}
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
