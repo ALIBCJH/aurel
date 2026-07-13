@@ -37,6 +37,10 @@
   --accent-soft: color-mix(in srgb, #b8925a 12%, transparent);
   --ring: color-mix(in srgb, #b8925a 55%, transparent);
 
+  /* Hero texture tokens */
+  --hero-dot: color-mix(in srgb, #0e1013 9%, transparent);
+  --hero-glow: color-mix(in srgb, #b8925a 26%, transparent);
+
   /* Shadows tuned for a light, paper-like surface */
   --shadow-color: 20 18 14;
 }
@@ -56,6 +60,10 @@
   --accent-foreground: #0e1013;
   --accent-soft: color-mix(in srgb, #b8925a 14%, transparent);
   --ring: color-mix(in srgb, #b8925a 60%, transparent);
+
+  /* Hero texture tokens */
+  --hero-dot: color-mix(in srgb, #f4f1ea 7%, transparent);
+  --hero-glow: color-mix(in srgb, #b8925a 20%, transparent);
 
   --shadow-color: 0 0 0;
 }
@@ -179,5 +187,75 @@
   /* Subtle gold-tinted hairline used for premium dividers */
   .border-hairline {
     border-color: var(--border);
+  }
+}
+
+/* ===========================================================================
+   HERO TEXTURE + MARQUEE
+   =========================================================================== */
+
+/* Masked dot grid — fades out toward the edges so it never feels like a table */
+@layer utilities {
+  .hero-dots {
+    background-image: radial-gradient(var(--hero-dot) 1px, transparent 1px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 78% 62% at 50% 0%,
+      #000 38%,
+      transparent 80%
+    );
+    mask-image: radial-gradient(
+      ellipse 78% 62% at 50% 0%,
+      #000 38%,
+      transparent 80%
+    );
+  }
+
+  /* Soft radial gold glow (used for the ambient light blobs) */
+  .hero-glow {
+    background: radial-gradient(
+      circle at center,
+      var(--hero-glow),
+      transparent 62%
+    );
+  }
+
+  /* Fine film grain for editorial depth (SVG fractal noise, no image request) */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Seamless horizontal marquee (two duplicated tracks, translate by -50%) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee var(--marquee-duration, 42s) linear infinite;
+  }
+
+  /* Fade the marquee in/out at both edges */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
   }
 }
