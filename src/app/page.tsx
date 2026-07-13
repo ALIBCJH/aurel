@@ -1,65 +1,139 @@
-import Image from "next/image";
+import { Section } from "@/components/layout/section";
+import { Container } from "@/components/layout/container";
+import { Reveal } from "@/components/ui/reveal";
+import { Button } from "@/components/ui/button";
+import { Card, CardBody, CardEyebrow, CardTitle } from "@/components/ui/card";
+import { ArrowUpRightIcon } from "@/components/icons";
+import { primaryCta } from "@/config/site";
 
-export default function Home() {
+/**
+ * Example homepage.
+ *
+ * This is NOT the finished site — it's a reference composition showing how the
+ * foundation pieces (Section, Container, Reveal, Button, Card, tokens, type
+ * system) fit together. Future pages should follow the same patterns.
+ */
+
+const capabilities = [
+  {
+    eyebrow: "01",
+    title: "Custom Software",
+    body: "Bespoke platforms and products engineered for scale, reliability, and long-term maintainability.",
+  },
+  {
+    eyebrow: "02",
+    title: "AI Automation",
+    body: "Intelligent systems and agents that remove manual work and compound your team's output.",
+  },
+  {
+    eyebrow: "03",
+    title: "Digital Products",
+    body: "End-to-end product design and engineering, from first principles to production launch.",
+  },
+  {
+    eyebrow: "04",
+    title: "Web Experiences",
+    body: "Fast, elegant, and memorable interfaces that make premium brands feel effortless.",
+  },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* Hero — clears the fixed navbar with its own top padding */}
+      <Section spacing="lg" className="pt-32 sm:pt-40 lg:pt-48">
+        <div className="max-w-3xl">
+          <Reveal>
+            <p className="text-eyebrow text-accent">
+              Digital Transformation Studio
+            </p>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <h1 className="mt-6 text-5xl sm:text-6xl lg:text-7xl">
+              We build the technology that moves ambitious businesses{" "}
+              <span className="text-accent italic">forward</span>.
+            </h1>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
+              Aurel is a creative technology studio crafting custom software, AI
+              automation, and modern digital experiences — with the precision of
+              a product company and the taste of a design house.
+            </p>
+          </Reveal>
+          <Reveal delay={0.24}>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Button href={primaryCta.href} size="lg">
+                {primaryCta.label}
+                <ArrowUpRightIcon
+                  width={18}
+                  height={18}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
+              </Button>
+              <Button href="/work" variant="secondary" size="lg">
+                View our work
+              </Button>
+            </div>
+          </Reveal>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </Section>
+
+      {/* Capabilities — demonstrates the Card + grid + Reveal stagger pattern */}
+      <Section spacing="default" className="border-t border-border">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <Reveal>
+            <h2 className="max-w-xl text-3xl sm:text-4xl">
+              A studio built for the full arc of transformation.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="max-w-sm text-sm leading-relaxed text-muted">
+              From strategy to shipped product — a single team accountable for
+              outcomes, not hand-offs.
+            </p>
+          </Reveal>
         </div>
-      </main>
-    </div>
+
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {capabilities.map((item, index) => (
+            <Reveal key={item.title} delay={index * 0.08}>
+              <Card interactive className="h-full">
+                <CardEyebrow>{item.eyebrow}</CardEyebrow>
+                <CardTitle className="mt-6 font-display">
+                  {item.title}
+                </CardTitle>
+                <CardBody className="mt-3">{item.body}</CardBody>
+              </Card>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* Closing CTA band */}
+      <Section spacing="lg" bleed className="border-t border-border">
+        <Container size="narrow" className="text-center">
+          <Reveal>
+            <h2 className="text-4xl sm:text-5xl">
+              Have something ambitious in mind?
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mx-auto mt-6 max-w-md text-muted">
+              Tell us where you want to go. We&apos;ll help you get there with
+              craft, precision, and technology that lasts.
+            </p>
+          </Reveal>
+          <Reveal delay={0.18}>
+            <div className="mt-10 flex justify-center">
+              <Button href={primaryCta.href} size="lg">
+                {primaryCta.label}
+                <ArrowUpRightIcon width={18} height={18} />
+              </Button>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
+    </>
   );
 }

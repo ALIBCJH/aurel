@@ -1,26 +1,183 @@
 @import "tailwindcss";
 
+/*
+ * ---------------------------------------------------------------------------
+ *  AUREL — Global Design System (Tailwind v4, CSS-first configuration)
+ * ---------------------------------------------------------------------------
+ *  Tailwind v4 is configured directly in CSS via `@theme`. There is no
+ *  `tailwind.config.js`. Design tokens are declared as CSS custom properties
+ *  so they can be swapped between themes, then exposed to Tailwind's utility
+ *  generator through `@theme inline`.
+ * ---------------------------------------------------------------------------
+ */
+
+/* Enable class-based dark mode (`.dark` on <html>) instead of the default
+   `prefers-color-scheme` media strategy, so we can offer a manual toggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ===========================================================================
+   THEME PALETTES
+   The light theme is the default (:root); the dark theme overrides on `.dark`.
+   Only the raw values live here — semantic Tailwind tokens are mapped below.
+   =========================================================================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces & text — Light: warm, editorial, sophisticated */
+  --background: #f4f1ea;
+  --foreground: #0e1013;
+  --surface: #ffffff;
+  --surface-muted: #ece7db;
+  --muted-foreground: color-mix(in srgb, #0e1013 58%, transparent);
+  --border: color-mix(in srgb, #0e1013 12%, transparent);
+  --border-strong: color-mix(in srgb, #0e1013 20%, transparent);
+
+  /* Accent — gold, identical hue across themes, used sparingly */
+  --accent: #b8925a;
+  --accent-hover: #c8a06a;
+  --accent-foreground: #0e1013; /* text/icon sitting on gold */
+  --accent-soft: color-mix(in srgb, #b8925a 12%, transparent);
+  --ring: color-mix(in srgb, #b8925a 55%, transparent);
+
+  /* Shadows tuned for a light, paper-like surface */
+  --shadow-color: 20 18 14;
 }
 
+.dark {
+  /* Surfaces & text — Dark: deep, precise, premium */
+  --background: #0e1013;
+  --foreground: #f4f1ea;
+  --surface: #16191e;
+  --surface-muted: #101317;
+  --muted-foreground: color-mix(in srgb, #f4f1ea 56%, transparent);
+  --border: color-mix(in srgb, #f4f1ea 10%, transparent);
+  --border-strong: color-mix(in srgb, #f4f1ea 18%, transparent);
+
+  --accent: #b8925a;
+  --accent-hover: #caa269;
+  --accent-foreground: #0e1013;
+  --accent-soft: color-mix(in srgb, #b8925a 14%, transparent);
+  --ring: color-mix(in srgb, #b8925a 60%, transparent);
+
+  --shadow-color: 0 0 0;
+}
+
+/* ===========================================================================
+   TAILWIND TOKEN MAPPING
+   Exposes the variables above as Tailwind utilities:
+     bg-background, text-foreground, text-muted, bg-surface, border-border,
+     bg-accent, text-accent, ring-ring, max-w-default, font-display, ...
+   =========================================================================== */
 @theme inline {
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-muted: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-ring: var(--ring);
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman",
+    serif;
+
+  /* Container widths (power max-w-narrow / max-w-default / max-w-wide) */
+  --container-narrow: 46rem;
+  --container-default: 75rem;
+  --container-wide: 88rem;
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.75rem;
+
+  /* Premium easing curves used across the animation system */
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ===========================================================================
+   BASE LAYER
+   =========================================================================== */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01";
+    /* Calm cross-fade when switching themes */
+    transition:
+      background-color 0.5s var(--ease-premium),
+      color 0.5s var(--ease-premium);
+  }
+
+  /* Editorial display headings */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* Accessible, on-brand focus states */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ===========================================================================
+   UTILITIES
+   =========================================================================== */
+@layer utilities {
+  /* Uppercase, wide-tracked eyebrow/label text — a premium editorial detail */
+  .text-eyebrow {
+    font-size: 0.75rem;
+    line-height: 1;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  /* Subtle gold-tinted hairline used for premium dividers */
+  .border-hairline {
+    border-color: var(--border);
+  }
 }
