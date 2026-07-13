@@ -21,12 +21,12 @@
    Only the raw values live here — semantic Tailwind tokens are mapped below.
    =========================================================================== */
 :root {
-  /* Surfaces & text — Light: warm, editorial, sophisticated */
-  --background: #f4f1ea;
-  --foreground: #0e1013;
+  /* Surfaces & text — Light: cool, clean, editorial */
+  --background: #f1f2f4;
+  --foreground: #0d0f12;
   --surface: #ffffff;
-  --surface-muted: #ece7db;
-  --muted-foreground: color-mix(in srgb, #0e1013 58%, transparent);
+  --surface-muted: #e9eaec;
+  --muted-foreground: color-mix(in srgb, #0d0f12 55%, transparent);
   --border: color-mix(in srgb, #0e1013 12%, transparent);
   --border-strong: color-mix(in srgb, #0e1013 20%, transparent);
 
@@ -46,15 +46,16 @@
 }
 
 .dark {
-  /* Surfaces & text — Dark: deep, precise, premium */
-  --background: #0e1013;
-  --foreground: #f4f1ea;
-  --surface: #16191e;
-  --surface-muted: #101317;
-  /* Warm muted grey for secondary text (brand spec) */
-  --muted-foreground: #93908a;
-  --border: color-mix(in srgb, #f4f1ea 10%, transparent);
-  --border-strong: color-mix(in srgb, #f4f1ea 18%, transparent);
+  /* Surfaces & text — Dark: cool, precise, premium */
+  --background: #0d0f12;
+  /* Cool, clean off-white (was warm cream) */
+  --foreground: #eceef1;
+  --surface: #15181d;
+  --surface-muted: #101318;
+  /* Cool muted grey for secondary text — crisper than the old warm grey */
+  --muted-foreground: #969ba4;
+  --border: color-mix(in srgb, #eceef1 11%, transparent);
+  --border-strong: color-mix(in srgb, #eceef1 19%, transparent);
 
   --accent: #b8925a;
   --accent-hover: #caa269;
@@ -63,7 +64,7 @@
   --ring: color-mix(in srgb, #b8925a 60%, transparent);
 
   /* Hero texture tokens */
-  --hero-dot: color-mix(in srgb, #f4f1ea 7%, transparent);
+  --hero-dot: color-mix(in srgb, #eceef1 7%, transparent);
   --hero-glow: color-mix(in srgb, #b8925a 20%, transparent);
 
   --shadow-color: 0 0 0;
@@ -91,11 +92,13 @@
   --color-ring: var(--ring);
 
   /* Typography */
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system,
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman",
-    serif;
+  /* Sans-only system: display headings share the sans family, differentiated
+     by weight, size, and tracking rather than a serif. */
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
 
   /* Container widths (power max-w-narrow / max-w-default / max-w-wide) */
   --container-narrow: 46rem;
@@ -132,21 +135,20 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv01";
     /* Calm cross-fade when switching themes */
     transition:
       background-color 0.5s var(--ease-premium),
       color 0.5s var(--ease-premium);
   }
 
-  /* Editorial display headings */
+  /* Display headings — sans, weighty, tightly tracked (Linear/Stripe style) */
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
   }
 
   ::selection {
