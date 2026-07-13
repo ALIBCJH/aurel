@@ -2,10 +2,14 @@ import Link from "next/link";
 import { Section } from "@/components/layout/section";
 import { Container } from "@/components/layout/container";
 import { Hero } from "@/components/home/hero";
+import { Approach } from "@/components/home/approach";
 import { Reveal } from "@/components/ui/reveal";
 import { Marquee } from "@/components/ui/marquee";
 import { Button } from "@/components/ui/button";
-import { GemFigure } from "@/components/brand/gem-figure";
+import { AnimatedGem } from "@/components/brand/animated-gem";
+import { GemMark } from "@/components/brand/gem-mark";
+import { ServiceIcon } from "@/components/brand/service-icons";
+import { Diamond, FacetedDivider } from "@/components/brand/facet";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { primaryCta } from "@/config/site";
 import { services } from "@/config/services";
@@ -19,29 +23,6 @@ const marqueeItems = [
   "SEO",
   "Process optimisation",
   "Immersive experiences",
-];
-
-const approach = [
-  {
-    num: "01",
-    title: "Discover",
-    body: "We learn your business, your customers, and the outcome that matters — before a line of code.",
-  },
-  {
-    num: "02",
-    title: "Design",
-    body: "We shape the experience and the system deliberately, so everything built later has a reason.",
-  },
-  {
-    num: "03",
-    title: "Build",
-    body: "We engineer it properly — fast, secure, and maintainable — with you in the loop throughout.",
-  },
-  {
-    num: "04",
-    title: "Grow",
-    body: "We measure, refine, and automate, so the work keeps compounding long after launch.",
-  },
 ];
 
 const whyAurel = [
@@ -62,7 +43,7 @@ const whyAurel = [
 export default function HomePage() {
   return (
     <>
-      {/* 2 — Hero (cinematic, animated product showcase) */}
+      {/* Hero (cinematic, animated product showcase) */}
       <Hero />
 
       {/* Capabilities marquee — continuous movement */}
@@ -70,11 +51,11 @@ export default function HomePage() {
         <Marquee items={marqueeItems} />
       </section>
 
-      {/* 3 — Belief band */}
+      {/* Belief band */}
       <Section
         spacing="default"
         bleed
-        className="border-y border-accent/20 bg-surface-muted/30"
+        className="border-b border-accent/20 bg-surface-muted/30"
       >
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
@@ -95,24 +76,30 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* 4 — Services grid */}
+      {/* Services grid — line icon + drawing gold top-border + lift on hover */}
       <Section spacing="lg">
         <Reveal>
           <h2 className="max-w-3xl text-3xl sm:text-4xl lg:text-5xl">
             Everything it takes to compete in the digital era — under one roof.
           </h2>
         </Reveal>
-        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
-            <Reveal key={service.slug} delay={(index % 4) * 0.06}>
+            <Reveal
+              key={service.slug}
+              delay={(index % 4) * 0.06}
+              className="h-full"
+            >
               <Link
                 href={`/services/${service.slug}`}
-                className="group relative flex h-full flex-col bg-background p-6 transition-colors duration-300 hover:bg-surface"
+                className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface/30 p-6 transition-[transform,border-color,background-color] duration-200 ease-[cubic-bezier(0.2,0.7,0.2,1)] hover:-translate-y-1 hover:border-accent/40 hover:bg-surface"
               >
-                {/* gold line across the top on hover */}
-                <span className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
-                <span className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-accent" />
-                <h3 className="mt-6 font-sans text-lg font-semibold text-foreground">
+                {/* gold top-border draws in on hover */}
+                <span className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100" />
+                <span className="text-accent">
+                  <ServiceIcon slug={service.slug} />
+                </span>
+                <h3 className="mt-6 text-lg font-semibold text-foreground">
                   {service.name}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -124,39 +111,17 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* 5 — Approach */}
-      <Section spacing="default" bleed className="border-t border-border">
-        <Container>
-          <Reveal>
-            <h2 className="max-w-2xl text-3xl sm:text-4xl lg:text-5xl">
-              Design first. Build second. Automate last.
-            </h2>
-          </Reveal>
-          <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-            {approach.map((step, index) => (
-              <Reveal key={step.num} delay={index * 0.08}>
-                <div className="border-t border-accent/25 pt-5">
-                  <span className="font-display text-2xl text-accent">
-                    {step.num}
-                  </span>
-                  <h3 className="mt-3 text-xl">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">
-                    {step.body}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </Section>
+      {/* Approach — steps joined by a self-drawing gold thread */}
+      <Approach />
 
-      {/* 6 — Why Aurel */}
+      {/* Why Aurel — small gem markers */}
       <Section spacing="default" bleed className="border-t border-border">
         <Container>
           <div className="grid gap-12 md:grid-cols-3 lg:gap-16">
             {whyAurel.map((item, index) => (
               <Reveal key={item.title} delay={index * 0.08}>
-                <h3 className="font-display text-2xl">{item.title}</h3>
+                <Diamond />
+                <h3 className="mt-5 font-display text-2xl">{item.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted">
                   {item.body}
                 </p>
@@ -166,11 +131,29 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* 7 — Closing CTA */}
-      <Section spacing="lg" bleed className="border-t border-border">
+      {/* Closing CTA — gem bookend with glow pulse, faint grid + watermark */}
+      <Section spacing="lg" bleed className="relative overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <div className="bg-line-grid absolute inset-0 opacity-70" />
+          <GemMark
+            strokeWidth={1.5}
+            className="absolute left-1/2 top-1/2 w-[min(80vw,560px)] -translate-x-1/2 -translate-y-1/2 text-accent opacity-[0.04]"
+          />
+        </div>
+
+        <Container>
+          <FacetedDivider className="mb-16 sm:mb-20" />
+        </Container>
+
         <Container size="narrow" className="text-center">
-          <Reveal>
-            <GemFigure className="mx-auto w-28" />
+          <Reveal className="flex justify-center">
+            <div className="relative">
+              <div
+                aria-hidden
+                className="hero-glow animate-glow-pulse absolute -inset-6 rounded-full blur-2xl"
+              />
+              <AnimatedGem className="relative w-24" />
+            </div>
           </Reveal>
           <Reveal delay={0.08}>
             <h2 className="mt-8 text-4xl sm:text-5xl">

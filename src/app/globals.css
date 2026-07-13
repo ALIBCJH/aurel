@@ -114,6 +114,8 @@
   /* Premium easing curves used across the animation system */
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Brand motion easing (calm, confident ease-out — no bounce) */
+  --ease-brand: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 /* ===========================================================================
@@ -260,5 +262,85 @@
       #000 92%,
       transparent
     );
+  }
+}
+
+/* ===========================================================================
+   ABSTRACT GRAPHICS — faint gold line grid (texture, not pattern)
+   =========================================================================== */
+@layer utilities {
+  .bg-line-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--accent) 9%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--accent) 9%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 72px 72px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 72% 62% at 50% 38%,
+      #000 28%,
+      transparent 76%
+    );
+    mask-image: radial-gradient(
+      ellipse 72% 62% at 50% 38%,
+      #000 28%,
+      transparent 76%
+    );
+  }
+}
+
+/* Gem light-sweep shimmer (a diagonal sheen passing across the facets) */
+@keyframes gem-shimmer {
+  0% {
+    transform: translateX(-140%) rotate(8deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(140%) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .animate-gem-shimmer {
+    animation: gem-shimmer 5s var(--ease-brand) infinite;
+  }
+}
+
+/* Soft glow pulse for the CTA gem bookend */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06);
+  }
+}
+
+@layer utilities {
+  .animate-glow-pulse {
+    animation: glow-pulse 6s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gem-shimmer,
+  .animate-glow-pulse {
+    animation: none;
   }
 }

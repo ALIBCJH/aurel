@@ -12,6 +12,8 @@ import {
 } from "framer-motion";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
+import { HeadlineReveal } from "@/components/motion/headline-reveal";
+import { GemMark } from "@/components/brand/gem-mark";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { primaryCta } from "@/config/site";
 
@@ -88,13 +90,16 @@ export function Hero() {
             <motion.p variants={itemV} className="text-eyebrow text-accent">
               Digital transformation studio
             </motion.p>
-            <motion.h1
-              variants={itemV}
+            <HeadlineReveal
               className="mt-6 text-5xl sm:text-6xl lg:text-[5rem] lg:leading-[0.98]"
-            >
-              Technology, held to a{" "}
-              <span className="italic text-accent">higher</span> standard.
-            </motion.h1>
+              delay={0.15}
+              lines={[
+                "Technology, held to a",
+                <>
+                  <span className="italic text-accent">higher</span> standard.
+                </>,
+              ]}
+            />
             <motion.p
               variants={itemV}
               className="mt-8 max-w-xl text-lg leading-relaxed text-muted"
@@ -194,7 +199,13 @@ function AnimatedBackground({
         animate={reduce ? undefined : { rotate: 360 }}
         transition={{ repeat: Infinity, duration: 55, ease: "linear" }}
       />
-      <div className="hero-dots absolute inset-0 opacity-60" />
+      {/* faint gold hairline grid — texture, not pattern */}
+      <div className="bg-line-grid absolute inset-0 opacity-80" />
+      {/* very-low-opacity faceted gem watermark */}
+      <GemMark
+        strokeWidth={1.5}
+        className="absolute left-1/2 top-1/2 w-[min(78vw,640px)] -translate-x-1/2 -translate-y-1/2 text-accent opacity-[0.05]"
+      />
       <div className="bg-grain absolute inset-0 opacity-[0.05] mix-blend-overlay dark:opacity-[0.07]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
     </motion.div>
