@@ -1,13 +1,25 @@
 import Link from "next/link";
 import { Section } from "@/components/layout/section";
 import { Container } from "@/components/layout/container";
-import { HeroBackground } from "@/components/layout/hero-background";
+import { Hero } from "@/components/home/hero";
 import { Reveal } from "@/components/ui/reveal";
+import { Marquee } from "@/components/ui/marquee";
 import { Button } from "@/components/ui/button";
 import { GemFigure } from "@/components/brand/gem-figure";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { primaryCta } from "@/config/site";
 import { services } from "@/config/services";
+
+const marqueeItems = [
+  "Custom software",
+  "AI automation",
+  "Digital products",
+  "Modern web",
+  "Branding",
+  "SEO",
+  "Process optimisation",
+  "Immersive experiences",
+];
 
 const approach = [
   {
@@ -50,48 +62,12 @@ const whyAurel = [
 export default function HomePage() {
   return (
     <>
-      {/* 2 — Hero */}
-      <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 lg:pt-48 lg:pb-28">
-        <HeroBackground />
-        <Container>
-          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
-            <div className="max-w-2xl">
-              <Reveal>
-                <p className="text-eyebrow text-accent">
-                  Digital transformation studio
-                </p>
-              </Reveal>
-              <Reveal delay={0.08}>
-                <h1 className="mt-6 text-5xl sm:text-6xl lg:text-7xl">
-                  Technology, held to a{" "}
-                  <span className="italic text-accent">higher</span> standard.
-                </h1>
-              </Reveal>
-              <Reveal delay={0.16}>
-                <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
-                  Aurel helps ambitious businesses modernise, grow, and lead —
-                  custom software, AI, and design, crafted end to end by a
-                  partner you can trust.
-                </p>
-              </Reveal>
-              <Reveal delay={0.24}>
-                <div className="mt-10 flex flex-wrap items-center gap-4">
-                  <Button href={primaryCta.href} size="lg">
-                    {primaryCta.label}
-                    <ArrowUpRightIcon width={18} height={18} />
-                  </Button>
-                  <Button href="/services" variant="secondary" size="lg">
-                    Explore what we do
-                  </Button>
-                </div>
-              </Reveal>
-            </div>
+      {/* 2 — Hero (cinematic, animated product showcase) */}
+      <Hero />
 
-            <Reveal delay={0.2} className="hidden lg:block">
-              <GemFigure className="mx-auto w-full max-w-md" />
-            </Reveal>
-          </div>
-        </Container>
+      {/* Capabilities marquee — continuous movement */}
+      <section className="border-y border-border py-5 sm:py-6">
+        <Marquee items={marqueeItems} />
       </section>
 
       {/* 3 — Belief band */}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Geist_Mono, Fraunces } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -7,24 +7,18 @@ import { ThemeScript } from "@/components/theme/theme-script";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
-// Clean geometric sans for everything except display headings (brand spec).
-const manrope = Manrope({
-  variable: "--font-manrope",
+// Single refined sans for the whole system — headlines and body (sans-only,
+// Linear/Stripe-style). Italic is loaded for the gold accent words.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  style: ["normal", "italic"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-// Editorial serif for display headings — the "luxury" half of the type system.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  display: "swap",
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -60,7 +54,7 @@ export default function RootLayout({
     <html
       lang="en"
       // Default to the brand's primary (dark); ThemeScript refines pre-paint.
-      className={`dark ${manrope.variable} ${geistMono.variable} ${fraunces.variable} h-full`}
+      className={`dark ${inter.variable} ${geistMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
