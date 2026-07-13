@@ -1,44 +1,69 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { Section } from "@/components/layout/section";
-import { Container } from "@/components/layout/container";
 import { Reveal } from "@/components/ui/reveal";
-import { Button } from "@/components/ui/button";
+import { ProjectForm } from "@/components/contact/project-form";
+import { GemMark } from "@/components/brand/gem-mark";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Start a Project",
+  title: "Start a project",
   description:
-    "Tell us where you want to go. Get in touch with the Aurel studio.",
+    "Tell us where you want to go. Start a project with Aurel — we reply within one business day.",
 };
 
 export default function ContactPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Contact"
-        title="Let's build something ambitious."
-        description="Tell us where you want to go — we'll help you get there with craft, precision, and technology that lasts."
+        eyebrow="Start a project"
+        title={
+          <>
+            Tell us where you want to{" "}
+            <span className="italic text-accent">go</span>.
+          </>
+        }
+        description="We'll show you how technology gets you there."
       />
 
       <Section spacing="default">
-        <Container size="narrow" className="px-0">
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16">
+          {/* Form */}
           <Reveal>
-            <div className="flex flex-wrap items-center gap-4">
-              <Button href="mailto:hello@aurel.studio" external size="lg">
-                hello@aurel.studio
-              </Button>
-              <Button href="/work" variant="secondary" size="lg">
-                See our work
-              </Button>
+            <ProjectForm />
+          </Reveal>
+
+          {/* Contact details */}
+          <Reveal delay={0.12}>
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-muted/40 p-8">
+              <GemMark className="w-12 text-accent/60" strokeWidth={1.75} />
+
+              <div className="mt-8 space-y-8">
+                <div>
+                  <p className="text-eyebrow text-muted">Email</p>
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="mt-2 block text-lg text-foreground transition-colors hover:text-accent"
+                  >
+                    {siteConfig.email}
+                  </a>
+                </div>
+                <div>
+                  <p className="text-eyebrow text-muted">Location</p>
+                  <p className="mt-2 text-lg text-foreground">
+                    {siteConfig.location}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-10 border-t border-accent/20 pt-6">
+                <p className="text-sm leading-relaxed text-muted">
+                  We reply within one business day.
+                </p>
+              </div>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
-            <p className="mt-8 text-sm leading-relaxed text-muted">
-              A full contact form will live here. For now, reach us directly by
-              email.
-            </p>
-          </Reveal>
-        </Container>
+        </div>
       </Section>
     </>
   );

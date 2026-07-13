@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Fraunces } from "next/font/google";
+import { Manrope, Geist_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -7,9 +7,11 @@ import { ThemeScript } from "@/components/theme/theme-script";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Clean geometric sans for everything except display headings (brand spec).
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -58,7 +60,7 @@ export default function RootLayout({
     <html
       lang="en"
       // Default to the brand's primary (dark); ThemeScript refines pre-paint.
-      className={`dark ${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full`}
+      className={`dark ${manrope.variable} ${geistMono.variable} ${fraunces.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
