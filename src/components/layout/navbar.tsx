@@ -11,7 +11,7 @@ import { Logo } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { CloseIcon, MenuIcon } from "@/components/icons";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const EASE = [0.2, 0.7, 0.2, 1] as const;
 
 function useActivePath() {
   const pathname = usePathname();
@@ -19,22 +19,26 @@ function useActivePath() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
-/** Desktop link with an animated gold underline and active state. */
+/** Desktop link with a soft pill hover + gold underline for the active route. */
 function NavLink({ href, label }: { href: string; label: string }) {
   const isActive = useActivePath()(href);
   return (
     <Link
       href={href}
       className={cn(
-        "group relative py-1 text-sm transition-colors duration-300",
-        isActive ? "text-foreground" : "text-muted hover:text-foreground",
+        "group relative rounded-full px-3 py-1.5 text-sm transition-colors duration-200",
+        isActive
+          ? "text-foreground"
+          : "text-muted hover:bg-foreground/[0.04] hover:text-foreground",
       )}
     >
       {label}
       <span
         className={cn(
-          "absolute -bottom-0.5 left-0 h-px bg-accent transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          isActive ? "w-full" : "w-0 group-hover:w-full",
+          "absolute inset-x-3 -bottom-0.5 h-px bg-accent transition-transform duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)]",
+          isActive
+            ? "scale-x-100"
+            : "origin-center scale-x-0 group-hover:scale-x-100",
         )}
       />
     </Link>
@@ -46,7 +50,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const isActive = useActivePath();
 
-  // Elevate the bar (background blur + hairline) once the page scrolls.
+  // Condense the capsule (tighter, more opaque, deeper shadow) once scrolled.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -67,118 +71,111 @@ export function Navbar() {
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
-      className="fixed inset-x-0 top-0 z-50"
+      className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:pt-4"
     >
-      <div
+      {/* Floating glass capsule */}
+      <nav
+        aria-label="Primary"
         className={cn(
-          "transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "mx-auto flex items-center justify-between gap-3 rounded-full border pl-5 pr-2",
+          "ring-1 ring-inset ring-foreground/[0.03] backdrop-blur-xl",
+          "transition-all duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)]",
           scrolled || menuOpen
-            ? "border-b border-border bg-background/80 backdrop-blur-xl"
-            : "border-b border-transparent bg-transparent",
+            ? "max-w-5xl border-border/80 bg-background/75 py-1.5 shadow-lg shadow-black/25"
+            : "max-w-6xl border-border/50 bg-surface/40 py-2.5 shadow-md shadow-black/10",
         )}
       >
-        <nav className="mx-auto flex h-18 max-w-wide items-center justify-between px-6 sm:px-8 lg:px-12">
-          <Logo />
+        <Logo />
 
-          {/* Desktop navigation */}
-          <div className="hidden items-center gap-9 lg:flex">
-            {mainNav.map((item) => (
-              <NavLink key={item.href} {...item} />
-            ))}
-          </div>
+        {/* Desktop navigation */}
+        <div className="hidden items-center gap-1 lg:flex">
+          {mainNav.map((item) => (
+            <NavLink key={item.href} {...item} />
+          ))}
+        </div>
 
-          <div className="hidden items-center gap-2 lg:flex">
-            <ThemeToggle />
-            <Button href={primaryCta.href} size="sm" className="ml-1">
-              {primaryCta.label}
-            </Button>
-          </div>
+        <div className="hidden items-center gap-1.5 lg:flex">
+          <ThemeToggle />
+          <Button href={primaryCta.href} size="sm">
+            {primaryCta.label}
+          </Button>
+        </div>
 
-          {/* Mobile controls */}
-          <div className="flex items-center gap-1 lg:hidden">
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-surface-muted"
-            >
-              {menuOpen ? <CloseIcon /> : <MenuIcon />}
-            </button>
-          </div>
-        </nav>
-      </div>
+        {/* Mobile controls */}
+        <div className="flex items-center gap-1 lg:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-foreground/[0.06]"
+          >
+            {menuOpen ? <CloseIcon /> : <MenuIcon />}
+          </button>
+        </div>
+      </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — a floating card beneath the capsule */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
             key="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE }}
-            className="lg:hidden"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.28, ease: EASE }}
+            style={{ transformOrigin: "top" }}
+            className="mt-2 origin-top rounded-3xl border border-border bg-background/90 p-3 shadow-xl shadow-black/30 backdrop-blur-xl lg:hidden"
           >
-            <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              exit={{ height: 0 }}
-              transition={{ duration: 0.4, ease: EASE }}
-              className="overflow-hidden border-b border-border bg-background/95 backdrop-blur-xl"
-            >
-              <div className="mx-auto max-w-wide px-6 py-6 sm:px-8">
-                <ul className="flex flex-col">
-                  {mainNav.map((item, index) => (
-                    <motion.li
-                      key={item.href}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.4,
-                        ease: EASE,
-                        delay: 0.08 + index * 0.05,
-                      }}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setMenuOpen(false)}
-                        className={cn(
-                          "flex items-center justify-between border-b border-border py-4 font-display text-2xl",
-                          isActive(item.href)
-                            ? "text-accent"
-                            : "text-foreground",
-                        )}
-                      >
-                        {item.label}
-                        <span className="text-eyebrow text-muted">
-                          0{index + 1}
-                        </span>
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
+            <ul className="flex flex-col">
+              {mainNav.map((item, index) => (
+                <motion.li
+                  key={item.href}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
                   transition={{
-                    duration: 0.4,
+                    duration: 0.35,
                     ease: EASE,
-                    delay: 0.08 + mainNav.length * 0.05,
+                    delay: 0.06 + index * 0.05,
                   }}
-                  className="mt-6"
                 >
-                  <Button
-                    href={primaryCta.href}
-                    size="lg"
-                    className="w-full"
+                  <Link
+                    href={item.href}
                     onClick={() => setMenuOpen(false)}
+                    className={cn(
+                      "flex items-center justify-between rounded-2xl px-4 py-3.5 text-lg transition-colors",
+                      isActive(item.href)
+                        ? "bg-foreground/[0.04] text-accent"
+                        : "text-foreground hover:bg-foreground/[0.04]",
+                    )}
                   >
-                    {primaryCta.label}
-                  </Button>
-                </motion.div>
-              </div>
+                    {item.label}
+                    <span className="text-eyebrow text-muted">
+                      0{index + 1}
+                    </span>
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.35,
+                ease: EASE,
+                delay: 0.06 + mainNav.length * 0.05,
+              }}
+              className="mt-2 px-1 pb-1"
+            >
+              <Button
+                href={primaryCta.href}
+                size="lg"
+                className="w-full"
+                onClick={() => setMenuOpen(false)}
+              >
+                {primaryCta.label}
+              </Button>
             </motion.div>
           </motion.div>
         )}
