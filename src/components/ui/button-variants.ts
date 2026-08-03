@@ -1,19 +1,23 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Button style contract.
+ * Button style contract — the Atelier edition.
  *
- * Variants are a plain string generator (no `cva` dependency). Kept separate
- * from the client Button component so styles can also be applied to plain
- * anchors or server-rendered elements when needed.
+ * Buttons are set like printed apparatus, not app chrome: square corners, mono
+ * uppercase labels, wide tracking. The primary action is a stamped foil field;
+ * everything else is a ruled outline or a plain lettered link. Interaction is a
+ * press into the paper (translate + shadow) rather than a lift off it.
+ *
+ * Kept as a plain string generator (no `cva` dependency) and separate from the
+ * Button component so the same styles can dress a bare anchor when needed.
  */
 export type ButtonVariant = "primary" | "secondary" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const base = cn(
-  "group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full",
-  "font-medium tracking-tight select-none",
-  "transition-[transform,background-color,color,border-color,box-shadow] duration-200",
+  "group relative inline-flex items-center justify-center gap-2 whitespace-nowrap",
+  "rounded-full font-medium tracking-[-0.01em] select-none",
+  "transition-[transform,background-color,color,border-color,opacity] duration-200",
   "ease-[cubic-bezier(0.2,0.7,0.2,1)]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   "active:scale-[0.98]",
@@ -21,30 +25,43 @@ const base = cn(
 );
 
 const variants: Record<ButtonVariant, string> = {
-  // Gold — reserved for the single most important action on a view.
-  // Hover shifts toward champagne with a slight lift + scale.
+  // The solid pill: black on white, white on black. The primary action is the
+  // page's highest-contrast object, which is why it needs no colour at all.
   primary: cn(
-    "bg-accent text-accent-foreground shadow-sm",
-    "hover:bg-accent-hover hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-md hover:shadow-accent/25",
-    "active:translate-y-0",
+    "bg-[color:var(--invert-bg)] text-[color:var(--invert-ink)]",
+    "hover:opacity-90",
   ),
-  // Quiet outline — the everyday action.
+  // Outline pill — the everyday action.
   secondary: cn(
-    "border border-border-strong bg-transparent text-foreground",
-    "hover:-translate-y-0.5 hover:scale-[1.02] hover:border-accent hover:text-accent",
-    "active:translate-y-0",
+    "border border-rule-strong bg-transparent text-ink",
+    "hover:border-[color:var(--invert-bg)] hover:bg-field",
   ),
-  // Text-only — inline and low-emphasis.
+  // Plain lettering with an underline that wipes in. Pinned to the text
+  // baseline rather than the box, so the padding that makes this
+  // thumb-reachable does not drag the underline away from the words.
   ghost: cn(
-    "bg-transparent text-foreground/80",
-    "hover:text-accent hover:bg-surface-muted",
+    "rounded-none px-0 py-3.5 text-ink-soft",
+    "after:absolute after:inset-x-0 after:bottom-3 after:h-px after:bg-current",
+    "after:origin-right after:scale-x-0 after:transition-transform after:duration-300",
+    "hover:text-ink hover:after:origin-left hover:after:scale-x-100",
   ),
 };
 
+// Sentence case at real text sizes — the mono uppercase with wide tracking
+// belonged to the print direction and reads as small print here. Heights are
+// touch minimums first: 44px is the smallest control a thumb hits reliably.
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-9 px-4 text-sm",
-  md: "h-11 px-6 text-sm",
-  lg: "h-13 px-8 text-base",
+  sm: "h-11 px-5 text-[0.9375rem]",
+  md: "h-12 px-6 text-[0.9375rem]",
+  lg: "h-14 px-7 text-base sm:px-8",
+};
+
+// The ghost variant is lettering, not a box — its height comes from the padding
+// in the variant above, which already clears 40px.
+const ghostSizes: Record<ButtonSize, string> = {
+  sm: "h-auto text-[0.9375rem]",
+  md: "h-auto text-[0.9375rem]",
+  lg: "h-auto text-base",
 };
 
 export function buttonVariants({
@@ -56,5 +73,10 @@ export function buttonVariants({
   size?: ButtonSize;
   className?: string;
 } = {}): string {
-  return cn(base, variants[variant], sizes[size], className);
+  return cn(
+    base,
+    variants[variant],
+    variant === "ghost" ? ghostSizes[size] : sizes[size],
+    className,
+  );
 }

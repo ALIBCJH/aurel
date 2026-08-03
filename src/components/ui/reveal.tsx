@@ -1,45 +1,72 @@
-"use client";
-
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import type { CSSProperties, ElementType, ReactNode } from "react";
 
 /**
- * Reveal — the reusable entrance animation used across pages.
+ * Reveal — the house entrance animation.
  *
- * A restrained fade-and-rise that plays once when the element scrolls into
- * view. `delay` enables simple staggering between sibling elements. This keeps
- * page-level motion consistent and intentional rather than ad hoc.
+ * This is a *server* component. It renders nothing but a `data-reveal`
+ * attribute; the animation is CSS (globals.css → REVEAL SYSTEM) and the trigger
+ * is the single `RevealObserver` mounted in the root layout.
+ *
+ * Two consequences worth the trade:
+ *  - Pages using it stay server components — no client boundary per section.
+ *  - The hiding CSS is scoped to `html.js`, so without JavaScript the page is
+ *    fully rendered and readable rather than a column of invisible blocks.
+ *
+ * Variants:
+ *  - `fade`  (default) fade + rise
+ *  - `mask`  child rises out of a clipped band — for display lines
+ *  - `rule`  hairline draws left → right
+ *  - `ruleV` hairline draws top → bottom
+ *  - `plate` slower, heavier arrival with a touch of scale — for figures
+ *  - `ink`   copy resolves out of soft focus
  */
-type RevealProps = {
-  children: ReactNode;
-  delay?: number;
-  /** Vertical travel distance in px. */
-  y?: number;
-  className?: string;
-  as?: "div" | "span" | "li" | "section";
+type RevealVariant = "fade" | "mask" | "rule" | "ruleV" | "plate" | "ink";
+
+const attr: Record<RevealVariant, string> = {
+  fade: "fade",
+  mask: "mask",
+  rule: "rule",
+  ruleV: "rule-v",
+  plate: "plate",
+  ink: "ink",
 };
 
-// Brand easing — calm, confident ease-out (no bounce).
-const EASE = [0.2, 0.7, 0.2, 1] as const;
+type RevealProps = {
+  children: ReactNode;
+  /** Stagger, in seconds. */
+  delay?: number;
+  /** Vertical travel in px (fade variant only). */
+  y?: number;
+  variant?: RevealVariant;
+  className?: string;
+  style?: CSSProperties;
+  as?: ElementType;
+};
 
 export function Reveal({
   children,
   delay = 0,
-  y = 14,
+  y,
+  variant = "fade",
   className,
-  as = "div",
+  style,
+  as,
 }: RevealProps) {
-  // Cast to a single motion component type to keep prop inference simple.
-  const MotionTag = motion[as] as typeof motion.div;
+  const Component = as ?? "div";
+
   return (
-    <MotionTag
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, ease: EASE, delay }}
+    <Component
+      data-reveal={attr[variant]}
       className={className}
+      style={
+        {
+          ...(delay ? { "--reveal-delay": `${delay}s` } : null),
+          ...(y !== undefined ? { "--reveal-y": `${y}px` } : null),
+          ...style,
+        } as CSSProperties
+      }
     >
       {children}
-    </MotionTag>
+    </Component>
   );
 }

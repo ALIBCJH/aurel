@@ -40,8 +40,8 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Default matches the server render / ThemeScript default (dark).
-  const [theme, setThemeState] = useState<Theme>("dark");
+  // Must match the server render and the ThemeScript default, which is light.
+  const [theme, setThemeState] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
   // Sync React state with whatever ThemeScript already applied to <html>.

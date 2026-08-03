@@ -1,119 +1,211 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
-import { Section } from "@/components/layout/section";
 import { Container } from "@/components/layout/container";
-import { Reveal } from "@/components/ui/reveal";
 import { Button } from "@/components/ui/button";
-import { BrowserMockup } from "@/components/brand/browser-mockup";
+import { Rule, FigureRule } from "@/components/editorial/rule";
+import { Display, Label, Marginalia } from "@/components/editorial/typography";
+import { ArrowUpRightIcon } from "@/components/icons";
+import { cases } from "@/config/cases";
 import { primaryCta } from "@/config/site";
+import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
   title: "Work",
   description:
-    "Selected work from the Aurel studio — proof, not promises. Case studies are on the way.",
+    "Selected work from Aurel — a real-time 3D showroom for R&J Interiors, and a searchable product-by-product site for Datani Insurance Agency.",
+  alternates: { canonical: "/work" },
 };
 
-// Placeholder project types — no invented clients. Replace with real work.
-const projects = [
-  { name: "Commerce platform", tags: "Web · Software", result: "Case study coming soon" },
-  { name: "Brand & website", tags: "Branding · Web", result: "Case study coming soon" },
-  { name: "AI operations assistant", tags: "AI · Automation", result: "Case study coming soon" },
-  { name: "Booking & payments app", tags: "Software · Mobile", result: "Case study coming soon" },
-  { name: "Marketing site & SEO", tags: "Web · SEO", result: "Case study coming soon" },
-  { name: "Product configurator", tags: "Immersive · Web", result: "Case study coming soon" },
-];
-
-const caseStudy = [
-  {
-    label: "The challenge",
-    body: "A concise framing of the problem the client faced and why it mattered to their business.",
-  },
-  {
-    label: "Our approach",
-    body: "How we discovered, designed, and built the solution — the decisions that shaped the outcome.",
-  },
-  {
-    label: "The outcome",
-    body: "The measurable result: faster, clearer, more revenue, less manual work. Proof it worked.",
-  },
-];
-
+/**
+ * The casebook.
+ *
+ * This page used to list six invented projects as a "forthcoming" list. Two
+ * real ones beat six imagined ones: the entries below are live, in production,
+ * and linked so anyone can go and check. Each states plainly what our
+ * involvement was rather than implying a client relationship that did not
+ * exist — see the note at the top of config/cases.ts.
+ */
 export default function WorkPage() {
   return (
     <>
+      <JsonLd data={buildBreadcrumbSchema([{ name: "Work", path: "/work" }])} />
+
       <PageHeader
-        eyebrow="Selected work"
-        title={
+        eyebrow="The casebook"
+        aside={`Section 02 — ${cases.length} entries`}
+        title={[
+          "Proof,",
           <>
-            Proof, not <span className="italic text-accent">promises</span>.
-          </>
-        }
-        description="A closer look at what we build. We're a young studio — these placeholders show the shape of the work as our first case studies are documented."
+            not <em key="p" className="foil font-normal italic">promises.</em>
+          </>,
+        ]}
+        description="Two projects, both live, both linked. Go and look at them — that is rather the point of a portfolio."
       />
 
-      <Section spacing="default">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <Reveal key={project.name} delay={(index % 3) * 0.08}>
-              <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background p-3 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40">
-                <BrowserMockup index={index} />
-                <div className="relative flex flex-1 flex-col px-3 pb-4 pt-5">
-                  <span className="absolute inset-x-3 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
-                  <div className="flex items-start justify-between gap-4">
-                    <h2 className="font-display text-xl">{project.name}</h2>
-                    <span className="text-eyebrow mt-1.5 shrink-0 text-muted">
-                      {project.tags}
-                    </span>
+      {/* ── The entries ──────────────────────────────────────────────────── */}
+      <section className="py-14 sm:py-16 lg:py-20">
+        <Container size="wide">
+          <ul className="flex flex-col gap-16 sm:gap-20 lg:gap-28">
+            {cases.map((entry, index) => (
+              <li key={entry.slug}>
+                <article className="grid gap-8 lg:grid-cols-12 lg:gap-14">
+                  {/* the plate */}
+                  <div
+                    className={
+                      index % 2 === 1
+                        ? "lg:order-2 lg:col-span-7"
+                        : "lg:col-span-7"
+                    }
+                  >
+                    <Link
+                      href={`/work/${entry.slug}`}
+                      data-reveal="plate"
+                      className="group/plate block overflow-hidden border border-rule"
+                    >
+                      <Image
+                        src={entry.image.src}
+                        alt={entry.image.alt}
+                        width={1440}
+                        height={900}
+                        sizes="(min-width: 1024px) 58vw, 100vw"
+                        className="h-auto w-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/plate:scale-[1.02]"
+                        priority={index === 0}
+                      />
+                    </Link>
                   </div>
-                  <p className="mt-2 text-sm text-muted">{project.result}</p>
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </Section>
 
-      {/* Featured case study block */}
-      <Section spacing="default" bleed className="border-t border-border">
-        <Container>
-          <Reveal>
-            <div className="rounded-2xl border border-border bg-surface-muted/30 p-8 sm:p-12">
-              <p className="text-eyebrow text-accent">Featured case study</p>
-              <h2 className="mt-4 max-w-2xl text-3xl sm:text-4xl">
-                The anatomy of a project, start to finish.
-              </h2>
-              <div className="mt-10 grid gap-8 border-t border-accent/20 pt-10 md:grid-cols-3">
-                {caseStudy.map((part) => (
-                  <div key={part.label}>
-                    <h3 className="text-eyebrow text-muted">{part.label}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-foreground/85">
-                      {part.body}
+                  {/* the entry */}
+                  <div
+                    className={
+                      index % 2 === 1
+                        ? "lg:order-1 lg:col-span-5 lg:pt-4"
+                        : "lg:col-span-5 lg:pt-4"
+                    }
+                  >
+                    <div
+                      data-reveal="fade"
+                      className="flex items-baseline justify-between gap-4"
+                    >
+                      <Label foil marker>
+                        {String(index + 1).padStart(2, "0")} — {entry.sector}
+                      </Label>
+                      <span className="text-label-sm text-ink-mute">
+                        {entry.year}
+                      </span>
+                    </div>
+                    <Rule className="mt-4" />
+
+                    <h2 className="font-display mt-7 text-[clamp(1.85rem,3.4vw,2.75rem)] font-light leading-[1.06] tracking-[-0.02em]">
+                      <Link
+                        href={`/work/${entry.slug}`}
+                        className="transition-colors duration-300 hover:text-foil"
+                      >
+                        {entry.headline}
+                      </Link>
+                    </h2>
+
+                    <p
+                      data-reveal="ink"
+                      className="mt-5 text-[0.9375rem] leading-[1.75] text-ink-soft"
+                    >
+                      {entry.summary}
                     </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </Container>
-      </Section>
 
-      {/* Closing CTA */}
-      <Section spacing="lg" bleed className="border-t border-border">
-        <Container size="narrow" className="text-center">
-          <Reveal>
-            <h2 className="text-4xl sm:text-5xl">
-              Your project could be the next one here.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <div className="mt-10 flex justify-center">
-              <Button href={primaryCta.href} size="lg">
-                {primaryCta.label}
-              </Button>
-            </div>
-          </Reveal>
+                    <p className="text-label-sm mt-6 text-ink-mute">
+                      <span className="text-foil">{entry.client}</span>
+                      <span className="normal-case tracking-[0.1em]">
+                        {" "}
+                        · {entry.location}
+                      </span>
+                    </p>
+
+                    <div
+                      data-reveal="fade"
+                      className="mt-8 flex flex-wrap items-center gap-6"
+                    >
+                      <Button
+                        href={`/work/${entry.slug}`}
+                        variant="secondary"
+                        size="md"
+                      >
+                        Read the case note
+                        <ArrowUpRightIcon width={13} height={13} />
+                      </Button>
+                    </div>
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
         </Container>
-      </Section>
+      </section>
+
+      {/* ── On measurement ───────────────────────────────────────────────── */}
+      <section className="border-t border-rule bg-paper-deep py-14 sm:py-16">
+        <Container size="wide">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-5">
+              <Label foil marker>
+                On measurement
+              </Label>
+              <Rule className="mt-4" />
+              <h2 className="font-display mt-8 text-[clamp(1.6rem,3vw,2.25rem)] font-light leading-[1.1] tracking-[-0.02em]">
+                We publish what we can{" "}
+                <em className="foil font-normal italic">stand behind.</em>
+              </h2>
+            </div>
+            <div className="lg:col-span-6 lg:col-start-7 lg:pt-2">
+              <p
+                data-reveal="ink"
+                className="text-[0.9375rem] leading-[1.8] text-ink-soft"
+              >
+                You will notice these case notes describe what was built and what
+                it does, and do not claim a percentage uplift. That is
+                deliberate. Outcome figures only mean something against a
+                measured baseline, and where we do not have one we would rather
+                say so than publish a number that merely sounds good. As results
+                come in from work now running, they will appear here with the
+                method behind them.
+              </p>
+              <Marginalia figure="Note" className="mt-8">
+                Every entry states plainly what our involvement was —
+                commissioned work, or our own venture. Ask any studio for that
+                distinction; it is often more informative than the portfolio
+                itself.
+              </Marginalia>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── The invitation ───────────────────────────────────────────────── */}
+      <section className="border-t border-rule-foil py-16 sm:py-20 lg:py-24">
+        <Container size="narrow" className="text-center">
+          <FigureRule className="mb-12" />
+          <Display
+            delay={0.1}
+            lines={[
+              "Your project could be",
+              <>
+                the next <em key="e" className="foil font-normal italic">entry.</em>
+              </>,
+            ]}
+            className="text-[clamp(2rem,4.8vw,3.75rem)] leading-[1.04] tracking-[-0.03em]"
+          />
+          <div
+            data-reveal="fade"
+            style={{ ["--reveal-delay" as string]: "0.4s" }}
+            className="mt-12 flex justify-center"
+          >
+            <Button href={primaryCta.href} size="lg">
+              {primaryCta.label}
+              <ArrowUpRightIcon width={14} height={14} />
+            </Button>
+          </div>
+        </Container>
+      </section>
     </>
   );
 }

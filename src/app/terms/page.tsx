@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
-import { Section } from "@/components/layout/section";
 import { Container } from "@/components/layout/container";
-import { Reveal } from "@/components/ui/reveal";
+import { Lead } from "@/components/editorial/typography";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -14,19 +13,19 @@ export default function TermsPage() {
     <>
       <PageHeader
         eyebrow="Legal"
-        title="Terms of Service"
+        aside="Appendix B"
+        title={["Terms of Service"]}
         description="The terms and conditions governing use of this site and our services."
       />
-      <Section spacing="default">
-        <Container size="narrow" className="px-0">
-          <Reveal>
-            <p className="leading-relaxed text-muted">
-              This is a placeholder terms of service. Replace this content with
-              your finalized terms before launch.
-            </p>
-          </Reveal>
+
+      <section className="py-16 sm:py-20 lg:py-24">
+        <Container size="narrow">
+          <Lead>
+            This is a placeholder terms of service. Replace this content with
+            your finalised terms before launch.
+          </Lead>
         </Container>
-      </Section>
+      </section>
     </>
   );
 }

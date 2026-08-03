@@ -33,14 +33,49 @@ export const GEM_PATH = [
   "M48 44 L60 22 L72 44",
 ].join(" ");
 
+/**
+ * The mark reduced to its four load-bearing strokes, for small sizes.
+ *
+ * `GEM_PATH` carries thirteen sub-paths across a 120×124 field. With
+ * `vectorEffect="non-scaling-stroke"` each of those keeps its full device-pixel
+ * width no matter how far the artwork is scaled down, so below roughly 28px the
+ * facets stop resolving, run together, and the mark fills in as a solid
+ * triangle with a notch — which reads as a warning icon sitting next to the
+ * company name, not as a gem.
+ *
+ * This variant is an *open* letterform — two legs, a crossbar, and the apex
+ * spine that keeps the gem's facet. The closed base is deliberately dropped:
+ * any closed triangle at this size reads as a caution glyph no matter how the
+ * interior is drawn, whereas an open A reads as a letter.
+ */
+export const GEM_PATH_COMPACT = [
+  // the two legs
+  "M60 12 L18 112",
+  "M60 12 L102 112",
+  // crossbar
+  "M36 84 L84 84",
+  // apex spine — the one surviving facet
+  "M60 12 L60 84",
+].join(" ");
+
 type GemMarkProps = {
   className?: string;
   strokeWidth?: number;
+  /**
+   * Draw the reduced mark. Use for anything rendered below ~28px — the
+   * masthead lockup, favicons, inline lettering.
+   */
+  compact?: boolean;
   /** Provide an accessible label; otherwise the mark is decorative. */
   title?: string;
 };
 
-export function GemMark({ className, strokeWidth = 2, title }: GemMarkProps) {
+export function GemMark({
+  className,
+  strokeWidth = 2,
+  compact = false,
+  title,
+}: GemMarkProps) {
   return (
     <svg
       viewBox="0 0 120 124"
@@ -51,7 +86,7 @@ export function GemMark({ className, strokeWidth = 2, title }: GemMarkProps) {
       className={cn("text-accent", className)}
     >
       <path
-        d={GEM_PATH}
+        d={compact ? GEM_PATH_COMPACT : GEM_PATH}
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"

@@ -1,19 +1,21 @@
 "use client";
 
-import { useRef, type MouseEvent } from "react";
+import { useRef, type PointerEvent } from "react";
 import {
   motion,
+  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
-  type MotionStyle,
+  type MotionValue,
 } from "framer-motion";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
-import { HeadlineReveal } from "@/components/motion/headline-reveal";
+import { KineticHeadline } from "@/components/motion/kinetic-headline";
 import { GemMark } from "@/components/brand/gem-mark";
+import { Diamond } from "@/components/brand/facet";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { primaryCta } from "@/config/site";
 
@@ -34,137 +36,141 @@ const itemV = {
   },
 };
 
-const capabilities = ["Software", "AI", "Design", "Strategy"];
+const capabilities = [
+  { label: "Software", float: "7s", delay: "0s" },
+  { label: "AI", float: "8.4s", delay: "-2s" },
+  { label: "Design", float: "7.6s", delay: "-4s" },
+  { label: "Strategy", float: "8s", delay: "-1s" },
+];
 
 export function Hero() {
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
 
+  // ---- Scroll choreography -------------------------------------------------
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const showcaseY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -90]);
-  const showcaseOpacity = useTransform(scrollYProgress, [0, 0.85], [1, reduce ? 1 : 0.4]);
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 80]);
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 120]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -70]);
+  const contentOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.85],
+    [1, reduce ? 1 : 0],
+  );
 
-  // pointer-driven tilt
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const rotateX = useSpring(useTransform(py, [-0.5, 0.5], [7, -7]), {
-    stiffness: 120,
-    damping: 16,
-  });
-  const rotateY = useSpring(useTransform(px, [-0.5, 0.5], [-9, 9]), {
-    stiffness: 120,
-    damping: 16,
-  });
+  // ---- Pointer: spotlight + parallax ---------------------------------------
+  const spotX = useMotionValue(0.5);
+  const spotY = useMotionValue(0.35);
+  const spotXpc = useTransform(spotX, (v) => `${v * 100}%`);
+  const spotYpc = useTransform(spotY, (v) => `${v * 100}%`);
+  const spotlight = useMotionTemplate`radial-gradient(560px circle at ${spotXpc} ${spotYpc}, color-mix(in srgb, var(--accent) 15%, transparent), transparent 60%)`;
 
-  function handleMouse(event: MouseEvent<HTMLDivElement>) {
+  const nx = useMotionValue(0);
+  const ny = useMotionValue(0);
+  const pcfg = { stiffness: 120, damping: 20, mass: 0.6 };
+  const snx = useSpring(nx, pcfg);
+  const sny = useSpring(ny, pcfg);
+
+  function handleMove(e: PointerEvent<HTMLElement>) {
     if (reduce) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    px.set((event.clientX - rect.left) / rect.width - 0.5);
-    py.set((event.clientY - rect.top) / rect.height - 0.5);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const rx = (e.clientX - rect.left) / rect.width;
+    const ry = (e.clientY - rect.top) / rect.height;
+    spotX.set(rx);
+    spotY.set(ry);
+    nx.set(rx - 0.5);
+    ny.set(ry - 0.5);
   }
-  function resetMouse() {
-    px.set(0);
-    py.set(0);
+  function handleLeave() {
+    spotX.set(0.5);
+    spotY.set(0.35);
+    nx.set(0);
+    ny.set(0);
   }
 
   return (
     <section
       ref={sectionRef}
-      className="relative flex items-center overflow-hidden pt-32 pb-20 sm:pt-36 lg:min-h-[92vh] lg:pt-40 lg:pb-16"
+      onPointerMove={handleMove}
+      onPointerLeave={handleLeave}
+      className="relative flex min-h-[92vh] items-center overflow-hidden pt-32 pb-24 sm:pt-36 lg:pt-40"
     >
-      <AnimatedBackground style={{ y: bgY }} reduce={!!reduce} />
+      <LivingBackground
+        bgY={bgY}
+        spotlight={spotlight}
+        snx={snx}
+        sny={sny}
+        reduce={!!reduce}
+      />
 
-      <Container className="w-full">
+      <Container className="relative w-full">
         <motion.div
           variants={containerV}
           initial="hidden"
           animate="show"
-          className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
+          style={{ y: contentY, opacity: contentOpacity }}
+          className="mx-auto flex max-w-4xl flex-col items-center text-center"
         >
-          {/* Left — copy */}
-          <div className="max-w-2xl">
-            <motion.p variants={itemV} className="text-eyebrow text-accent">
-              Digital transformation studio
-            </motion.p>
-            <HeadlineReveal
-              className="mt-6 text-5xl sm:text-6xl lg:text-[5rem] lg:leading-[0.98]"
-              delay={0.15}
-              lines={[
-                "Technology, held to a",
-                <>
-                  <span className="italic text-accent">higher</span> standard.
-                </>,
-              ]}
-            />
-            <motion.p
-              variants={itemV}
-              className="mt-8 max-w-xl text-lg leading-relaxed text-muted"
-            >
-              Aurel helps ambitious businesses modernise, grow, and lead —
-              custom software, AI, and design, crafted end to end by a partner
-              you can trust.
-            </motion.p>
-            <motion.div
-              variants={itemV}
-              className="mt-10 flex flex-wrap items-center gap-4"
-            >
-              <Button href={primaryCta.href} size="lg">
-                {primaryCta.label}
-                <ArrowUpRightIcon width={18} height={18} />
-              </Button>
-              <Button href="/services" variant="secondary" size="lg">
-                Explore what we do
-              </Button>
-            </motion.div>
-            <motion.div
-              variants={itemV}
-              className="mt-12 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-6"
-            >
-              {capabilities.map((cap, i) => (
-                <span key={cap} className="flex items-center gap-5 text-sm text-muted">
-                  {cap}
-                  {i < capabilities.length - 1 && (
-                    <span className="h-1 w-1 rotate-45 bg-accent/70" />
-                  )}
-                </span>
-              ))}
-            </motion.div>
-          </div>
+          {/* Eyebrow */}
+          <motion.p
+            variants={itemV}
+            className="flex items-center gap-3 text-eyebrow text-accent"
+          >
+            <Diamond className="opacity-70" />
+            Digital transformation studio
+            <Diamond className="opacity-70" />
+          </motion.p>
 
-          {/* Right — animated product showcase (shown on all sizes) */}
+          {/* Kinetic headline */}
+          <KineticHeadline
+            className="mt-7 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[5.25rem] lg:leading-[0.98]"
+            delay={0.15}
+            lines={[
+              [{ t: "Technology," }, { t: "held" }, { t: "to" }, { t: "a" }],
+              [{ t: "higher", accent: true }, { t: "standard." }],
+            ]}
+          />
+
+          <motion.p
+            variants={itemV}
+            className="mt-8 max-w-xl text-lg leading-relaxed text-muted"
+          >
+            Aurel helps ambitious businesses modernise, grow, and lead — custom
+            software, AI, and design, crafted end to end by a partner you can
+            trust.
+          </motion.p>
+
           <motion.div
             variants={itemV}
-            className="mx-auto w-full max-w-md sm:max-w-lg lg:mx-0 lg:max-w-none"
+            className="mt-10 flex flex-wrap items-center justify-center gap-4"
           >
-            <motion.div
-              style={{ y: showcaseY, opacity: showcaseOpacity }}
-              onMouseMove={handleMouse}
-              onMouseLeave={resetMouse}
-              className="relative [perspective:1400px]"
-            >
-              {/* gold glow behind the devices */}
-              <div
-                aria-hidden
-                className="hero-glow absolute -inset-8 rounded-full opacity-70 blur-3xl"
+            <Button href={primaryCta.href} size="lg">
+              {primaryCta.label}
+              <ArrowUpRightIcon width={18} height={18} />
+            </Button>
+            <Button href="/services" variant="secondary" size="lg">
+              Explore what we do
+            </Button>
+          </motion.div>
+
+          {/* Floating capability pills */}
+          <motion.div
+            variants={itemV}
+            className="mt-14 flex flex-wrap items-center justify-center gap-3"
+          >
+            {capabilities.map((cap) => (
+              <FloatingPill
+                key={cap.label}
+                label={cap.label}
+                float={cap.float}
+                delay={cap.delay}
+                snx={snx}
+                sny={sny}
+                reduce={!!reduce}
               />
-              <motion.div
-                style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-                className="relative"
-              >
-                <motion.div
-                  animate={reduce ? undefined : { y: [0, -14, 0] }}
-                  transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
-                  className="relative"
-                >
-                  <BrowserApp reduce={!!reduce} />
-                  <PhoneApp reduce={!!reduce} />
-                </motion.div>
-              </motion.div>
-            </motion.div>
+            ))}
           </motion.div>
         </motion.div>
       </Container>
@@ -176,157 +182,113 @@ export function Hero() {
 
 /* -------------------------------------------------------------------------- */
 
-function AnimatedBackground({
-  style,
+function LivingBackground({
+  bgY,
+  spotlight,
+  snx,
+  sny,
   reduce,
 }: {
-  style: MotionStyle;
+  bgY: MotionValue<number>;
+  spotlight: MotionValue<string>;
+  snx: MotionValue<number>;
+  sny: MotionValue<number>;
   reduce: boolean;
 }) {
+  const auroraX = useTransform(snx, (v) => v * 22);
+  const auroraY = useTransform(sny, (v) => v * 16);
+  const gemX = useTransform(snx, (v) => v * -34);
+  const gemY = useTransform(sny, (v) => v * -22);
+
   return (
     <motion.div
       aria-hidden
-      style={style}
+      style={{ y: bgY }}
       className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
     >
-      {/* slowly rotating gold aurora */}
+      {/* Slowly rotating gold aurora */}
       <motion.div
-        className="absolute left-1/2 top-[-25%] h-[85vh] w-[85vh] -translate-x-1/2 rounded-full opacity-50 blur-3xl"
-        style={{
-          background:
-            "conic-gradient(from 0deg, var(--accent-soft), transparent 35%, var(--accent-soft) 65%, transparent 100%)",
-        }}
-        animate={reduce ? undefined : { rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 55, ease: "linear" }}
-      />
-      {/* faint gold hairline grid — texture, not pattern */}
+        style={{ x: auroraX, y: auroraY }}
+        className="absolute left-1/2 top-[-22%] h-[82vh] w-[82vh] -translate-x-1/2"
+      >
+        <motion.div
+          className="h-full w-full rounded-full opacity-50 blur-3xl"
+          style={{
+            background:
+              "conic-gradient(from 0deg, var(--accent-soft), transparent 35%, var(--accent-soft) 65%, transparent 100%)",
+          }}
+          animate={reduce ? undefined : { rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 55, ease: "linear" }}
+        />
+      </motion.div>
+
+      {/* Faint gold hairline grid */}
       <div className="bg-line-grid absolute inset-0 opacity-80" />
-      {/* very-low-opacity faceted gem watermark */}
-      <GemMark
-        strokeWidth={1.5}
-        className="absolute left-1/2 top-1/2 w-[min(78vw,640px)] -translate-x-1/2 -translate-y-1/2 text-accent opacity-[0.05]"
-      />
+
+      {/* Large faceted gem watermark — parallaxes opposite the pointer */}
+      <motion.div
+        style={{ x: gemX, y: gemY }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+      >
+        <GemMark
+          strokeWidth={1.5}
+          className="w-[min(80vw,640px)] text-accent opacity-[0.06] drop-shadow-[0_0_40px_var(--accent-soft)]"
+        />
+      </motion.div>
+
+      {/* Central bloom behind the headline */}
+      <div className="hero-glow absolute left-1/2 top-[46%] h-[58vh] w-[58vh] -translate-x-1/2 -translate-y-1/2 opacity-70 blur-2xl" />
+
+      {/* Cursor-tracked spotlight */}
+      <motion.div className="absolute inset-0" style={{ background: spotlight }} />
+
+      {/* Film grain + bottom fade into the page */}
       <div className="bg-grain absolute inset-0 opacity-[0.05] mix-blend-overlay dark:opacity-[0.07]" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
     </motion.div>
   );
 }
 
-const CHART = [42, 68, 50, 82, 58, 96, 72, 63];
-
-function BrowserApp({ reduce }: { reduce: boolean }) {
+function FloatingPill({
+  label,
+  float,
+  delay,
+  snx,
+  sny,
+  reduce,
+}: {
+  label: string;
+  float: string;
+  delay: string;
+  snx: MotionValue<number>;
+  sny: MotionValue<number>;
+  reduce: boolean;
+}) {
+  const x = useTransform(snx, (v) => v * 30);
+  const y = useTransform(sny, (v) => v * 18);
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl shadow-black/40">
-      {/* light sweep */}
-      {!reduce && (
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-          animate={{ x: ["-130%", "130%"] }}
-          transition={{ repeat: Infinity, duration: 4.5, ease: "linear", repeatDelay: 2 }}
-        />
-      )}
-
-      {/* chrome */}
-      <div className="flex items-center gap-1.5 border-b border-border px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-muted/40" />
-        <span className="h-2.5 w-2.5 rounded-full bg-muted/30" />
-        <span className="h-2.5 w-2.5 rounded-full bg-muted/20" />
-        <span className="ml-3 h-5 w-1/2 max-w-48 rounded-full bg-surface-muted" />
-      </div>
-
-      <div className="flex">
-        {/* sidebar */}
-        <div className="hidden w-16 flex-col gap-3 border-r border-border p-3 sm:flex">
-          <span className="h-8 w-8 rounded-lg bg-accent/25" />
-          {[70, 50, 60, 40].map((w, i) => (
-            <span
-              key={i}
-              className="h-2 rounded-full bg-muted/30"
-              style={{ width: `${w}%` }}
-            />
-          ))}
-        </div>
-
-        {/* main */}
-        <div className="flex-1 space-y-4 p-5">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <span className="block h-3 w-28 rounded bg-foreground/70" />
-              <span className="block h-2 w-20 rounded bg-muted/40" />
-            </div>
-            <span className="h-8 w-20 rounded-full bg-accent" />
-          </div>
-
-          {/* KPI cards */}
-          <div className="grid grid-cols-3 gap-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="space-y-2 rounded-lg border border-border p-3">
-                <span className="block h-2 w-10 rounded bg-muted/40" />
-                <span className="block h-4 w-14 rounded bg-foreground/80" />
-                <span
-                  className={`block h-1.5 rounded ${i === 1 ? "bg-accent" : "bg-accent/40"}`}
-                  style={{ width: `${60 + i * 15}%` }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* chart */}
-          <div className="rounded-lg border border-border p-4">
-            <span className="mb-3 block h-2 w-16 rounded bg-muted/40" />
-            <div className="flex h-24 items-end gap-2">
-              {CHART.map((h, i) => (
-                <motion.span
-                  key={i}
-                  className={`flex-1 origin-bottom rounded-t ${h > 80 ? "bg-accent" : "bg-muted/30"}`}
-                  style={{ height: `${h}%` }}
-                  initial={reduce ? undefined : { scaleY: 0 }}
-                  animate={reduce ? undefined : { scaleY: 1 }}
-                  transition={{ delay: 0.7 + i * 0.07, duration: 0.6, ease: EASE }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <motion.span style={reduce ? undefined : { x, y }} className="inline-block">
+      <span
+        className={cnFloat(reduce)}
+        style={
+          {
+            "--float-duration": float,
+            "--float-delay": delay,
+          } as React.CSSProperties
+        }
+      >
+        <span className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-sm text-muted backdrop-blur-md transition-colors duration-300 hover:border-accent/40 hover:text-foreground">
+          <span className="h-1.5 w-1.5 rotate-45 bg-accent/80" />
+          {label}
+        </span>
+      </span>
+    </motion.span>
   );
 }
 
-function PhoneApp({ reduce }: { reduce: boolean }) {
-  return (
-    <motion.div
-      className="absolute -bottom-10 -right-4 hidden w-36 rounded-[2rem] border border-border bg-surface p-2 shadow-2xl shadow-black/50 sm:right-[-1.5rem] sm:block sm:w-40"
-      animate={reduce ? undefined : { y: [0, 10, 0] }}
-      transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 0.6 }}
-    >
-      <div className="overflow-hidden rounded-[1.6rem] border border-border bg-background">
-        <div className="flex justify-center py-2">
-          <span className="h-1 w-10 rounded-full bg-muted/40" />
-        </div>
-        <div className="space-y-3 p-3">
-          <div className="flex items-center gap-2">
-            <span className="h-7 w-7 rounded-full bg-accent/25" />
-            <div className="flex-1 space-y-1.5">
-              <span className="block h-2 w-3/4 rounded bg-foreground/60" />
-              <span className="block h-1.5 w-1/2 rounded bg-muted/40" />
-            </div>
-          </div>
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex items-center gap-2 rounded-lg border border-border p-2">
-              <span className="h-6 w-6 rounded-md bg-surface-muted" />
-              <div className="flex-1 space-y-1">
-                <span className="block h-1.5 w-full rounded bg-muted/40" />
-                <span className="block h-1.5 w-2/3 rounded bg-muted/25" />
-              </div>
-            </div>
-          ))}
-          <span className="mt-1 block h-8 rounded-lg bg-accent" />
-        </div>
-      </div>
-    </motion.div>
-  );
+// Small helper so the levitation class only applies when motion is allowed.
+function cnFloat(reduce: boolean) {
+  return reduce ? "inline-block" : "island-float inline-block";
 }
 
 function ScrollCue() {
