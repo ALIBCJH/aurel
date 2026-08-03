@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { ProjectForm } from "@/components/contact/project-form";
+import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { services } from "@/config/services";
 import { businessInfo, siteConfig } from "@/config/site";
@@ -86,9 +87,7 @@ export default function ContactPage() {
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
           <div className="max-w-4xl">
-            <p data-reveal="fade" className="text-sm font-medium text-ink-mute">
-              Start a project
-            </p>
+            <Eyebrow data-reveal="fade">Start a project</Eyebrow>
             <h1
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.05s" }}
@@ -233,9 +232,10 @@ export default function ContactPage() {
       {/* ── What happens next ────────────────────────────────────────────── */}
       <section className="bg-paper-deep py-20 sm:py-24 lg:py-28">
         <Container size="wide">
-          <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-            What happens next
-          </h2>
+          <SectionHead
+            title="What happens next"
+            deck="No funnel, no nurture sequence. Three steps, and a person at the end of each of them."
+          />
 
           <ol className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 lg:grid-cols-3">
             {expectations.map((item, index) => (

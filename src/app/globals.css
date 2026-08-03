@@ -61,6 +61,14 @@
   --glow: color-mix(in srgb, #8a6209 20%, transparent);
   --glow-edge: color-mix(in srgb, #8a6209 34%, transparent);
 
+  /* A single warm band, used once per page to break an otherwise identical
+     vertical rhythm. Kept to a whisper — enough that the eye registers a change
+     of temperature, not enough to read as a coloured section.
+     9% is the working ceiling: at 12% `ink-mute` on this surface falls to
+     4.45:1 and stops clearing AA, and below 8% the band is indistinguishable
+     from white and stops doing its job. */
+  --tint: color-mix(in srgb, #8a6209 9%, #ffffff);
+
   --rule: color-mix(in srgb, #0a0a0a 10%, transparent);
   --rule-strong: color-mix(in srgb, #0a0a0a 22%, transparent);
   --rule-foil: color-mix(in srgb, #8a6209 35%, transparent);
@@ -112,6 +120,8 @@
   --glow: color-mix(in srgb, #e3b45f 16%, transparent);
   --glow-edge: color-mix(in srgb, #e3b45f 30%, transparent);
 
+  --tint: color-mix(in srgb, #e3b45f 9%, #0a0a0b);
+
   --rule: color-mix(in srgb, #fafafa 12%, transparent);
   --rule-strong: color-mix(in srgb, #fafafa 24%, transparent);
   --rule-foil: color-mix(in srgb, #e3b45f 38%, transparent);
@@ -160,6 +170,7 @@
      utility, and `bg-invert` silently fails to generate because of the clash.
      The failure is invisible in the build and total on the page — the card
      renders transparent and takes its white title with it. */
+  --color-tint: var(--tint);
   --color-contrast: var(--invert-bg);
   --color-contrast-ink: var(--invert-ink);
   --color-contrast-mute: var(--invert-ink-mute);

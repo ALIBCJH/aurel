@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { Panel, PanelGlow } from "@/components/ui/panel";
+import { SectionHead } from "@/components/layout/section-head";
 import { OpeningSpread } from "@/components/home/opening-spread";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases } from "@/config/cases";
@@ -44,17 +45,18 @@ export default function HomePage() {
       <OpeningSpread />
 
       {/* ── Services ─────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-24 lg:py-32">
+      <section className="py-16 sm:py-20 lg:py-24">
         <Container size="wide">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-              What we do
-            </h2>
-            <Button href="/services" variant="secondary" size="md">
-              All services
-              <ArrowUpRightIcon width={14} height={14} />
-            </Button>
-          </div>
+          <SectionHead
+            title="What we do"
+            deck="Four disciplines, deep enough to be worth hiring for. Take one or the whole transformation — the standard does not change."
+            action={
+              <Button href="/services" variant="secondary" size="md">
+                All services
+                <ArrowUpRightIcon width={14} height={14} />
+              </Button>
+            }
+          />
 
           <div className="mt-10 flex flex-col gap-4 sm:mt-14 sm:gap-5">
             {services.map((service, index) => (
@@ -88,17 +90,20 @@ export default function HomePage() {
       </section>
 
       {/* ── Work ─────────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-24 lg:py-32">
+      {/* Deliberately the tallest section on the page: the screenshots are the
+          strongest asset here and everything else is arguing for them. */}
+      <section className="py-20 sm:py-28 lg:py-36">
         <Container size="wide">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-              Selected work
-            </h2>
-            <Button href="/work" variant="secondary" size="md">
-              All work
-              <ArrowUpRightIcon width={14} height={14} />
-            </Button>
-          </div>
+          <SectionHead
+            title="Selected work"
+            deck="Two products, both live, both linked. Open them and judge the work rather than the claim."
+            action={
+              <Button href="/work" variant="secondary" size="md">
+                All work
+                <ArrowUpRightIcon width={14} height={14} />
+              </Button>
+            }
+          />
 
           <div className="mt-10 grid gap-10 sm:mt-14 lg:grid-cols-2 lg:gap-12">
             {cases.map((entry, index) => (
@@ -141,11 +146,16 @@ export default function HomePage() {
       </section>
 
       {/* ── Why us ───────────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-24 lg:py-32">
+      {/* The one warm band on the page. Every other section is the same
+          temperature and the same shape, so the eye has nothing to catch on;
+          a single change of surface is enough to mark a turn without adding a
+          second colour to the palette. */}
+      <section className="bg-tint py-16 sm:py-20 lg:py-24">
         <Container size="wide">
-          <h2 className="max-w-[18ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-            Why studios like ours get picked
-          </h2>
+          <SectionHead
+            title="Why studios like ours get picked"
+            deck="Small enough that the person you meet is the person who builds it. Serious enough to hand over something you can run for years."
+          />
 
           <div className="mt-10 grid gap-4 sm:mt-14 sm:gap-5 lg:grid-cols-3">
             {commitments.map((item, index) => (
@@ -153,7 +163,7 @@ export default function HomePage() {
                 key={item.title}
                 data-reveal="fade"
                 style={{ ["--reveal-delay" as string]: `${index * 0.07}s` }}
-                className="rounded-[var(--radius-xl)] bg-paper-deep p-7 sm:p-9"
+                className="rounded-[var(--radius-xl)] border border-rule bg-paper p-7 sm:p-9"
               >
                 <span aria-hidden className="text-sm tabular-nums text-ink-mute">
                   {String(index + 1).padStart(2, "0")}

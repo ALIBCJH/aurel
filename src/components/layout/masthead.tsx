@@ -200,15 +200,20 @@ export function Masthead() {
               aria-label="Aurel — home"
               className="group/mark flex h-full shrink-0 items-center gap-2.5 justify-self-start"
             >
-              {/* The mark does not rotate on scroll. It is a letterform, and
-                  turning an "A" on its side makes it read as an arrow or a
-                  send icon — a moment of delight bought by destroying the one
-                  piece of brand recognition in the bar. The capsule morph is
-                  the motion here; the mark stays itself. */}
+              {/* Gold again. It was switched to ink because a single coloured
+                  glyph beside black lettering read as a stray artifact — which
+                  was true while gold appeared nowhere else. Now that the accent
+                  also carries the eyebrows and the active rule it reads as part
+                  of a system rather than an orphan, and the bar is the one
+                  place the brand colour is guaranteed to be on screen.
+
+                  The mark still does not rotate on scroll: turning an "A" on
+                  its side makes it read as an arrow. The capsule is the motion;
+                  the mark stays itself. */}
               <GemMark
                 compact
                 strokeWidth={1.75}
-                className="h-[1.05rem] w-[1.05rem] shrink-0 text-ink transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
+                className="h-[1.05rem] w-[1.05rem] shrink-0 text-foil transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
               />
               <motion.span
                 initial={false}
@@ -237,7 +242,7 @@ export function Masthead() {
                   style={{ x, width }}
                   animate={{ opacity: visible ? 1 : 0 }}
                   transition={{ duration: 0.25, ease: EASE }}
-                  className="absolute bottom-1 left-0 h-px bg-ink"
+                  className="absolute bottom-1 left-0 h-0.5 rounded-full bg-foil"
                 />
 
                 {mainNav.map((item) => {
