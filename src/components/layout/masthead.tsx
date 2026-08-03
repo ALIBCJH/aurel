@@ -1,44 +1,141 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+} from "framer-motion";
 import { Container } from "@/components/layout/container";
-import { Wordmark } from "@/components/brand/wordmark";
+import { GemMark } from "@/components/brand/gem-mark";
 import { ThemeToggle } from "@/components/theme/edition-toggle";
-import { Button } from "@/components/ui/button";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { mainNav, primaryCta, siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /**
- * The top bar.
+ * The masthead.
  *
- * Replaces the previous editorial masthead — a two-strip affair with a folio
- * line, Roman numerals, an "edition" switch, and a sliding gold marker. All of
- * that was arguing that this is a printed annual. It is a software studio, and
- * the bar should say the name, offer the four destinations, and get out of the
- * way so the work can be the loudest thing on screen.
+ * Three things carry it, and each is doing a job rather than decorating:
  *
- * One row, one rule. It only earns a background once you have scrolled past the
- * hero, so at rest the page starts at the very top of the viewport with nothing
- * sitting on it.
+ *  1. It condenses. At the top of the page the bar spans the full measure and
+ *     is transparent, so the page begins at the very top of the viewport with
+ *     nothing sitting on it. Once you scroll, it contracts into a floating
+ *     glass capsule — smaller, self-contained, and clearly a layer above the
+ *     page rather than part of it.
+ *
+ *  2. A highlight follows the pointer. A rounded field is measured from the
+ *     live DOM and sprung between entries, so the nav has a sense of momentum
+ *     and always shows where you are. It returns to the current page when the
+ *     pointer leaves.
+ *
+ *  3. The call to action is magnetic. It leans very slightly toward the cursor
+ *     as you approach, which makes it feel like the one object on the bar that
+ *     wants to be pressed.
+ *
+ * All of it is pointer-driven and all of it is disabled under reduced motion,
+ * where the bar simply sits there and works.
  */
-const EASE = [0.2, 0.7, 0.2, 1] as const;
+const EASE = [0.22, 1, 0.36, 1] as const;
+const SPRING = { stiffness: 420, damping: 40, mass: 0.7 };
+
+/** `/` must match exactly, or Home would be active on every page. */
+function isActive(pathname: string, href: string): boolean {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
 
 export function Masthead() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const reduce = useReducedMotion();
+
+  const [condensed, setCondensed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (value) => {
-    setScrolled(value > 16);
+    setCondensed(value > 24);
   });
 
-  // Close on navigation. Adjusted during render rather than in an effect, which
-  // would paint the overlay once over the new page before tearing it down.
+  // ---- the travelling highlight -------------------------------------------
+  const navRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef(new Map<string, HTMLAnchorElement | null>());
+  const [hovered, setHovered] = useState<string | null>(null);
+  const settled = useRef(false);
+
+  const x = useSpring(0, SPRING);
+  const width = useSpring(0, SPRING);
+  const [visible, setVisible] = useState(false);
+
+  const activeHref =
+    mainNav.find((item) => isActive(pathname, item.href))?.href ?? null;
+
+  const measure = useCallback(() => {
+    const target = hovered ?? activeHref;
+    if (!target || !navRef.current) {
+      setVisible(false);
+      return;
+    }
+    const node = itemRefs.current.get(target);
+    if (!node) {
+      setVisible(false);
+      return;
+    }
+
+    // The first measurement must not fly in from zero.
+    if (!settled.current) {
+      x.jump(node.offsetLeft);
+      width.jump(node.offsetWidth);
+      settled.current = true;
+    } else {
+      x.set(node.offsetLeft);
+      width.set(node.offsetWidth);
+    }
+    setVisible(true);
+  }, [activeHref, hovered, width, x]);
+
+  useLayoutEffect(measure, [measure]);
+
+  // The capsule changes the nav's width, so the highlight has to be
+  // re-measured after that transition settles or it points at the old layout.
+  useEffect(() => {
+    const timer = window.setTimeout(measure, 420);
+    return () => window.clearTimeout(timer);
+  }, [condensed, measure]);
+
+  useEffect(() => {
+    const onResize = () => {
+      settled.current = false;
+      measure();
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [measure]);
+
+  // ---- the magnetic call to action ----------------------------------------
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+  const magnetX = useSpring(0, { stiffness: 260, damping: 22 });
+  const magnetY = useSpring(0, { stiffness: 260, damping: 22 });
+
+  function pullCta(event: React.PointerEvent<HTMLAnchorElement>) {
+    if (reduce || event.pointerType !== "mouse") return;
+    const box = ctaRef.current?.getBoundingClientRect();
+    if (!box) return;
+    // A third of the distance from centre, so it leans rather than lurches.
+    magnetX.set((event.clientX - (box.left + box.width / 2)) * 0.32);
+    magnetY.set((event.clientY - (box.top + box.height / 2)) * 0.32);
+  }
+
+  function releaseCta() {
+    magnetX.set(0);
+    magnetY.set(0);
+  }
+
+  // ---- the full-screen index ----------------------------------------------
   const [menuPath, setMenuPath] = useState(pathname);
   if (menuPath !== pathname) {
     setMenuPath(pathname);
@@ -62,97 +159,156 @@ export function Masthead() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50">
-        <motion.div
-          initial={false}
-          animate={{
-            backgroundColor: scrolled
-              ? "color-mix(in srgb, var(--paper) 72%, transparent)"
-              : "color-mix(in srgb, var(--paper) 0%, transparent)",
-            borderBottomColor: scrolled ? "var(--rule)" : "transparent",
-          }}
-          transition={{ duration: 0.35, ease: EASE }}
-          className={cn(
-            "border-b transition-[backdrop-filter] duration-300",
-            scrolled && "backdrop-blur-xl backdrop-saturate-150",
-          )}
-        >
-          <Container size="wide">
-            <div className="flex h-16 items-center gap-6 sm:h-20 lg:gap-10">
-              <Wordmark href="/" size="sm" />
-
-              {/* Nav sits right of centre, next to the CTA, rather than being
-                  centred in its own island — the reference keeps the whole
-                  right side as one cluster so the left is purely the mark. */}
-              <nav
-                aria-label="Main"
-                className="ml-auto hidden items-center gap-7 lg:flex"
+        <Container size="wide" className="pointer-events-none">
+          <motion.div
+            initial={false}
+            animate={{
+              // Height is animated on the capsule rather than left to the
+              // logo's row height. At the full 80px the "pill" is really just
+              // a tall bar with rounded ends; contracting to 60 is what makes
+              // it read as a discrete floating object.
+              height: condensed ? 60 : 80,
+              marginTop: condensed ? 12 : 0,
+              paddingLeft: condensed ? 16 : 0,
+              paddingRight: condensed ? 8 : 0,
+              borderRadius: condensed ? 999 : 0,
+              backgroundColor: condensed
+                ? "color-mix(in srgb, var(--paper) 78%, transparent)"
+                : "color-mix(in srgb, var(--paper) 0%, transparent)",
+              borderColor: condensed ? "var(--rule)" : "rgba(0,0,0,0)",
+              boxShadow: condensed
+                ? "0 18px 40px -28px rgb(0 0 0 / 0.35)"
+                : "0 0 0 0 rgb(0 0 0 / 0)",
+            }}
+            transition={{ duration: 0.4, ease: EASE }}
+            className={cn(
+              "pointer-events-auto mx-auto flex items-center border transition-[backdrop-filter,max-width] duration-500",
+              condensed
+                ? "max-w-fit gap-2 backdrop-blur-xl backdrop-saturate-150"
+                : "max-w-full gap-6",
+            )}
+          >
+            {/* the mark */}
+            <Link
+              href="/"
+              aria-label="Aurel — home"
+              className="group/mark flex h-full shrink-0 items-center gap-2.5"
+            >
+              {/* The mark does not rotate on scroll. It is a letterform, and
+                  turning an "A" on its side makes it read as an arrow or a
+                  send icon — a moment of delight bought by destroying the one
+                  piece of brand recognition in the bar. The capsule morph is
+                  the motion here; the mark stays itself. */}
+              <GemMark
+                compact
+                strokeWidth={1.75}
+                className="h-[1.05rem] w-[1.05rem] shrink-0 text-foil transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
+              />
+              <motion.span
+                initial={false}
+                animate={{
+                  width: condensed ? 0 : "auto",
+                  opacity: condensed ? 0 : 1,
+                  marginRight: condensed ? -10 : 0,
+                }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="overflow-hidden whitespace-nowrap text-lg font-semibold tracking-[-0.02em]"
               >
+                Aurel
+              </motion.span>
+            </Link>
+
+            {/* the index */}
+            <nav
+              aria-label="Main"
+              className={cn("hidden lg:block", !condensed && "ml-auto")}
+              onMouseLeave={() => setHovered(null)}
+            >
+              <div ref={navRef} className="relative flex items-center">
+                {/* the travelling highlight */}
+                <motion.span
+                  aria-hidden
+                  style={{ x, width }}
+                  animate={{ opacity: visible ? 1 : 0 }}
+                  transition={{ duration: 0.25, ease: EASE }}
+                  className="absolute left-0 top-1/2 -z-10 h-9 -translate-y-1/2 rounded-full bg-field"
+                />
+
                 {mainNav.map((item) => {
-                  const active =
-                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  const active = isActive(pathname, item.href);
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
+                      ref={(node) => {
+                        itemRefs.current.set(item.href, node);
+                      }}
+                      onMouseEnter={() => setHovered(item.href)}
+                      onFocus={() => setHovered(item.href)}
+                      onBlur={() => setHovered(null)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "text-[0.9375rem] font-medium transition-opacity duration-200",
-                        active ? "text-ink" : "text-ink opacity-60 hover:opacity-100",
+                        "relative flex h-11 items-center px-4 text-[0.9375rem] font-medium",
+                        "transition-opacity duration-200",
+                        active ? "opacity-100" : "opacity-60 hover:opacity-100",
                       )}
                     >
                       {item.label}
                     </Link>
                   );
                 })}
-              </nav>
-
-              <div className="ml-auto flex items-center gap-2 sm:gap-3 lg:ml-0">
-                <ThemeToggle />
-
-                <span className="hidden sm:inline-flex">
-                  <Button href={primaryCta.href} size="sm" variant="primary">
-                    {primaryCta.label}
-                    <ArrowUpRightIcon width={13} height={13} />
-                  </Button>
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen((open) => !open)}
-                  aria-expanded={menuOpen}
-                  aria-controls="mobile-menu"
-                  aria-label={menuOpen ? "Close menu" : "Open menu"}
-                  className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-ink transition-colors duration-200 hover:bg-field lg:hidden"
-                >
-                  <span className="relative flex h-3.5 w-5 flex-col justify-between">
-                    <motion.span
-                      animate={menuOpen ? { rotate: 45, y: 6.5 } : { rotate: 0, y: 0 }}
-                      transition={{ duration: 0.3, ease: EASE }}
-                      className="h-0.5 w-full rounded-full bg-current"
-                    />
-                    <motion.span
-                      animate={{ opacity: menuOpen ? 0 : 1 }}
-                      transition={{ duration: 0.15 }}
-                      className="h-0.5 w-full rounded-full bg-current"
-                    />
-                    <motion.span
-                      animate={menuOpen ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
-                      transition={{ duration: 0.3, ease: EASE }}
-                      className="h-0.5 w-full rounded-full bg-current"
-                    />
-                  </span>
-                </button>
               </div>
+            </nav>
+
+            <div
+              className={cn(
+                "flex shrink-0 items-center gap-1.5",
+                !condensed && "ml-auto lg:ml-0",
+              )}
+            >
+              <ThemeToggle />
+
+              {/* the magnetic call to action */}
+              <motion.span
+                style={{ x: magnetX, y: magnetY }}
+                className="hidden sm:inline-flex"
+              >
+                <Link
+                  ref={ctaRef}
+                  href={primaryCta.href}
+                  onPointerMove={pullCta}
+                  onPointerLeave={releaseCta}
+                  className="inline-flex h-11 items-center gap-2 rounded-full bg-contrast px-5 text-[0.9375rem] font-medium text-contrast-ink transition-opacity duration-200 hover:opacity-90"
+                >
+                  {primaryCta.label}
+                  <ArrowUpRightIcon width={14} height={14} />
+                </Link>
+              </motion.span>
+
+              {/* index trigger — the only route into the nav below lg */}
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                aria-expanded={menuOpen}
+                aria-controls="site-index"
+                aria-label="Open menu"
+                className="flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200 hover:bg-field lg:hidden"
+              >
+                <span aria-hidden className="flex flex-col items-end gap-[5px]">
+                  <span className="block h-0.5 w-5 rounded-full bg-current" />
+                  <span className="block h-0.5 w-3.5 rounded-full bg-current" />
+                </span>
+              </button>
             </div>
-          </Container>
-        </motion.div>
+          </motion.div>
+        </Container>
       </header>
 
-      {/* ---- mobile menu ---- */}
+      {/* ---- the full-screen index ---- */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            id="mobile-menu"
+            id="site-index"
             role="dialog"
             aria-modal="true"
             aria-label="Menu"
@@ -160,53 +316,83 @@ export function Masthead() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: EASE }}
-            className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-paper lg:hidden"
+            className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-paper lg:hidden"
           >
-            <div className="flex min-h-full flex-col justify-between px-6 pt-24 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-8">
-              <nav aria-label="Menu">
+            <Container size="wide">
+              <div className="flex h-16 items-center justify-between sm:h-20">
+                <span className="text-sm text-ink-mute">Menu</span>
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(false)}
+                  aria-label="Close menu"
+                  className="-mr-2 flex h-11 w-11 items-center justify-center rounded-full text-2xl transition-colors duration-200 hover:bg-field"
+                >
+                  <span aria-hidden>×</span>
+                </button>
+              </div>
+
+              <nav aria-label="Menu" className="pb-[max(2rem,env(safe-area-inset-bottom))] pt-6">
                 <ul>
                   {mainNav.map((item, index) => (
                     <motion.li
                       key={item.href}
-                      initial={{ opacity: 0, y: 12 }}
+                      initial={reduce ? false : { opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, ease: EASE, delay: 0.04 + index * 0.05 }}
+                      transition={{
+                        duration: 0.45,
+                        ease: EASE,
+                        delay: 0.04 + index * 0.05,
+                      }}
                       className="border-b border-rule"
                     >
                       <Link
                         href={item.href}
-                        className="flex items-center justify-between py-5 text-3xl font-bold tracking-[-0.03em] transition-colors duration-200 hover:text-foil sm:text-4xl"
+                        className="flex items-center justify-between gap-6 py-5"
                       >
-                        {item.label}
-                        <ArrowUpRightIcon width={18} height={18} className="text-ink-mute" />
+                        <span className="flex items-baseline gap-4">
+                          <span className="text-sm tabular-nums text-ink-mute">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <span className="text-[clamp(2rem,9vw,3rem)] font-semibold tracking-[-0.035em]">
+                            {item.label}
+                          </span>
+                        </span>
+                        <ArrowUpRightIcon
+                          width={20}
+                          height={20}
+                          className="shrink-0 text-ink-mute"
+                        />
                       </Link>
                     </motion.li>
                   ))}
                 </ul>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={reduce ? false : { opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: EASE, delay: 0.28 }}
+                  transition={{ duration: 0.45, ease: EASE, delay: 0.32 }}
                   className="mt-10"
                 >
-                  <Button href={primaryCta.href} size="lg" className="w-full">
+                  <Link
+                    href={primaryCta.href}
+                    className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-contrast text-base font-medium text-contrast-ink"
+                  >
                     {primaryCta.label}
-                    <ArrowUpRightIcon width={14} height={14} />
-                  </Button>
+                    <ArrowUpRightIcon width={15} height={15} />
+                  </Link>
+
+                  <div className="mt-8 flex flex-col gap-1 text-[0.9375rem] text-ink-mute">
+                    <a
+                      href={`mailto:${siteConfig.email}`}
+                      className="tap inline-flex py-2 transition-colors hover:text-ink"
+                    >
+                      {siteConfig.email}
+                    </a>
+                    <span className="py-1">{siteConfig.location}</span>
+                  </div>
                 </motion.div>
               </nav>
-
-              <div className="mt-12 flex flex-col gap-2 text-sm text-ink-mute">
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="tap inline-flex py-2 transition-colors duration-200 hover:text-ink"
-                >
-                  {siteConfig.email}
-                </a>
-                <span className="py-1">{siteConfig.location}</span>
-              </div>
-            </div>
+            </Container>
           </motion.div>
         )}
       </AnimatePresence>

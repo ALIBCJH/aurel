@@ -69,8 +69,9 @@ export const businessInfo: BusinessInfo = {
   profiles: [],
 };
 
-/** Primary navigation — shared by desktop nav and the mobile menu. */
+/** Primary navigation — shared by desktop nav and the full-screen index. */
 export const mainNav: NavItem[] = [
+  { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
