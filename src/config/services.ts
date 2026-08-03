@@ -47,6 +47,13 @@ export type Service = {
   pricing: { from: string; note: string };
   /** Real objections. Rendered visibly on the page and mirrored into FAQPage schema. */
   faqs: ServiceFaq[];
+  /**
+   * A real screen from shipped work that illustrates this discipline.
+   * Always a capture of something we actually built — never a stock image or
+   * an abstract stand-in, because the entire argument of the services page is
+   * that these are things we have done rather than things we offer.
+   */
+  showcase: { src: string; alt: string };
 };
 
 export const services: Service[] = [
@@ -154,6 +161,10 @@ export const services: Service[] = [
           "Completely. Code, content, domain, and hosting accounts are all in your name. We do not hold client work hostage as a retention strategy.",
       },
     ],
+    showcase: {
+      src: "/work/datani-insurance.png",
+      alt: "The Datani Insurance website we built: a product-led homepage with a prominent quote call to action.",
+    },
   },
 
   {
@@ -251,6 +262,10 @@ export const services: Service[] = [
           "Generally yes. We integrate with accounting packages, inventory systems, payment providers, and internal databases. Where a system has no API we will say plainly what is and is not possible rather than promising a bridge that will be fragile.",
       },
     ],
+    showcase: {
+      src: "/work/rj-mobile.png",
+      alt: "R&J Interiors on a phone, with the real-time fabric selector filling the screen.",
+    },
   },
 
   {
@@ -362,6 +377,10 @@ export const services: Service[] = [
           "Because we will tell you when the answer is not AI. A good share of what we are asked for is better solved by connecting two systems properly, and we say so — it is a smaller invoice and a better outcome. Ask any vendor to show you the measurement plan before the build starts; that is the question the serious ones can answer.",
       },
     ],
+    showcase: {
+      src: "/work/rj-experience.png",
+      alt: "The R&J studio entry screen, where colour selection happens before the customer walks into the 3D room.",
+    },
   },
 
   {
@@ -468,6 +487,10 @@ export const services: Service[] = [
           "Enquiries, calls, and the searches that produced them; positions gained and lost; work completed and work next. In plain language. If a month was flat we say so and explain why, rather than finding a chart that went up.",
       },
     ],
+    showcase: {
+      src: "/work/datani-quote.png",
+      alt: "The Datani quote page, structured around the cover types people actually search for.",
+    },
   },
 ];
 

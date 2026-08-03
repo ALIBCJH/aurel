@@ -7,10 +7,11 @@ import { ArrowUpRightIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 
 /**
- * ProjectForm — the brief, set as a printed form.
+ * ProjectForm — the brief.
  *
- * Fields are numbered and ruled rather than boxed, the way a paper form on a
- * studio desk would be.
+ * Fields are numbered and ruled rather than boxed: fewer borders, less visual
+ * work per field, and a form that reads as a short list of questions rather
+ * than a database entry screen.
  *
  * Submitting posts to `/api/contact`, which validates the brief and forwards it
  * to whatever delivery channel is configured. If that request cannot be made at
@@ -19,21 +20,26 @@ import { siteConfig } from "@/config/site";
  * resort, not the mechanism: on its own it loses every lead whose device has no
  * mail client configured, and tells neither party that anything went missing.
  */
+// Mirrors the four disciplines actually sold, plus an escape hatch. It listed
+// eight — including three that no longer exist as services — so a visitor could
+// tick "Strategy" and receive a reply explaining it is not a thing we sell.
 const NEEDS = [
   "Website",
-  "Software",
-  "AI automation",
-  "Strategy",
-  "Branding",
+  "Mobile app",
+  "AI & automation",
   "SEO",
-  "Other",
+  "Not sure yet",
 ];
 
+// KES, matching the ranges published on the services page. These were in USD,
+// which meant the budget a visitor selected here and the prices they had just
+// read were in different currencies — and the brackets did not line up with any
+// figure on the site.
 const BUDGETS = [
-  "Under $5k",
-  "$5k – $15k",
-  "$15k – $50k",
-  "$50k+",
+  "Under KES 150,000",
+  "KES 150,000 – 400,000",
+  "KES 400,000 – 1M",
+  "KES 1M+",
   "Not sure yet",
 ];
 
@@ -58,10 +64,10 @@ function Field({
   return (
     <div className={cn("border-t border-rule pt-5", className)}>
       <div className="flex items-baseline gap-3">
-        <span className="text-label-sm text-foil/70">
+        <span className="text-sm tabular-nums text-ink-mute">
           {String(index).padStart(2, "0")}
         </span>
-        <label htmlFor={htmlFor} className="text-label text-ink-soft">
+        <label htmlFor={htmlFor} className="text-[0.9375rem] font-medium">
           {label}
         </label>
       </div>
@@ -72,7 +78,7 @@ function Field({
           role="alert"
           className="mt-2 text-sm text-ink-soft"
         >
-          <span aria-hidden className="mr-1.5 text-foil">
+          <span aria-hidden className="mr-1.5 text-ink-mute">
             ↳
           </span>
           {error}
@@ -175,10 +181,10 @@ export function ProjectForm() {
       <div
         ref={confirmationRef}
         tabIndex={-1}
-        className="border-t border-rule-foil pt-8 outline-none"
+        className="rounded-[var(--radius-xl)] bg-paper-deep p-8 outline-none sm:p-10"
       >
-        <span className="text-label text-foil">Received</span>
-        <h3 className="font-display mt-5 text-[clamp(1.75rem,4vw,2.5rem)] font-light leading-[1.1] tracking-[-0.02em]">
+        <span className="text-sm font-medium text-ink-mute">Received</span>
+        <h3 className="mt-4 text-[clamp(1.5rem,3.4vw,2.25rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
           Thank you — your brief is with us.
         </h3>
         <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-ink-soft">
@@ -186,7 +192,7 @@ export function ProjectForm() {
           it is urgent, write to{" "}
           <a
             href={`mailto:${siteConfig.email}`}
-            className="link-rule link-rule-on text-ink"
+            className="tap font-medium text-ink underline underline-offset-4"
           >
             {siteConfig.email}
           </a>
@@ -218,7 +224,7 @@ export function ProjectForm() {
             aria-invalid={errors.name ? true : undefined}
             aria-describedby={errors.name ? "name-error" : undefined}
             placeholder="Jane Mwangi"
-            className="field-rule font-display text-lg font-light"
+            className="field-rule text-lg"
           />
         </Field>
         <Field index={2} label="Your email" htmlFor="email" error={errors.email}>
@@ -233,7 +239,7 @@ export function ProjectForm() {
             aria-invalid={errors.email ? true : undefined}
             aria-describedby={errors.email ? "email-error" : undefined}
             placeholder="you@company.com"
-            className="field-rule font-display text-lg font-light"
+            className="field-rule text-lg"
           />
         </Field>
       </div>
@@ -245,14 +251,14 @@ export function ProjectForm() {
           autoComplete="organization"
           enterKeyHint="next"
           placeholder="Company name"
-          className="field-rule font-display text-lg font-light"
+          className="field-rule text-lg"
         />
       </Field>
 
       <fieldset className="border-t border-rule pt-5">
         <div className="flex items-baseline gap-3">
-          <span className="text-label-sm text-foil/70">04</span>
-          <legend className="text-label text-ink-soft">What do you need?</legend>
+          <span className="text-sm tabular-nums text-ink-mute">04</span>
+          <legend className="text-[0.9375rem] font-medium">What do you need?</legend>
         </div>
         <div className="mt-4 flex flex-wrap gap-2.5">
           {NEEDS.map((need) => {
@@ -264,11 +270,11 @@ export function ProjectForm() {
                 aria-pressed={active}
                 onClick={() => toggleNeed(need)}
                 className={cn(
-                  "text-label-sm flex min-h-11 items-center border px-4 transition-all duration-300",
+                  "flex min-h-11 items-center rounded-full border px-4 text-[0.9375rem] transition-colors duration-200",
                   "ease-[cubic-bezier(0.2,0.7,0.2,1)]",
                   active
-                    ? "border-foil bg-foil text-[color:var(--foil-ink)]"
-                    : "border-rule text-ink-soft hover:border-foil hover:text-foil",
+                    ? "border-transparent bg-contrast text-contrast-ink"
+                    : "border-rule text-ink-soft hover:bg-field",
                 )}
               >
                 {need}
@@ -283,7 +289,7 @@ export function ProjectForm() {
           id="budget"
           name="budget"
           defaultValue=""
-          className="field-rule field-select font-display text-lg font-light"
+          className="field-rule field-select text-lg"
         >
           <option value="" disabled>
             Select a range
@@ -326,7 +332,7 @@ export function ProjectForm() {
           role={status === "error" ? "alert" : undefined}
           className={cn(
             "mt-4 max-w-sm text-sm leading-relaxed",
-            status === "error" ? "text-foil" : "text-ink-mute",
+            status === "error" ? "text-ink" : "text-ink-mute",
           )}
         >
           {notice ?? "We read every enquiry ourselves and reply within one business day."}
