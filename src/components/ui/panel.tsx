@@ -1,5 +1,8 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { motion, useMotionTemplate, useMotionValue, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /**
@@ -9,12 +12,13 @@ import { cn } from "@/lib/utils";
  * action. Its whole job is scale: a full-measure rounded rectangle with an
  * oversized title, a short paragraph, and an index in the corner. Stacked with
  * alternating tones it produces rhythm without needing a second colour or any
- * commissioned artwork — which is precisely why this pattern is worth copying
- * and a 3D-render-led homepage is not.
+ * commissioned artwork.
  *
- *   loud   — inverted (black on a white page, white on a dark one)
- *   quiet  — the muted surface
- *   outline— transparent with a hairline, for lower-priority rows
+ * It also glows. A soft gold bloom tracks the pointer across the card, and the
+ * card's edge lights where the cursor is nearest. Both are driven by motion
+ * values written straight to the DOM rather than React state — a card that
+ * re-rendered on every mousemove would be a genuinely bad trade for a lighting
+ * effect.
  */
 export type PanelTone = "loud" | "quiet" | "outline";
 
@@ -36,10 +40,15 @@ const bodyTones: Record<PanelTone, string> = {
   outline: "text-ink-soft",
 };
 
+// `ink-soft`, not `ink-mute`. The glow warms the surface behind this numeral,
+// and at peak intensity `ink-mute` falls to 3.65:1 against the lit background —
+// below AA for text this size. `ink-soft` holds 6.16:1 lit and is still quiet
+// enough at rest. Strengthening the numeral costs nothing; weakening the glow
+// to protect it would have cost the effect.
 const indexTones: Record<PanelTone, string> = {
-  loud: "text-ink-mute",
-  quiet: "text-ink-mute",
-  outline: "text-ink-mute",
+  loud: "text-ink-soft",
+  quiet: "text-ink-soft",
+  outline: "text-ink-soft",
 };
 
 export function Panel({
@@ -64,8 +73,58 @@ export function Panel({
   footer?: ReactNode;
   className?: string;
 }) {
+  const reduce = useReducedMotion();
+  const shellRef = useRef<HTMLElement>(null);
+
+  const px = useMotionValue(50);
+  const py = useMotionValue(50);
+  const [lit, setLit] = useState(false);
+
+  // Percentages rather than pixels so the gradient stays correct through the
+  // card's hover lift and any resize, without re-measuring.
+  const glow = useMotionTemplate`radial-gradient(38rem circle at ${px}% ${py}%, var(--glow), transparent 62%)`;
+  const edge = useMotionTemplate`radial-gradient(22rem circle at ${px}% ${py}%, var(--glow-edge), transparent 68%)`;
+
+  function track(event: React.PointerEvent<HTMLElement>) {
+    // Touch has no hover, and a glow that only appears after a tap reads as a
+    // rendering fault rather than an effect.
+    if (reduce || event.pointerType !== "mouse") return;
+    const box = shellRef.current?.getBoundingClientRect();
+    if (!box) return;
+    px.set(((event.clientX - box.left) / box.width) * 100);
+    py.set(((event.clientY - box.top) / box.height) * 100);
+    if (!lit) setLit(true);
+  }
+
   const inner = (
     <>
+      {/* the bloom — sits under the content, over the surface */}
+      <motion.span
+        aria-hidden
+        style={{ backgroundImage: glow }}
+        animate={{ opacity: lit ? 1 : 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="pointer-events-none absolute inset-0"
+      />
+
+      {/* the lit edge — a 1px gradient ring, drawn with a mask so only the
+          border shows. Without the mask this would be a second full bloom. */}
+      <motion.span
+        aria-hidden
+        style={{
+          backgroundImage: edge,
+          WebkitMask:
+            "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+          WebkitMaskComposite: "xor",
+          mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+          maskComposite: "exclude",
+          padding: 1,
+        }}
+        animate={{ opacity: lit ? 1 : 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="pointer-events-none absolute inset-0 rounded-[var(--radius-card)]"
+      />
+
       <div className="relative z-10 flex flex-col p-7 sm:p-10 lg:max-w-[46%] lg:p-14">
         {index && (
           <span
@@ -108,10 +167,7 @@ export function Panel({
 
   // `block` is load-bearing, not cosmetic. With `href` this renders an <a>,
   // which is `display: inline` by default — and an inline box wrapping block
-  // children paints no background at all. The children still lay out, so the
-  // failure looks like "the card lost its colour" rather than "the card is the
-  // wrong display type", and `getBoundingClientRect` still returns a plausible
-  // rect, which makes it maddening to diagnose.
+  // children paints no background at all.
   const shell = cn(
     "group/panel relative isolate block overflow-hidden rounded-[var(--radius-card)]",
     "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -120,21 +176,40 @@ export function Panel({
     className,
   );
 
+  const handlers = {
+    onPointerMove: track,
+    onPointerLeave: () => setLit(false),
+  };
+
   if (href) {
     return (
-      <Link href={href} className={shell}>
+      <Link
+        ref={shellRef as React.Ref<HTMLAnchorElement>}
+        href={href}
+        className={shell}
+        {...handlers}
+      >
         {inner}
       </Link>
     );
   }
 
-  return <div className={shell}>{inner}</div>;
+  return (
+    <div
+      ref={shellRef as React.Ref<HTMLDivElement>}
+      className={shell}
+      {...handlers}
+    >
+      {inner}
+    </div>
+  );
 }
 
 /**
- * A cheap, asset-free graphic for a Panel's media slot: soft concentric bands
- * in the panel's own ink, so it reads as texture rather than as a picture we
- * did not have. Deterministic per index — no randomness, so SSR stays stable.
+ * A cheap, asset-free graphic for a Panel's media slot: fine diagonal rules in
+ * the panel's own ink, masked to fade toward the middle of the card, so it
+ * reads as texture rather than as a picture we did not have. Deterministic per
+ * index — no randomness, so SSR stays stable.
  */
 export function PanelGlow({ seed = 0 }: { seed?: number }) {
   const shift = (seed * 17) % 40;
