@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
+import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases } from "@/config/cases";
 import { services } from "@/config/services";
@@ -62,9 +63,7 @@ export default function AboutPage() {
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
           <div className="max-w-4xl">
-            <p data-reveal="fade" className="text-sm font-medium text-ink-mute">
-              About
-            </p>
+            <Eyebrow data-reveal="fade">About</Eyebrow>
             <h1
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.05s" }}
@@ -105,9 +104,14 @@ export default function AboutPage() {
       {/* ── The person ───────────────────────────────────────────────────── */}
       <section className="py-20 sm:py-24 lg:py-32">
         <Container size="wide">
-          <h2 className="text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-            {team.length === 1 ? "Who you will be working with" : "The team"}
-          </h2>
+          <SectionHead
+            title={team.length === 1 ? "Who you will be working with" : "The team"}
+            deck={
+              team.length === 1
+                ? "One person, named, with the work and the credentials in public. Search the name before you call — that is rather the point of putting it here."
+                : "The people who will actually be on your project."
+            }
+          />
 
           <div className="mt-12 flex flex-col gap-16 sm:mt-16 lg:gap-24">
             {team.map((person) => (
@@ -229,9 +233,10 @@ export default function AboutPage() {
       {/* ── How we work ──────────────────────────────────────────────────── */}
       <section className="bg-paper-deep py-20 sm:py-24 lg:py-32">
         <Container size="wide">
-          <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-            What you can hold us to
-          </h2>
+          <SectionHead
+            title="What you can hold us to"
+            deck="Commitments rather than adjectives — each one is something you could reasonably hold against us if we broke it."
+          />
 
           <div className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 lg:grid-cols-2">
             {principles.map((principle, index) => (

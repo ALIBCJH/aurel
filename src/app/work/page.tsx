@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
+import { Eyebrow } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases } from "@/config/cases";
 import { getService } from "@/config/services";
@@ -32,9 +33,7 @@ export default function WorkPage() {
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
           <div className="max-w-4xl">
-            <p data-reveal="fade" className="text-sm font-medium text-ink-mute">
-              Work
-            </p>
+            <Eyebrow data-reveal="fade">Work</Eyebrow>
             <h1
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.05s" }}

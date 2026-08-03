@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { ServiceReel } from "@/components/services/service-reel";
+import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { services } from "@/config/services";
 import { primaryCta } from "@/config/site";
@@ -66,9 +67,7 @@ export default function ServicesPage() {
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
           <div className="max-w-4xl">
-            <p data-reveal="fade" className="text-sm font-medium text-ink-mute">
-              Services
-            </p>
+            <Eyebrow data-reveal="fade">Services</Eyebrow>
             <h1
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.05s" }}
@@ -227,13 +226,10 @@ export default function ServicesPage() {
       {/* ── How an engagement runs ───────────────────────────────────────── */}
       <section className="py-20 sm:py-24 lg:py-32">
         <Container size="wide">
-          <h2 className="max-w-[18ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
-            How an engagement runs
-          </h2>
-          <p className="mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-ink-soft">
-            The same four stages whatever the discipline, so you always know
-            where a project is and what happens next.
-          </p>
+          <SectionHead
+            title="How an engagement runs"
+            deck="The same four stages whatever the discipline, so you always know where a project is and what happens next."
+          />
 
           <ol className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 lg:grid-cols-4">
             {engagement.map((stage, index) => (

@@ -71,8 +71,9 @@ export default async function CaseNotePage({ params }: Params) {
           </Link>
 
           <div className="mt-6 max-w-4xl">
-            <p data-reveal="fade" className="text-sm font-medium text-ink-mute">
-              {entry.client} · {entry.sector} · {entry.year}
+            <p data-reveal="fade" className="text-sm font-medium">
+              <span className="text-foil">{entry.client}</span>
+              <span className="text-ink-mute"> · {entry.sector} · {entry.year}</span>
             </p>
             <h1
               data-reveal="fade"
