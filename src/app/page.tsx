@@ -1,181 +1,211 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { Section } from "@/components/layout/section";
 import { Container } from "@/components/layout/container";
-import { Hero } from "@/components/home/hero";
-import { Approach } from "@/components/home/approach";
-import { Reveal } from "@/components/ui/reveal";
-import { Marquee } from "@/components/ui/marquee";
 import { Button } from "@/components/ui/button";
-import { AnimatedGem } from "@/components/brand/animated-gem";
-import { GemMark } from "@/components/brand/gem-mark";
-import { ServiceIcon } from "@/components/brand/service-icons";
-import { Diamond, FacetedDivider } from "@/components/brand/facet";
+import { Panel, PanelGlow } from "@/components/ui/panel";
+import { OpeningSpread } from "@/components/home/opening-spread";
 import { ArrowUpRightIcon } from "@/components/icons";
-import { primaryCta } from "@/config/site";
+import { cases } from "@/config/cases";
 import { services } from "@/config/services";
+import { primaryCta } from "@/config/site";
 
-const marqueeItems = [
-  "Custom software",
-  "AI automation",
-  "Digital products",
-  "Modern web",
-  "Branding",
-  "SEO",
-  "Process optimisation",
-  "Immersive experiences",
-];
+/**
+ * The title deliberately leads with what is sold and where, not with the
+ * studio's positioning line: "digital transformation studio" is not a phrase
+ * anyone searches, and a title is a query-matching surface before it is a
+ * brand surface.
+ */
+export const metadata: Metadata = {
+  title: "Websites, mobile apps, AI & SEO for businesses in Kenya",
+  description:
+    "Aurel is a Kenyan software studio building custom websites, mobile apps, AI automation, and SEO for businesses across Kenya and East Africa.",
+  alternates: { canonical: "/" },
+};
 
-const whyAurel = [
+const commitments = [
   {
-    title: "A true partner",
-    body: "We own the whole journey — strategy, design, and engineering under one roof. No hand-offs, no finger-pointing, one team accountable for the result.",
+    title: "One team, end to end",
+    body: "Strategy, design and engineering under one roof. The people who scope your project are the people who build it — no hand-offs, no finger-pointing.",
   },
   {
-    title: "Craft as standard",
-    body: "Details others skip are where trust is built. We hold every pixel and every line of code to a standard usually reserved for enterprise budgets.",
+    title: "Built for the network you have",
+    body: "Mid-range Android on congested 4G is the baseline we build against, not an afterthought. Page weight is a budget we hold ourselves to.",
   },
   {
-    title: "Built to last",
-    body: "We build systems you can grow on for years, not throwaway work you'll replace in months. Deliberate choices that protect your investment.",
+    title: "You own everything",
+    body: "Code, content, domains, infrastructure and store listings, all in your name. We do not hold work hostage as a retention strategy.",
   },
 ];
 
 export default function HomePage() {
   return (
     <>
-      {/* Hero (cinematic, animated product showcase) */}
-      <Hero />
+      <OpeningSpread />
 
-      {/* Capabilities marquee — continuous movement */}
-      <section className="border-y border-border py-5 sm:py-6">
-        <Marquee items={marqueeItems} />
-      </section>
-
-      {/* Belief band */}
-      <Section
-        spacing="default"
-        bleed
-        className="border-b border-accent/20 bg-surface-muted/30"
-      >
-        <Container>
-          <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
-            <Reveal>
-              <p className="font-display text-3xl leading-tight sm:text-4xl lg:text-[2.75rem]">
-                Great software is engineering. Great products are craft. We
-                refuse to choose.
-              </p>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="text-base leading-relaxed text-muted lg:mt-2">
-                Most agencies pick a lane — they can code, or they can design.
-                Aurel was built to do both to the highest standard, so what you
-                ship works beautifully and lasts.
-              </p>
-            </Reveal>
+      {/* ── Services ─────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-24 lg:py-32">
+        <Container size="wide">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
+              What we do
+            </h2>
+            <Button href="/services" variant="secondary" size="md">
+              All services
+              <ArrowUpRightIcon width={14} height={14} />
+            </Button>
           </div>
-        </Container>
-      </Section>
 
-      {/* Services grid — line icon + drawing gold top-border + lift on hover */}
-      <Section spacing="lg">
-        <Reveal>
-          <h2 className="max-w-3xl text-3xl sm:text-4xl lg:text-5xl">
-            Everything it takes to compete in the digital era — under one roof.
-          </h2>
-        </Reveal>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((service, index) => (
-            <Reveal
-              key={service.slug}
-              delay={(index % 4) * 0.06}
-              className="h-full"
-            >
-              <Link
-                href={`/services/${service.slug}`}
-                className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface/30 p-6 transition-[transform,border-color,background-color] duration-200 ease-[cubic-bezier(0.2,0.7,0.2,1)] hover:-translate-y-1 hover:border-accent/40 hover:bg-surface"
+          <div className="mt-10 flex flex-col gap-4 sm:mt-14 sm:gap-5">
+            {services.map((service, index) => (
+              <div
+                key={service.slug}
+                data-reveal="fade"
+                style={{ ["--reveal-delay" as string]: `${index * 0.06}s` }}
               >
-                {/* gold top-border draws in on hover */}
-                <span className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100" />
-                <span className="text-accent">
-                  <ServiceIcon slug={service.slug} />
-                </span>
-                <h3 className="mt-6 text-lg font-semibold text-foreground">
-                  {service.name}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {service.summary}
-                </p>
-              </Link>
-            </Reveal>
-          ))}
-        </div>
-      </Section>
-
-      {/* Approach — steps joined by a self-drawing gold thread */}
-      <Approach />
-
-      {/* Why Aurel — small gem markers */}
-      <Section spacing="default" bleed className="border-t border-border">
-        <Container>
-          <div className="grid gap-12 md:grid-cols-3 lg:gap-16">
-            {whyAurel.map((item, index) => (
-              <Reveal key={item.title} delay={index * 0.08}>
-                <Diamond />
-                <h3 className="mt-5 font-display text-2xl">{item.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted">
-                  {item.body}
-                </p>
-              </Reveal>
+                <Panel
+                  href={`/services/${service.slug}`}
+                  tone={index % 2 === 0 ? "loud" : "quiet"}
+                  index={service.index}
+                  title={service.name}
+                  body={service.description}
+                  media={<PanelGlow seed={index} />}
+                  footer={
+                    <span className="inline-flex items-center gap-2 text-[0.9375rem] font-medium">
+                      {service.headline}
+                      <ArrowUpRightIcon
+                        width={14}
+                        height={14}
+                        className="transition-transform duration-300 group-hover/panel:translate-x-0.5 group-hover/panel:-translate-y-0.5"
+                      />
+                    </span>
+                  }
+                />
+              </div>
             ))}
           </div>
         </Container>
-      </Section>
+      </section>
 
-      {/* Closing CTA — gem bookend with glow pulse, faint grid + watermark */}
-      <Section spacing="lg" bleed className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-          <div className="bg-line-grid absolute inset-0 opacity-70" />
-          <GemMark
-            strokeWidth={1.5}
-            className="absolute left-1/2 top-1/2 w-[min(80vw,560px)] -translate-x-1/2 -translate-y-1/2 text-accent opacity-[0.04]"
-          />
-        </div>
-
-        <Container>
-          <FacetedDivider className="mb-16 sm:mb-20" />
-        </Container>
-
-        <Container size="narrow" className="text-center">
-          <Reveal className="flex justify-center">
-            <div className="relative">
-              <div
-                aria-hidden
-                className="hero-glow animate-glow-pulse absolute -inset-6 rounded-full blur-2xl"
-              />
-              <AnimatedGem className="relative w-24" />
-            </div>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <h2 className="mt-8 text-4xl sm:text-5xl">
-              Let&apos;s build what your business is becoming.
+      {/* ── Work ─────────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-24 lg:py-32">
+        <Container size="wide">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
+              Selected work
             </h2>
-          </Reveal>
-          <Reveal delay={0.16}>
-            <p className="mx-auto mt-6 max-w-md text-muted">
-              Tell us where you want to go. We&apos;ll show you how technology
-              gets you there — with craft, precision, and care.
+            <Button href="/work" variant="secondary" size="md">
+              All work
+              <ArrowUpRightIcon width={14} height={14} />
+            </Button>
+          </div>
+
+          <div className="mt-10 grid gap-10 sm:mt-14 lg:grid-cols-2 lg:gap-12">
+            {cases.map((entry, index) => (
+              <article
+                key={entry.slug}
+                data-reveal="plate"
+                style={{ ["--reveal-delay" as string]: `${index * 0.08}s` }}
+              >
+                <Link
+                  href={`/work/${entry.slug}`}
+                  className="group/case block overflow-hidden rounded-[var(--radius-card)] bg-paper-deep"
+                >
+                  <Image
+                    src={entry.image.src}
+                    alt={entry.image.alt}
+                    width={1440}
+                    height={900}
+                    sizes="(min-width: 1024px) 45vw, 100vw"
+                    className="h-auto w-full transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/case:scale-[1.03]"
+                  />
+                </Link>
+                <h3 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">
+                  <Link
+                    href={`/work/${entry.slug}`}
+                    className="transition-opacity duration-200 hover:opacity-70"
+                  >
+                    {entry.client}
+                  </Link>
+                </h3>
+                <p className="mt-2.5 max-w-lg text-[0.9375rem] leading-relaxed text-ink-soft">
+                  {entry.headline}
+                </p>
+                <p className="mt-4 text-sm text-ink-mute">
+                  {entry.sector} · {entry.year}
+                </p>
+              </article>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── Why us ───────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-24 lg:py-32">
+        <Container size="wide">
+          <h2 className="max-w-[18ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
+            Why studios like ours get picked
+          </h2>
+
+          <div className="mt-10 grid gap-4 sm:mt-14 sm:gap-5 lg:grid-cols-3">
+            {commitments.map((item, index) => (
+              <div
+                key={item.title}
+                data-reveal="fade"
+                style={{ ["--reveal-delay" as string]: `${index * 0.07}s` }}
+                className="rounded-[var(--radius-xl)] bg-paper-deep p-7 sm:p-9"
+              >
+                <span aria-hidden className="text-sm tabular-nums text-ink-mute">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-5 text-xl font-semibold tracking-[-0.025em] sm:text-[1.375rem]">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink-soft">
+                  {item.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* ── The invitation ───────────────────────────────────────────────── */}
+      <section className="pb-20 sm:pb-24 lg:pb-32">
+        <Container size="wide">
+          <div className="rounded-[var(--radius-card)] bg-contrast px-7 py-16 text-center text-contrast-ink sm:px-10 sm:py-20 lg:py-28">
+            <h2
+              data-reveal="fade"
+              className="mx-auto max-w-[18ch] text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.03] tracking-[-0.04em]"
+            >
+              Tell us what you are trying to build
+            </h2>
+            <p
+              data-reveal="fade"
+              style={{ ["--reveal-delay" as string]: "0.08s" }}
+              className="mx-auto mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-contrast-mute"
+            >
+              We read every enquiry ourselves and reply within one business day.
             </p>
-          </Reveal>
-          <Reveal delay={0.24}>
-            <div className="mt-10 flex justify-center">
-              <Button href={primaryCta.href} size="lg">
+            <div
+              data-reveal="fade"
+              style={{ ["--reveal-delay" as string]: "0.16s" }}
+              className="mt-10 flex justify-center"
+            >
+              {/* Inverted context: the pill has to flip back to the page's
+                  surface colour to stay the highest-contrast object here. */}
+              <Button
+                href={primaryCta.href}
+                size="lg"
+                className="bg-paper text-ink hover:opacity-90"
+              >
                 {primaryCta.label}
-                <ArrowUpRightIcon width={18} height={18} />
+                <ArrowUpRightIcon width={15} height={15} />
               </Button>
             </div>
-          </Reveal>
+          </div>
         </Container>
-      </Section>
+      </section>
     </>
   );
 }
