@@ -171,7 +171,7 @@ export default async function CaseNotePage({ params }: Params) {
       </section>
 
       {/* ── The challenge ────────────────────────────────────────────────── */}
-      <section className="bg-contrast py-16 text-contrast-ink sm:py-20 lg:py-28">
+      <section className="bg-paper-deep py-16 sm:py-20 lg:py-28">
         <Container size="wide">
           <div className="grid gap-8 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-4">
@@ -182,7 +182,7 @@ export default async function CaseNotePage({ params }: Params) {
             <div className="lg:col-span-7 lg:col-start-6">
               <p
                 data-reveal="fade"
-                className="text-[1.0625rem] leading-[1.75] text-contrast-mute sm:text-lg"
+                className="text-[1.0625rem] leading-[1.75] text-ink-soft sm:text-lg"
               >
                 {entry.challenge}
               </p>

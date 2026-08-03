@@ -231,7 +231,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── What happens next ────────────────────────────────────────────── */}
-      <section className="bg-contrast py-20 text-contrast-ink sm:py-24 lg:py-28">
+      <section className="bg-paper-deep py-20 sm:py-24 lg:py-28">
         <Container size="wide">
           <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
             What happens next
@@ -243,15 +243,15 @@ export default function ContactPage() {
                 key={item.title}
                 data-reveal="fade"
                 style={{ ["--reveal-delay" as string]: `${index * 0.07}s` }}
-                className="rounded-[var(--radius-xl)] border border-white/15 p-7 sm:p-8"
+                className="rounded-[var(--radius-xl)] border border-rule bg-paper p-7 sm:p-8"
               >
-                <span className="text-sm tabular-nums text-contrast-mute">
+                <span className="text-sm tabular-nums text-ink-mute">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <h3 className="mt-5 text-xl font-semibold leading-snug tracking-[-0.025em]">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-contrast-mute">
+                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink-soft">
                   {item.body}
                 </p>
               </li>

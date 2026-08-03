@@ -192,7 +192,7 @@ export default function WorkPage() {
       {/* ── The invitation ───────────────────────────────────────────────── */}
       <section className="pb-20 sm:pb-24 lg:pb-32">
         <Container size="wide">
-          <div className="rounded-[var(--radius-card)] bg-contrast px-7 py-16 text-center text-contrast-ink sm:px-10 sm:py-20 lg:py-28">
+          <div className="rounded-[var(--radius-card)] border border-rule bg-paper-deep px-7 py-16 text-center sm:px-10 sm:py-20 lg:py-28">
             <h2
               data-reveal="fade"
               className="mx-auto max-w-[18ch] text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.03] tracking-[-0.04em]"
@@ -202,7 +202,7 @@ export default function WorkPage() {
             <p
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.08s" }}
-              className="mx-auto mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-contrast-mute"
+              className="mx-auto mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-ink-soft"
             >
               Tell us what you are trying to build. We reply within one business
               day.
@@ -212,11 +212,7 @@ export default function WorkPage() {
               style={{ ["--reveal-delay" as string]: "0.16s" }}
               className="mt-10 flex justify-center"
             >
-              <Button
-                href={primaryCta.href}
-                size="lg"
-                className="bg-paper text-ink hover:opacity-90"
-              >
+              <Button href={primaryCta.href} size="lg">
                 {primaryCta.label}
                 <ArrowUpRightIcon width={15} height={15} />
               </Button>

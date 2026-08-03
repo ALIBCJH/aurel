@@ -55,6 +55,12 @@
   --foil-pale: #b98f2e;
   --foil-ink: #ffffff;
 
+  /* The pointer glow on service cards. Gold rather than white, because on a
+     white page a white glow is invisible — and gold is the brand accent, which
+     is otherwise barely used in this direction. */
+  --glow: color-mix(in srgb, #8a6209 20%, transparent);
+  --glow-edge: color-mix(in srgb, #8a6209 34%, transparent);
+
   --rule: color-mix(in srgb, #0a0a0a 10%, transparent);
   --rule-strong: color-mix(in srgb, #0a0a0a 22%, transparent);
   --rule-foil: color-mix(in srgb, #8a6209 35%, transparent);
@@ -100,6 +106,11 @@
   --foil-bright: #f2cc85;
   --foil-pale: #ffe4a8;
   --foil-ink: #0a0a0a;
+
+  /* Warmer and a touch stronger on near-black, where a low-opacity tint
+     disappears entirely. */
+  --glow: color-mix(in srgb, #e3b45f 16%, transparent);
+  --glow-edge: color-mix(in srgb, #e3b45f 30%, transparent);
 
   --rule: color-mix(in srgb, #fafafa 12%, transparent);
   --rule-strong: color-mix(in srgb, #fafafa 24%, transparent);
