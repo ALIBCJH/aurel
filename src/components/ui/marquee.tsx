@@ -2,49 +2,55 @@ import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Marquee — a calm, infinite horizontal ticker.
+ * Marquee — the contents ticker.
  *
- * Renders two identical tracks and translates by -50% for a seamless loop
- * (pure CSS). Pauses on hover, fades at both edges, and freezes for users who
- * prefer reduced motion (handled by the global reduced-motion rule).
+ * A calm, infinite horizontal band of the studio's capabilities, set in mono
+ * capitals and separated by the house lozenge, like a strip of running text
+ * across the head of a page. Two identical tracks translate by -50% for a
+ * seamless loop (pure CSS). Pauses on hover, fades at both edges, and freezes
+ * under prefers-reduced-motion via the global rule.
  */
 type MarqueeProps = {
   items: string[];
   /** Full loop duration; larger = slower. */
   duration?: string;
+  /** Travel right-to-left (default) or the reverse. */
+  reverse?: boolean;
   className?: string;
 };
 
 function Track({ items, ariaHidden }: { items: string[]; ariaHidden?: boolean }) {
   return (
-    <div
-      aria-hidden={ariaHidden}
-      className="flex shrink-0 items-center"
-    >
+    <div aria-hidden={ariaHidden} className="flex shrink-0 items-center">
       {items.map((item, index) => (
         <span
           key={`${item}-${index}`}
-          className="flex items-center font-display text-lg text-muted sm:text-xl"
+          className="text-label flex items-center whitespace-nowrap text-ink-soft"
         >
           {item}
-          {/* gold diamond separator (consistent spacing across the loop seam) */}
-          <span className="mx-8 h-1.5 w-1.5 rotate-45 rounded-[1px] bg-accent/70 sm:mx-10" />
+          <span
+            aria-hidden
+            className="mx-7 h-1 w-1 rotate-45 bg-foil/70 sm:mx-9"
+          />
         </span>
       ))}
     </div>
   );
 }
 
-export function Marquee({ items, duration = "44s", className }: MarqueeProps) {
+export function Marquee({
+  items,
+  duration = "58s",
+  reverse = false,
+  className,
+}: MarqueeProps) {
   return (
-    <div
-      className={cn(
-        "group marquee-mask relative flex overflow-hidden",
-        className,
-      )}
-    >
+    <div className={cn("group marquee-mask relative flex overflow-hidden", className)}>
       <div
-        className="flex w-max animate-marquee group-hover:[animation-play-state:paused]"
+        className={cn(
+          "flex w-max group-hover:[animation-play-state:paused]",
+          reverse ? "animate-marquee-reverse" : "animate-marquee",
+        )}
         style={{ "--marquee-duration": duration } as CSSProperties}
       >
         <Track items={items} />

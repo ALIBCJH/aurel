@@ -5,14 +5,21 @@ import { Container } from "./container";
 /**
  * Section — vertical rhythm primitive.
  *
- * Provides consistent, generous vertical spacing between page regions. By
- * default it wraps its children in a <Container>; pass `bleed` to opt out when
- * a section needs full-bleed content (e.g. a background band).
+ * Provides consistent vertical spacing between page regions. By default it
+ * wraps its children in a <Container>; pass `bleed` to opt out when a section
+ * needs full-bleed content (e.g. a background band).
+ *
+ * The scale is deliberately tighter than it was. Adjacent sections stack their
+ * padding, so the old `py-24` floor put 192px of nothing between every pair of
+ * content blocks — on a phone that is most of a screen. Printed pages, which
+ * this design takes its cues from, are dense: they use the *margin* as a frame
+ * and fill the measure. Separation here is the job of the hairline rules, not
+ * of empty paper.
  */
 const spacingClasses = {
-  sm: "py-16 sm:py-20",
-  default: "py-24 sm:py-28 lg:py-32",
-  lg: "py-28 sm:py-36 lg:py-44",
+  sm: "py-12 sm:py-16",
+  default: "py-16 sm:py-20 lg:py-24",
+  lg: "py-20 sm:py-24 lg:py-32",
 } as const;
 
 type SectionProps = ComponentPropsWithoutRef<"section"> & {

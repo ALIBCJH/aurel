@@ -2,82 +2,158 @@
 
 /*
  * ---------------------------------------------------------------------------
- *  AUREL — Global Design System (Tailwind v4, CSS-first configuration)
+ *  AUREL — global design system (Tailwind v4, CSS-first configuration)
  * ---------------------------------------------------------------------------
- *  Tailwind v4 is configured directly in CSS via `@theme`. There is no
- *  `tailwind.config.js`. Design tokens are declared as CSS custom properties
- *  so they can be swapped between themes, then exposed to Tailwind's utility
- *  generator through `@theme inline`.
+ *  Direction: bold product studio, white-first. High-contrast surfaces,
+ *  oversized grotesk type, generous radii, and full-width cards that flip to
+ *  the opposite tone. Real product screenshots carry the page; the interface
+ *  around them stays quiet and gets out of the way.
+ *
+ *  Light is the default and the designed state. Dark exists and is coherent,
+ *  but the brand lives on white.
+ *
+ *  Token names (`--paper`, `--ink`, `--foil`) are inherited from an earlier
+ *  print-editorial direction. They are kept because they are referenced across
+ *  every component and renaming them would be pure churn — read them as
+ *  background / foreground / accent.
+ *
+ *  Tailwind v4 is configured entirely here via `@theme` — there is no
+ *  `tailwind.config.js`. Raw values live as custom properties so the two themes
+ *  can swap them, then `@theme inline` exposes them as utilities.
  * ---------------------------------------------------------------------------
  */
 
-/* Enable class-based dark mode (`.dark` on <html>) instead of the default
-   `prefers-color-scheme` media strategy, so we can offer a manual toggle. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ===========================================================================
-   THEME PALETTES
-   The light theme is the default (:root); the dark theme overrides on `.dark`.
-   Only the raw values live here — semantic Tailwind tokens are mapped below.
+   1. EDITIONS (palette)
    =========================================================================== */
+/* ---- LIGHT (default) ------------------------------------------------------
+   White wall, near-black ink. Contrast does the work; colour is rationed.
+   `--invert-*` is the core device of this direction: full-width cards that
+   flip to the opposite of the page, so a section can go loud without
+   introducing a new hue. */
 :root {
-  /* Surfaces & text — Light: cool, clean, editorial */
-  --background: #f1f2f4;
-  --foreground: #0d0f12;
-  --surface: #ffffff;
-  --surface-muted: #e9eaec;
-  --muted-foreground: color-mix(in srgb, #0d0f12 55%, transparent);
-  --border: color-mix(in srgb, #0e1013 12%, transparent);
-  --border-strong: color-mix(in srgb, #0e1013 20%, transparent);
+  color-scheme: light;
 
-  /* Accent — gold, identical hue across themes, used sparingly */
-  --accent: #b8925a;
-  --accent-hover: #c8a06a;
-  --accent-foreground: #0e1013; /* text/icon sitting on gold */
-  --accent-soft: color-mix(in srgb, #b8925a 12%, transparent);
-  --ring: color-mix(in srgb, #b8925a 55%, transparent);
+  --paper: #ffffff;
+  --paper-deep: #f4f4f5; /* the quiet card, section bands */
+  --paper-raised: #fafafa;
+  --ink: #0a0a0a;
+  --ink-soft: #4a4a4d;
+  --ink-mute: #6c6c6f; /* 5.23:1 on white, 4.76:1 on the grey band */
 
-  /* Hero texture tokens */
-  --hero-dot: color-mix(in srgb, #0e1013 9%, transparent);
-  --hero-glow: color-mix(in srgb, #b8925a 26%, transparent);
+  /* The loud card — black on a white page. */
+  --invert-bg: #0a0a0a;
+  --invert-ink: #ffffff;
+  --invert-ink-mute: #a1a1a6;
 
-  /* Shadows tuned for a light, paper-like surface */
-  --shadow-color: 20 18 14;
+  /* Gold is now an accent of last resort, not a wash. It survives for the
+     mark, the occasional emphasis, and focus rings. */
+  --foil: #8a6209;
+  --foil-bright: #a0761a;
+  --foil-pale: #b98f2e;
+  --foil-ink: #ffffff;
+
+  --rule: color-mix(in srgb, #0a0a0a 10%, transparent);
+  --rule-strong: color-mix(in srgb, #0a0a0a 22%, transparent);
+  --rule-foil: color-mix(in srgb, #8a6209 35%, transparent);
+  --field: color-mix(in srgb, #0a0a0a 4%, transparent);
+
+  /* No paper texture in this direction — the surfaces are screen, not stock. */
+  --grain-opacity: 0;
+  --grain-blend: normal;
+  --vignette: transparent;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --surface: var(--paper-raised);
+  --surface-muted: var(--paper-deep);
+  --muted-foreground: var(--ink-mute);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --accent: var(--ink);
+  --accent-hover: #2a2a2d;
+  --accent-foreground: #ffffff;
+  --accent-soft: color-mix(in srgb, #0a0a0a 6%, transparent);
+  --ring: color-mix(in srgb, #0a0a0a 55%, transparent);
 }
 
+/* ---- DARK -----------------------------------------------------------------
+   Kept coherent rather than designed-for. Everything inverts, including the
+   invert tokens, so a "loud" card is white on a black page. */
 .dark {
-  /* Surfaces & text — Dark: cool, precise, premium */
-  --background: #0d0f12;
-  /* Cool, clean off-white (was warm cream) */
-  --foreground: #eceef1;
-  --surface: #15181d;
-  --surface-muted: #101318;
-  /* Cool muted grey for secondary text — crisper than the old warm grey */
-  --muted-foreground: #969ba4;
-  --border: color-mix(in srgb, #eceef1 11%, transparent);
-  --border-strong: color-mix(in srgb, #eceef1 19%, transparent);
+  color-scheme: dark;
 
-  --accent: #b8925a;
-  --accent-hover: #caa269;
-  --accent-foreground: #0e1013;
-  --accent-soft: color-mix(in srgb, #b8925a 14%, transparent);
-  --ring: color-mix(in srgb, #b8925a 60%, transparent);
+  --paper: #0a0a0b;
+  --paper-deep: #141416;
+  --paper-raised: #17171a;
+  --ink: #fafafa;
+  --ink-soft: #b4b4b8;
+  --ink-mute: #8a8a8f;
 
-  /* Hero texture tokens */
-  --hero-dot: color-mix(in srgb, #eceef1 7%, transparent);
-  --hero-glow: color-mix(in srgb, #b8925a 20%, transparent);
+  --invert-bg: #fafafa;
+  --invert-ink: #0a0a0a;
+  --invert-ink-mute: #55555a;
 
-  --shadow-color: 0 0 0;
+  --foil: #e3b45f;
+  --foil-bright: #f2cc85;
+  --foil-pale: #ffe4a8;
+  --foil-ink: #0a0a0a;
+
+  --rule: color-mix(in srgb, #fafafa 12%, transparent);
+  --rule-strong: color-mix(in srgb, #fafafa 24%, transparent);
+  --rule-foil: color-mix(in srgb, #e3b45f 38%, transparent);
+  --field: color-mix(in srgb, #fafafa 6%, transparent);
+
+  --grain-opacity: 0;
+  --grain-blend: normal;
+  --vignette: transparent;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --surface: var(--paper-raised);
+  --surface-muted: var(--paper-deep);
+  --muted-foreground: var(--ink-mute);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --accent: var(--ink);
+  --accent-hover: #d8d8dc;
+  --accent-foreground: #0a0a0a;
+  --accent-soft: color-mix(in srgb, #fafafa 8%, transparent);
+  --ring: color-mix(in srgb, #fafafa 60%, transparent);
 }
 
 /* ===========================================================================
-   TAILWIND TOKEN MAPPING
-   Exposes the variables above as Tailwind utilities:
-     bg-background, text-foreground, text-muted, bg-surface, border-border,
-     bg-accent, text-accent, ring-ring, max-w-default, font-display, ...
+   2. TOKEN MAPPING
    =========================================================================== */
 @theme inline {
-  /* Colors */
+  /* Surfaces & ink */
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-foil: var(--foil);
+  --color-foil-bright: var(--foil-bright);
+  --color-foil-pale: var(--foil-pale);
+  --color-foil-ink: var(--foil-ink);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-rule-foil: var(--rule-foil);
+  --color-field: var(--field);
+
+  /* The inverted card — the loudest surface available without adding a hue.
+     Named `contrast`, not `invert`: `invert` is a built-in Tailwind filter
+     utility, and `bg-invert` silently fails to generate because of the clash.
+     The failure is invisible in the build and total on the page — the card
+     renders transparent and takes its white title with it. */
+  --color-contrast: var(--invert-bg);
+  --color-contrast-ink: var(--invert-ink);
+  --color-contrast-mute: var(--invert-ink-mute);
+
+  /* Legacy aliases */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
@@ -91,39 +167,55 @@
   --color-accent-soft: var(--accent-soft);
   --color-ring: var(--ring);
 
-  /* Typography */
+  /* Typography.
+     One grotesk does display and text. The editorial serif is gone: at the
+     sizes this direction sets type, a light serif reads as a magazine, and the
+     point here is to read as an engineering studio. Weight and tightness carry
+     the impact instead of a distinctive face. Mono stays for apparatus — it is
+     the one thing that still says "built by people who write software". */
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
-  /* Sans-only system: display headings share the sans family, differentiated
-     by weight, size, and tracking rather than a serif. */
-  --font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
 
-  /* Container widths (power max-w-narrow / max-w-default / max-w-wide) */
-  --container-narrow: 46rem;
-  --container-default: 75rem;
-  --container-wide: 88rem;
+  /* Breakpoints — `xs` is set at 352px so that essentially every modern phone
+     (iPhone SE is 375, iPhone 14 is 390) clears it and shows the small-screen
+     labels, while a 320px handset still falls back to icons alone.
+     Tailwind v4 ships no `xs` by default; it must be declared to exist, and
+     until it was, `xs:` variants silently generated nothing — the contents
+     toggle rendered as a bare unlabelled hamburger. */
+  --breakpoint-xs: 22rem;
 
-  /* Radii */
+  /* Measures */
+  --container-prose: 36rem;
+  --container-narrow: 48rem;
+  --container-default: 78rem;
+  --container-wide: 92rem;
+
+  /* Radii — generous. Controls are pills; cards are big soft rectangles. The
+     previous direction was squared off to read as printed matter; this one
+     rounds hard because that is what reads as software. */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
-  --radius-lg: 1.125rem;
-  --radius-xl: 1.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-card: 2rem;
 
-  /* Premium easing curves used across the animation system */
+  /* Motion */
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
-  /* Brand motion easing (calm, confident ease-out — no bounce) */
   --ease-brand: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-press: cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
 /* ===========================================================================
-   BASE LAYER
+   3. BASE
    =========================================================================== */
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: var(--rule);
   }
 
   html {
@@ -131,40 +223,83 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    /* Anchor targets clear the *docked* masthead (58px + its rule), which is
+       what is actually on screen once the page has scrolled. The old 8rem was
+       sized against the undocked height and overshot every anchor by ~70px. */
+    scroll-padding-top: 5rem;
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--paper);
+    color: var(--ink);
     font-family: var(--font-sans);
-    /* Calm cross-fade when switching themes */
+    font-size: 1rem;
+    line-height: 1.6;
+    /* Short: the edition's custom properties swap instantly while this
+       transition runs, so a long cross-fade leaves the page sitting in a muddy
+       in-between state where the surface has moved but the tokens have not. */
     transition:
-      background-color 0.5s var(--ease-premium),
-      color 0.5s var(--ease-premium);
+      background-color 0.25s var(--ease-premium),
+      color 0.25s var(--ease-premium);
   }
 
-  /* Display headings — sans, weighty, tightly tracked (Linear/Stripe style) */
+  /* The sheet's fibre — a fixed grain wash over the page.
+     Deliberately *below* the masthead (z-50) and the contents overlay (z-40):
+     the grain belongs to the paper, not to the furniture standing on it. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Display type — heavy grotesk, tight. The negative tracking is the whole
+     effect: at 300 weight and 0 tracking this face is a UI font, and at 700+
+     with -0.04em it becomes a statement. Tracking tightens as size grows,
+     which is how type is meant to be optically corrected. */
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.04;
+    letter-spacing: -0.035em;
+    line-height: 1.06;
+  }
+
+  /* Big, tight, and only semibold. The impact comes from size and negative
+     tracking, not from weight — at 800 this face turns blobby at display
+     sizes and starts to look like a discount banner rather than a studio. */
+  h1 {
+    font-size: clamp(2.5rem, 7.5vw, 6rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    letter-spacing: -0.038em;
+  }
+
+  em,
+  i {
+    font-style: italic;
   }
 
   ::selection {
-    background: var(--accent);
-    color: var(--accent-foreground);
+    background: var(--foil);
+    color: var(--foil-ink);
   }
 
-  /* Accessible, on-brand focus states */
   :focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline: 1.5px solid var(--foil);
+    outline-offset: 3px;
   }
 
-  /* Respect users who prefer reduced motion */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -178,60 +313,353 @@
 }
 
 /* ===========================================================================
-   UTILITIES
+   4. TYPOGRAPHIC APPARATUS
+   The small marks that make a page read as printed matter: labels, folios,
+   figure numbers, drop caps, pull quotes, marginalia.
    =========================================================================== */
 @layer utilities {
-  /* Uppercase, wide-tracked eyebrow/label text — a premium editorial detail */
-  .text-eyebrow {
+  /* Mono, uppercase, wide — used for labels, folios, and figure numbers.
+     Mono + caps + tracking is already the hardest combination to read there
+     is; at 10–11px with 0.24em it stopped being apparatus and became fine
+     print. Sizes are up a step and tracking is pulled back to roughly the
+     letterspacing of a real running head. */
+  .text-label {
+    font-family: var(--font-mono);
     font-size: 0.75rem;
-    line-height: 1;
-    letter-spacing: 0.22em;
+    line-height: 1.1;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  /* Subtle gold-tinted hairline used for premium dividers */
-  .border-hairline {
-    border-color: var(--border);
+  .text-label-sm {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Retained so any older markup keeps its shape. */
+  .text-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* Body copy set for reading — slightly larger, looser leading. */
+  .text-reading {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  /* Opening paragraph: an oversized initial that sits three lines deep.
+     A drop cap only works when enough lines wrap against it. On a phone the
+     measure is short and a 3.9em initial is taller than the paragraph is
+     deep — it detaches and reads as a stray letter — so the cap starts at a
+     restrained 2.8em and only reaches full height where there is a column to
+     hold it. */
+  .drop-cap::first-letter {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 2.8em;
+    line-height: 0.8;
+    float: left;
+    margin: 0.06em 0.08em 0 0;
+    color: var(--foil);
+    font-variation-settings: "SOFT" 0, "WONK" 1;
+  }
+
+  @media (min-width: 40rem) {
+    .drop-cap::first-letter {
+      font-size: 3.9em;
+      line-height: 0.78;
+      margin: 0.06em 0.09em 0 0;
+    }
+  }
+
+  /* Hanging quotation mark for pull quotes. */
+  .hanging-quote {
+    text-indent: -0.42em;
+  }
+
+  /* Old-style numerals + tabular figures where columns must line up. */
+  .nums-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* `.letterpress` (a printed-relief text-shadow) was removed with the print
+     direction. The class is still applied by the Display component and by some
+     page copy; with no definition it is simply inert, which is the intended
+     behaviour — a relief shadow under heavy grotesk at display size only makes
+     the letterforms look smeared. */
+}
+
+/* ===========================================================================
+   5. ACCENT EMPHASIS
+   =========================================================================== */
+@layer utilities {
+  /* `.foil` marks the emphasised word in a headline.
+
+     It used to clip an animated gradient to the glyphs so gold appeared to
+     sweep across them. That is a luxury-brand device, and it fought this
+     direction on two counts: the sweep's bright and pale stops could not clear
+     AA on a white surface, and a shimmering headline pulls the eye to a moving
+     target rather than to the sentence. Solid accent is louder at the size
+     this type is set, and it is legible in both themes.
+
+     Kept as a class rather than replaced at every call site, because it is used
+     across the whole content layer and the name is now simply "emphasis". */
+  .foil,
+  .foil-flat {
+    color: var(--foil);
   }
 }
 
 /* ===========================================================================
-   HERO TEXTURE + MARQUEE
+   6. RULES, PLATES & TEXTURES
    =========================================================================== */
-
-/* Masked dot grid — fades out toward the edges so it never feels like a table */
 @layer utilities {
-  .hero-dots {
-    background-image: radial-gradient(var(--hero-dot) 1px, transparent 1px);
-    background-size: 26px 26px;
-    -webkit-mask-image: radial-gradient(
-      ellipse 78% 62% at 50% 0%,
-      #000 38%,
-      transparent 80%
+  /* A hairline that draws itself left→right when revealed. */
+  .rule-h {
+    height: 1px;
+    width: 100%;
+    background: var(--rule);
+    transform-origin: left center;
+  }
+
+  .rule-foil-h {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      var(--foil),
+      color-mix(in srgb, var(--foil) 20%, transparent)
     );
-    mask-image: radial-gradient(
-      ellipse 78% 62% at 50% 0%,
-      #000 38%,
-      transparent 80%
+    transform-origin: left center;
+  }
+
+  /* Engraver's crosshatch — the shading of a printed plate. */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--ink) 7%, transparent) 0 1px,
+      transparent 1px 7px
     );
   }
 
-  /* Soft radial gold glow (used for the ambient light blobs) */
-  .hero-glow {
+  .hatch-foil {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--foil) 16%, transparent) 0 1px,
+      transparent 1px 9px
+    );
+  }
+
+  /* The register grid a plate is composed on. */
+  .plate-grid {
+    background-image:
+      linear-gradient(to right, var(--rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.5;
+  }
+
+  /* Column rules for the typographic grid overlay. */
+  .column-rules {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--rule) 0 1px,
+      transparent 1px calc(100% / 6)
+    );
+  }
+
+  /* Paper edge — a soft press shadow so a sheet reads as physical. */
+  .sheet {
+    background: var(--paper-raised);
+    box-shadow:
+      0 1px 0 0 color-mix(in srgb, var(--ink) 6%, transparent),
+      0 18px 40px -28px color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+
+  .dark .sheet {
+    box-shadow:
+      0 1px 0 0 color-mix(in srgb, var(--foil) 8%, transparent),
+      0 18px 40px -24px rgb(0 0 0 / 0.7);
+  }
+
+  /* Vignette at the sheet's edges. */
+  .edge-vignette {
+    background: radial-gradient(
+      ellipse 120% 80% at 50% 50%,
+      transparent 55%,
+      var(--vignette) 100%
+    );
+  }
+
+  /* A warm halo behind foil ornaments. */
+  .foil-halo {
     background: radial-gradient(
       circle at center,
-      var(--hero-glow),
+      color-mix(in srgb, var(--foil) 26%, transparent),
       transparent 62%
     );
   }
 
-  /* Fine film grain for editorial depth (SVG fractal noise, no image request) */
-  .bg-grain {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Torn/deckle edge for full-bleed bands. */
+  .deckle-top {
+    -webkit-mask-image: radial-gradient(
+      3px 6px at var(--deckle-x, 8px) 0,
+      transparent 96%,
+      #000 100%
+    );
+    mask-image: radial-gradient(
+      3px 6px at 8px 0,
+      transparent 96%,
+      #000 100%
+    );
+    -webkit-mask-size: 16px 100%;
+    mask-size: 16px 100%;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
   }
 }
 
-/* Seamless horizontal marquee (two duplicated tracks, translate by -50%) */
+/* ===========================================================================
+   7. REVEAL SYSTEM
+   Motion is applied only once JavaScript has confirmed itself (`html.js`,
+   set pre-paint by ThemeScript). Without JS — and for crawlers — every element
+   renders in its final, fully legible state. `RevealObserver` adds `.is-in`
+   when an element enters the viewport.
+   =========================================================================== */
+@layer utilities {
+  /* Default: fade + rise */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(var(--reveal-y, 16px));
+    transition:
+      opacity 0.7s var(--ease-premium) var(--reveal-delay, 0s),
+      transform 0.7s var(--ease-premium) var(--reveal-delay, 0s);
+    will-change: opacity, transform;
+  }
+
+  /* `will-change` is released once the element has arrived.
+     Left on, it pins every revealed element to its own compositor layer for
+     the life of the page — dozens of layers holding GPU memory for an
+     animation that ran once. It also changes how descendants are rasterised,
+     which is how a black card ended up painting as white here. `auto` is not
+     just tidier, it is the documented way to use the property. */
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  /* Line wipe: the child rises out of a clipped band, as if being printed. */
+  .js [data-reveal="mask"] {
+    opacity: 1;
+    transform: none;
+    overflow: clip;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+
+  .js [data-reveal="mask"] > * {
+    display: block;
+    transform: translateY(115%);
+    transition: transform 0.9s var(--ease-premium) var(--reveal-delay, 0s);
+    will-change: transform;
+  }
+
+  .js [data-reveal="mask"].is-in > * {
+    transform: none;
+    will-change: auto;
+  }
+
+  /* Rule draw */
+  .js [data-reveal="rule"] {
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1s var(--ease-premium) var(--reveal-delay, 0s);
+  }
+
+  .js [data-reveal="rule"].is-in {
+    transform: scaleX(1);
+  }
+
+  /* Vertical rule draw */
+  .js [data-reveal="rule-v"] {
+    opacity: 1;
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform 1s var(--ease-premium) var(--reveal-delay, 0s);
+  }
+
+  .js [data-reveal="rule-v"].is-in {
+    transform: scaleY(1);
+  }
+
+  /* Plate: a slower, heavier arrival with a touch of scale — for figures. */
+  .js [data-reveal="plate"] {
+    opacity: 0;
+    transform: translateY(26px) scale(0.985);
+    transition:
+      opacity 0.85s var(--ease-premium) var(--reveal-delay, 0s),
+      transform 0.85s var(--ease-premium) var(--reveal-delay, 0s);
+  }
+
+  .js [data-reveal="plate"].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Ink bleed: copy fades up from soft focus. */
+  .js [data-reveal="ink"] {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+    transition:
+      opacity 0.8s var(--ease-premium) var(--reveal-delay, 0s),
+      filter 0.8s var(--ease-premium) var(--reveal-delay, 0s),
+      transform 0.8s var(--ease-premium) var(--reveal-delay, 0s);
+  }
+
+  .js [data-reveal="ink"].is-in {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+
+  /* Engraved strokes draw themselves. */
+  .js [data-reveal="engrave"] .engrave-stroke {
+    stroke-dasharray: var(--engrave-len, 400);
+    stroke-dashoffset: var(--engrave-len, 400);
+    transition: stroke-dashoffset 1.3s var(--ease-premium)
+      var(--reveal-delay, 0s);
+  }
+
+  .js [data-reveal="engrave"].is-in .engrave-stroke {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal],
+  .js [data-reveal] > *,
+  .js [data-reveal] .engrave-stroke {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+/* ===========================================================================
+   8. THE CONTENTS TICKER (marquee)
+   =========================================================================== */
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -243,104 +671,216 @@
 
 @layer utilities {
   .animate-marquee {
-    animation: marquee var(--marquee-duration, 42s) linear infinite;
+    animation: marquee var(--marquee-duration, 52s) linear infinite;
   }
 
-  /* Fade the marquee in/out at both edges */
+  .animate-marquee-reverse {
+    animation: marquee var(--marquee-duration, 52s) linear infinite reverse;
+  }
+
   .marquee-mask {
     -webkit-mask-image: linear-gradient(
       to right,
       transparent,
-      #000 8%,
-      #000 92%,
+      #000 6%,
+      #000 94%,
       transparent
     );
     mask-image: linear-gradient(
       to right,
       transparent,
-      #000 8%,
-      #000 92%,
+      #000 6%,
+      #000 94%,
       transparent
     );
   }
 }
 
 /* ===========================================================================
-   ABSTRACT GRAPHICS — faint gold line grid (texture, not pattern)
+   9. ORNAMENT MOTION
    =========================================================================== */
-@layer utilities {
-  .bg-line-grid {
-    background-image:
-      linear-gradient(
-        to right,
-        color-mix(in srgb, var(--accent) 9%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--accent) 9%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 72px 72px;
-    -webkit-mask-image: radial-gradient(
-      ellipse 72% 62% at 50% 38%,
-      #000 28%,
-      transparent 76%
-    );
-    mask-image: radial-gradient(
-      ellipse 72% 62% at 50% 38%,
-      #000 28%,
-      transparent 76%
-    );
-  }
-}
-
-/* Gem light-sweep shimmer (a diagonal sheen passing across the facets) */
-@keyframes gem-shimmer {
-  0% {
-    transform: translateX(-140%) rotate(8deg);
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  30% {
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(140%) rotate(8deg);
-    opacity: 0;
-  }
-}
-
-@layer utilities {
-  .animate-gem-shimmer {
-    animation: gem-shimmer 5s var(--ease-brand) infinite;
-  }
-}
-
-/* Soft glow pulse for the CTA gem bookend */
-@keyframes glow-pulse {
+@keyframes plate-drift {
   0%,
   100% {
-    opacity: 0.45;
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes foil-breathe {
+  0%,
+  100% {
+    opacity: 0.4;
     transform: scale(1);
   }
   50% {
-    opacity: 0.75;
-    transform: scale(1.06);
+    opacity: 0.72;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes engrave-orbit {
+  to {
+    transform: rotate(360deg);
   }
 }
 
 @layer utilities {
-  .animate-glow-pulse {
-    animation: glow-pulse 6s ease-in-out infinite;
+  .animate-plate-drift {
+    animation: plate-drift var(--drift-duration, 9s) ease-in-out infinite;
+    animation-delay: var(--drift-delay, 0s);
+  }
+
+  .animate-foil-breathe {
+    animation: foil-breathe 7s ease-in-out infinite;
+  }
+
+  .animate-engrave-orbit {
+    animation: engrave-orbit var(--orbit-duration, 48s) linear infinite;
+    transform-origin: center;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-gem-shimmer,
-  .animate-glow-pulse {
+  .animate-plate-drift,
+  .animate-foil-breathe,
+  .animate-engrave-orbit,
+  .animate-marquee,
+  .animate-marquee-reverse {
     animation: none;
+  }
+}
+
+/* ===========================================================================
+   10. LINKS & CONTROLS
+   The house link: a foil rule that wipes in from the left under the words.
+   =========================================================================== */
+@layer utilities {
+  .link-rule {
+    position: relative;
+    display: inline-block;
+  }
+
+  .link-rule::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.14em;
+    height: 1px;
+    width: 100%;
+    background: var(--foil);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.5s var(--ease-premium);
+  }
+
+  .link-rule:hover::after,
+  .link-rule:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  /* Underline already present, wipes away and back on hover. */
+  .link-rule-on::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  /* Grows a link's hit area to the 44px touch minimum without growing the link.
+     Small lettering is central to how this site looks, so the fix cannot be
+     "make everything bigger" — instead an invisible pseudo-element centres a
+     full-height target over the text. Layout is untouched; the thumb is not.
+     Uses ::before so it never collides with `.link-rule`'s ::after underline. */
+  .tap {
+    position: relative;
+  }
+
+  .tap::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 100%;
+    min-height: 44px;
+    transform: translateY(-50%);
+  }
+
+  /* Field inputs: ruled lines, not boxes.
+     `font-size: 16px` is a hard floor, not a style choice: iOS Safari zooms the
+     viewport on focus for anything smaller, which throws the visitor into a
+     pinched, horizontally-scrolled page mid-form. Callers may set a larger
+     size, never a smaller one. Min-height keeps the tap target honest. */
+  .field-rule {
+    width: 100%;
+    min-height: 2.75rem;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--rule);
+    padding: 0.65rem 0.15rem;
+    font-size: max(1rem, 1em);
+    color: var(--ink);
+    outline: none;
+    transition:
+      border-color 0.4s var(--ease-premium),
+      background-color 0.4s var(--ease-premium);
+  }
+
+  .field-rule::placeholder {
+    color: color-mix(in srgb, var(--ink-mute) 80%, transparent);
+  }
+
+  /* `background-color`, not the `background` shorthand — the shorthand would
+     wipe the chevron that `.field-select` paints as a background image. */
+  .field-rule:focus {
+    border-color: var(--foil);
+    background-color: color-mix(in srgb, var(--foil) 5%, transparent);
+  }
+
+  /* The border alone is a 1px cue. Pair it with the ring so keyboard focus is
+     visible against both editions. */
+  .field-rule:focus-visible {
+    outline: 1.5px solid var(--foil);
+    outline-offset: 2px;
+  }
+
+  /* Native select needs an affordance — without one it is indistinguishable
+     from the text inputs stacked above it. */
+  .field-select {
+    appearance: none;
+    padding-right: 2rem;
+    background-image: linear-gradient(
+        45deg,
+        transparent 50%,
+        var(--foil) 50%
+      ),
+      linear-gradient(135deg, var(--foil) 50%, transparent 50%);
+    background-position:
+      calc(100% - 12px) calc(50% - 1px),
+      calc(100% - 7px) calc(50% - 1px);
+    background-size:
+      5px 5px,
+      5px 5px;
+    background-repeat: no-repeat;
+  }
+}
+
+/* ===========================================================================
+   11. MASTHEAD
+   =========================================================================== */
+@layer utilities {
+  /* Frosted sheet behind the masthead once it docks. */
+  .masthead-sheet {
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+  }
+
+  /* The foil marker that slides between navigation entries. */
+  .nav-marker {
+    background: var(--foil);
+    box-shadow: 0 0 10px -2px color-mix(in srgb, var(--foil) 70%, transparent);
   }
 }

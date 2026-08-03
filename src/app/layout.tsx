@@ -4,22 +4,39 @@ import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { ScrollProgress } from "@/components/motion/scroll-progress";
+import { Masthead } from "@/components/layout/masthead";
+import { Colophon } from "@/components/layout/colophon";
+import { RevealObserver } from "@/components/motion/reveal-observer";
+import { ReadingProgress } from "@/components/motion/reading-progress";
+import {
+  JsonLd,
+  buildLocalBusinessSchema,
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+} from "@/components/seo/json-ld";
 
-// Single refined sans for the whole system — headlines and body (sans-only,
-// Linear/Stripe-style). Italic is loaded for the gold accent words.
+/**
+ * The house typography.
+ *
+ * Inter — everything. Display and text from one grotesk, separated by weight
+ * and tracking rather than by family. Fraunces (the previous editorial serif)
+ * was removed with the print direction: it carried a magazine voice this studio
+ * does not want, and it was the single heaviest asset on the page — a variable
+ * serif with three axes plus a full italic, for headings only.
+ *
+ * Geist Mono — apparatus. Labels, figures, and captions. The one face that
+ * still signals software.
+ */
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
-  style: ["normal", "italic"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -38,12 +55,12 @@ export const metadata: Metadata = {
   },
 };
 
-// `themeColor` lives in the viewport export (Next 15+). Match each theme's bg.
+// Browser chrome matches the page. A single value, not a prefers-color-scheme
+// pair: the theme is chosen by stored preference and defaults to light, so
+// keying the chrome off the OS setting produced the mismatch where a
+// system-dark visitor got a light page inside dark chrome.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f1ea" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1013" },
-  ],
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -51,22 +68,36 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Site-wide entities. LocalBusiness is omitted until there is a real phone
+  // number in config — see buildLocalBusinessSchema for why a placeholder is
+  // worse than nothing.
+  const graph = [
+    buildOrganizationSchema(),
+    buildWebSiteSchema(),
+    buildLocalBusinessSchema(),
+  ].filter((node) => node !== null);
+
   return (
     <html
       lang="en"
-      // Default to the brand's primary (dark); ThemeScript refines pre-paint.
-      className={`dark ${inter.variable} ${geistMono.variable} h-full`}
+      // Light is the default and the designed state; ThemeScript applies any
+      // stored preference pre-paint.
+      className={`${inter.variable} ${geistMono.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
         <ThemeScript />
+        <JsonLd data={graph} />
       </head>
       <body className="flex min-h-full flex-col antialiased">
         <ThemeProvider>
-          <ScrollProgress />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <RevealObserver />
+          <ReadingProgress />
+          <Masthead />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Colophon />
         </ThemeProvider>
       </body>
     </html>
