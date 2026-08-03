@@ -29,10 +29,11 @@ import { cn } from "@/lib/utils";
  *     glass capsule — smaller, self-contained, and clearly a layer above the
  *     page rather than part of it.
  *
- *  2. A highlight follows the pointer. A rounded field is measured from the
- *     live DOM and sprung between entries, so the nav has a sense of momentum
- *     and always shows where you are. It returns to the current page when the
- *     pointer leaves.
+ *  2. A rule follows the pointer. A short line is measured from the live DOM
+ *     and sprung beneath the entries, so the nav has momentum and always shows
+ *     where you are. It was a filled chip; at rest that read as a selected
+ *     filter tag and became the second-loudest object in the bar, competing
+ *     with the call to action it sits beside.
  *
  *  3. The call to action is magnetic. It leans very slightly toward the cursor
  *     as you approach, which makes it feel like the one object on the bar that
@@ -181,18 +182,23 @@ export function Masthead() {
                 : "0 0 0 0 rgb(0 0 0 / 0)",
             }}
             transition={{ duration: 0.4, ease: EASE }}
+            // Three zones at rest — logo left, index centred, actions right —
+            // so the bar reads as one composed object. Right-aligning
+            // everything left the logo stranded beside ~650px of dead space at
+            // desktop widths. Condensed it collapses to a flex row, because a
+            // capsule should hug its contents rather than hold a grid open.
             className={cn(
-              "pointer-events-auto mx-auto flex items-center border transition-[backdrop-filter,max-width] duration-500",
+              "pointer-events-auto mx-auto items-center border transition-[backdrop-filter,max-width] duration-500",
               condensed
-                ? "max-w-fit gap-2 backdrop-blur-xl backdrop-saturate-150"
-                : "max-w-full gap-6",
+                ? "flex max-w-fit gap-2 backdrop-blur-xl backdrop-saturate-150"
+                : "grid w-full max-w-full grid-cols-[1fr_auto_1fr] gap-6",
             )}
           >
             {/* the mark */}
             <Link
               href="/"
               aria-label="Aurel — home"
-              className="group/mark flex h-full shrink-0 items-center gap-2.5"
+              className="group/mark flex h-full shrink-0 items-center gap-2.5 justify-self-start"
             >
               {/* The mark does not rotate on scroll. It is a letterform, and
                   turning an "A" on its side makes it read as an arrow or a
@@ -202,7 +208,7 @@ export function Masthead() {
               <GemMark
                 compact
                 strokeWidth={1.75}
-                className="h-[1.05rem] w-[1.05rem] shrink-0 text-foil transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
+                className="h-[1.05rem] w-[1.05rem] shrink-0 text-ink transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
               />
               <motion.span
                 initial={false}
@@ -221,7 +227,7 @@ export function Masthead() {
             {/* the index */}
             <nav
               aria-label="Main"
-              className={cn("hidden lg:block", !condensed && "ml-auto")}
+              className={cn("hidden lg:block", !condensed && "justify-self-center")}
               onMouseLeave={() => setHovered(null)}
             >
               <div ref={navRef} className="relative flex items-center">
@@ -231,7 +237,7 @@ export function Masthead() {
                   style={{ x, width }}
                   animate={{ opacity: visible ? 1 : 0 }}
                   transition={{ duration: 0.25, ease: EASE }}
-                  className="absolute left-0 top-1/2 -z-10 h-9 -translate-y-1/2 rounded-full bg-field"
+                  className="absolute bottom-1 left-0 h-px bg-ink"
                 />
 
                 {mainNav.map((item) => {
@@ -248,9 +254,11 @@ export function Masthead() {
                       onBlur={() => setHovered(null)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "relative flex h-11 items-center px-4 text-[0.9375rem] font-medium",
-                        "transition-opacity duration-200",
-                        active ? "opacity-100" : "opacity-60 hover:opacity-100",
+                        "relative flex h-11 items-center px-3.5 text-[0.9375rem]",
+                        "transition-colors duration-200",
+                        active
+                          ? "font-medium text-ink"
+                          : "text-ink-mute hover:text-ink",
                       )}
                     >
                       {item.label}
@@ -261,9 +269,13 @@ export function Masthead() {
             </nav>
 
             <div
+              // Explicitly column 3. Below `lg` the index is `display: none`,
+              // which removes it from grid flow entirely — without this the
+              // actions slide into the empty middle column and sit stranded in
+              // the centre of the bar on every phone.
               className={cn(
                 "flex shrink-0 items-center gap-1.5",
-                !condensed && "ml-auto lg:ml-0",
+                !condensed && "col-start-3 justify-self-end",
               )}
             >
               <ThemeToggle />
