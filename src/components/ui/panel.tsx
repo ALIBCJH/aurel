@@ -18,25 +18,26 @@ import { cn } from "@/lib/utils";
  */
 export type PanelTone = "loud" | "quiet" | "outline";
 
-// Uses the `--color-invert*` utilities declared in globals.css `@theme inline`
-// rather than arbitrary `bg-[color:var(--invert-bg)]` values. Arbitrary values
-// referencing a custom property that is itself redefined per theme did not
-// resolve reliably here, and the failure mode is silent and total: the card
-// rendered fully transparent, taking its white text with it.
+// All three tones stay inside the active theme. An earlier version inverted
+// `loud` to a black card on a white page, which gave strong rhythm but meant a
+// stack of cards read as two different palettes fighting each other — and in
+// dark mode it flipped to glaring white slabs. Rhythm now comes from alternating
+// a filled surface against an outlined one, which is quieter and holds together
+// in both themes.
 const tones: Record<PanelTone, string> = {
-  loud: "bg-contrast text-contrast-ink",
-  quiet: "bg-paper-deep text-ink",
+  loud: "bg-paper-deep text-ink",
+  quiet: "border border-rule bg-paper text-ink",
   outline: "border border-rule bg-transparent text-ink",
 };
 
 const bodyTones: Record<PanelTone, string> = {
-  loud: "text-contrast-mute",
+  loud: "text-ink-soft",
   quiet: "text-ink-soft",
   outline: "text-ink-soft",
 };
 
 const indexTones: Record<PanelTone, string> = {
-  loud: "text-contrast-mute",
+  loud: "text-ink-mute",
   quiet: "text-ink-mute",
   outline: "text-ink-mute",
 };

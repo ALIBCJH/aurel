@@ -108,7 +108,7 @@ export default function ServicesPage() {
             id={service.slug}
             className={cn(
               "mt-16 scroll-mt-24 py-16 sm:mt-20 sm:py-20 lg:py-28",
-              loud && "bg-contrast text-contrast-ink",
+              loud && "bg-paper-deep",
             )}
           >
             <Container size="wide">
@@ -117,8 +117,7 @@ export default function ServicesPage() {
                 <div className={cn("lg:col-span-6", flip && "lg:order-2 lg:col-start-7")}>
                   <span
                     className={cn(
-                      "text-sm tabular-nums",
-                      loud ? "text-contrast-mute" : "text-ink-mute",
+                      "text-sm tabular-nums text-ink-mute",
                     )}
                   >
                     {service.index}
@@ -135,8 +134,7 @@ export default function ServicesPage() {
                     data-reveal="fade"
                     style={{ ["--reveal-delay" as string]: "0.06s" }}
                     className={cn(
-                      "mt-6 max-w-xl text-[1.0625rem] leading-[1.7]",
-                      loud ? "text-contrast-mute" : "text-ink-soft",
+                      "mt-6 max-w-xl text-[1.0625rem] leading-[1.7] text-ink-soft",
                     )}
                   >
                     {service.description}
@@ -152,10 +150,7 @@ export default function ServicesPage() {
                       <li
                         key={item}
                         className={cn(
-                          "rounded-full border px-3.5 py-2 text-sm",
-                          loud
-                            ? "border-white/20 text-contrast-mute"
-                            : "border-rule text-ink-soft",
+                          "rounded-full border border-rule px-3.5 py-2 text-sm text-ink-soft",
                         )}
                       >
                         {item}
@@ -171,17 +166,12 @@ export default function ServicesPage() {
                     <Button
                       href={`/services/${service.slug}`}
                       size="md"
-                      className={cn(
-                        loud && "bg-paper text-ink hover:opacity-90",
-                      )}
                     >
                       Explore {service.name.toLowerCase()}
                       <ArrowUpRightIcon width={14} height={14} />
                     </Button>
                     <p className="text-sm">
-                      <span className={loud ? "text-contrast-mute" : "text-ink-mute"}>
-                        From{" "}
-                      </span>
+                      <span className="text-ink-mute">From </span>
                       <span className="font-medium">{service.pricing.from}</span>
                     </p>
                   </div>
@@ -194,7 +184,7 @@ export default function ServicesPage() {
                     data-reveal="plate"
                     className={cn(
                       "group/shot block overflow-hidden rounded-[var(--radius-card)]",
-                      loud ? "bg-white/5" : "bg-paper-deep",
+                      loud ? "bg-paper" : "bg-paper-deep",
                     )}
                   >
                     <Image
@@ -213,24 +203,17 @@ export default function ServicesPage() {
               <div
                 data-reveal="fade"
                 className={cn(
-                  "mt-12 border-t pt-8 sm:mt-16",
-                  loud ? "border-white/15" : "border-rule",
+                  "mt-12 border-t border-rule pt-8 sm:mt-16",
                 )}
               >
                 <div className="grid gap-4 lg:grid-cols-12 lg:gap-16">
                   <h3
-                    className={cn(
-                      "text-base font-medium lg:col-span-4",
-                      loud ? "text-contrast-ink" : "text-ink",
-                    )}
+                    className="text-base font-medium text-ink lg:col-span-4"
                   >
                     {service.localAngle.title}
                   </h3>
                   <p
-                    className={cn(
-                      "max-w-3xl text-[0.9375rem] leading-[1.75] lg:col-span-8",
-                      loud ? "text-contrast-mute" : "text-ink-soft",
-                    )}
+                    className="max-w-3xl text-[0.9375rem] leading-[1.75] text-ink-soft lg:col-span-8"
                   >
                     {service.localAngle.body}
                   </p>
@@ -310,7 +293,7 @@ export default function ServicesPage() {
       {/* ── The invitation ───────────────────────────────────────────────── */}
       <section className="pb-20 sm:pb-24 lg:pb-32">
         <Container size="wide">
-          <div className="rounded-[var(--radius-card)] bg-contrast px-7 py-16 text-center text-contrast-ink sm:px-10 sm:py-20 lg:py-28">
+          <div className="rounded-[var(--radius-card)] border border-rule bg-paper-deep px-7 py-16 text-center sm:px-10 sm:py-20 lg:py-28">
             <h2
               data-reveal="fade"
               className="mx-auto max-w-[18ch] text-[clamp(2rem,5vw,4rem)] font-semibold leading-[1.03] tracking-[-0.04em]"
@@ -320,7 +303,7 @@ export default function ServicesPage() {
             <p
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.08s" }}
-              className="mx-auto mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-contrast-mute"
+              className="mx-auto mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-ink-soft"
             >
               Tell us the problem rather than the solution. Half the time the
               answer is smaller and cheaper than people expect — and we will say
@@ -332,10 +315,7 @@ export default function ServicesPage() {
               className="mt-10 flex justify-center"
             >
               <Button
-                href={primaryCta.href}
-                size="lg"
-                className="bg-paper text-ink hover:opacity-90"
-              >
+                href={primaryCta.href} size="lg">
                 {primaryCta.label}
                 <ArrowUpRightIcon width={15} height={15} />
               </Button>

@@ -119,7 +119,7 @@ export default function AboutPage() {
                 <div className="lg:col-span-4">
                   <div
                     data-reveal="plate"
-                    className="overflow-hidden rounded-[var(--radius-card)] bg-contrast"
+                    className="overflow-hidden rounded-[var(--radius-card)] border border-rule bg-paper-deep"
                   >
                     {person.photo ? (
                       <Image
@@ -134,7 +134,7 @@ export default function AboutPage() {
                       <div className="flex aspect-[4/5] items-center justify-center">
                         <span
                           aria-hidden
-                          className="text-[clamp(4rem,9vw,7rem)] font-semibold tracking-[-0.05em] text-contrast-ink"
+                          className="text-[clamp(4rem,9vw,7rem)] font-semibold tracking-[-0.05em] text-ink"
                         >
                           {initials(person.name)}
                         </span>
@@ -227,7 +227,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── How we work ──────────────────────────────────────────────────── */}
-      <section className="bg-contrast py-20 text-contrast-ink sm:py-24 lg:py-32">
+      <section className="bg-paper-deep py-20 sm:py-24 lg:py-32">
         <Container size="wide">
           <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
             What you can hold us to
@@ -239,15 +239,15 @@ export default function AboutPage() {
                 key={principle.title}
                 data-reveal="fade"
                 style={{ ["--reveal-delay" as string]: `${index * 0.07}s` }}
-                className="rounded-[var(--radius-xl)] border border-white/15 p-7 sm:p-9"
+                className="rounded-[var(--radius-xl)] border border-rule bg-paper p-7 sm:p-9"
               >
-                <span className="text-sm tabular-nums text-contrast-mute">
+                <span className="text-sm tabular-nums text-ink-mute">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <h3 className="mt-5 text-xl font-semibold tracking-[-0.025em] sm:text-[1.375rem]">
                   {principle.title}
                 </h3>
-                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-contrast-mute">
+                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink-soft">
                   {principle.body}
                 </p>
               </div>
