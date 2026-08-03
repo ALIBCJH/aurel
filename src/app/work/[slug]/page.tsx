@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/layout/page-header";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
-import { Rule } from "@/components/editorial/rule";
-import { Label, Marginalia } from "@/components/editorial/typography";
-import { ArrowUpRightIcon, ArrowRightIcon } from "@/components/icons";
+import { ArrowUpRightIcon } from "@/components/icons";
 import { cases, getCase } from "@/config/cases";
 import { getService } from "@/config/services";
 import { primaryCta, siteConfig } from "@/config/site";
@@ -63,94 +60,129 @@ export default async function CaseNotePage({ params }: Params) {
         ])}
       />
 
-      <PageHeader
-        eyebrow={entry.client}
-        aside={`${entry.sector} — ${entry.year}`}
-        title={[entry.headline]}
-        description={entry.summary}
-      />
-
-      {/* ── The plate ────────────────────────────────────────────────────── */}
-      <section className="pt-10 sm:pt-12">
+      {/* ── The claim ────────────────────────────────────────────────────── */}
+      <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
-          <figure data-reveal="plate" className="border border-rule">
-            <Image
-              src={entry.image.src}
-              alt={entry.image.alt}
-              width={1440}
-              height={900}
-              sizes="(min-width: 1024px) 90vw, 100vw"
-              className="h-auto w-full"
-              priority
-            />
-          </figure>
-          <figcaption className="text-label-sm mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-ink-mute">
-            <span className="text-foil">Fig. {String(index + 1).padStart(2, "0")}</span>
-            <span className="normal-case tracking-[0.1em]">
-              {entry.client} · {entry.location}
-            </span>
-            {entry.url && (
-              <a
-                href={entry.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link-rule tap inline-flex items-center gap-1.5 whitespace-nowrap py-2 text-foil"
-              >
-                Visit the live site
-                <ArrowUpRightIcon width={11} height={11} />
-              </a>
-            )}
-          </figcaption>
+          <Link
+            href="/work"
+            className="tap inline-flex items-center gap-1.5 text-sm text-ink-mute underline-offset-4 hover:text-ink hover:underline"
+          >
+            ← All work
+          </Link>
+
+          <div className="mt-6 max-w-4xl">
+            <p data-reveal="fade" className="text-sm font-medium text-ink-mute">
+              {entry.client} · {entry.sector} · {entry.year}
+            </p>
+            <h1
+              data-reveal="fade"
+              style={{ ["--reveal-delay" as string]: "0.05s" }}
+              className="mt-5 text-[clamp(2.25rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.04em]"
+            >
+              {entry.headline}
+            </h1>
+            <p
+              data-reveal="fade"
+              style={{ ["--reveal-delay" as string]: "0.1s" }}
+              className="mt-7 max-w-2xl text-[1.0625rem] leading-[1.6] text-ink-soft sm:text-xl"
+            >
+              {entry.summary}
+            </p>
+          </div>
         </Container>
       </section>
 
-      {/* ── Our involvement — stated before anything else ────────────────── */}
-      <section className="py-14 sm:py-16 lg:py-20">
+      {/* ── The plate ────────────────────────────────────────────────────── */}
+      <section className="pt-12 sm:pt-14">
+        <Container size="wide">
+          <figure data-reveal="plate">
+            <div className="overflow-hidden rounded-[var(--radius-card)] bg-paper-deep">
+              <Image
+                src={entry.image.src}
+                alt={entry.image.alt}
+                width={1440}
+                height={900}
+                sizes="(min-width: 1536px) 88rem, 100vw"
+                priority
+                className="h-auto w-full"
+              />
+            </div>
+            {entry.url && (
+              <figcaption className="mt-5">
+                <a
+                  href={entry.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap inline-flex items-center gap-1.5 text-[0.9375rem] font-medium underline-offset-4 hover:underline"
+                >
+                  Visit the live site
+                  <ArrowUpRightIcon width={13} height={13} />
+                </a>
+              </figcaption>
+            )}
+          </figure>
+        </Container>
+      </section>
+
+      {/* ── Involvement + details ────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 lg:py-24">
         <Container size="wide">
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
-            <div className="lg:col-span-4">
-              <Label foil marker>
+            <div className="lg:col-span-7">
+              <h2 className="text-sm font-medium text-ink-mute">
                 Our involvement
-              </Label>
-              <Rule className="mt-4" />
-            </div>
-            <div className="lg:col-span-7 lg:col-start-6">
+              </h2>
               <p
-                data-reveal="ink"
-                className="text-[1.0625rem] leading-[1.8] text-ink-soft"
+                data-reveal="fade"
+                className="mt-4 max-w-2xl text-[1.0625rem] leading-[1.7] text-ink-soft"
               >
                 {entry.relationship}
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
+
+              <ul className="mt-7 flex flex-wrap gap-2">
                 {disciplines.map((service) => (
-                  <Link
-                    key={service.slug}
-                    href={`/services/${service.slug}`}
-                    className="text-label-sm inline-flex min-h-11 items-center border border-rule px-4 text-ink-soft transition-colors duration-300 hover:border-foil hover:text-foil"
-                  >
-                    {service.name}
-                  </Link>
+                  <li key={service.slug}>
+                    <Link
+                      href={`/services/${service.slug}`}
+                      className="inline-flex min-h-11 items-center rounded-full border border-rule px-4 text-sm transition-colors hover:bg-field"
+                    >
+                      {service.name}
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
+            </div>
+
+            <div className="lg:col-span-4 lg:col-start-9">
+              <dl className="rounded-[var(--radius-xl)] bg-paper-deep p-6 sm:p-7">
+                {entry.facts.map((fact, factIndex) => (
+                  <div
+                    key={fact.label}
+                    className={factIndex > 0 ? "mt-5" : undefined}
+                  >
+                    <dt className="text-sm text-ink-mute">{fact.label}</dt>
+                    <dd className="mt-1 text-base font-medium">{fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </div>
         </Container>
       </section>
 
       {/* ── The challenge ────────────────────────────────────────────────── */}
-      <section className="border-t border-rule bg-paper-deep py-14 sm:py-16 lg:py-20">
+      <section className="bg-contrast py-16 text-contrast-ink sm:py-20 lg:py-28">
         <Container size="wide">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <div className="grid gap-8 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-4">
-              <Label foil marker>
+              <h2 className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
                 The challenge
-              </Label>
-              <Rule className="mt-4" />
+              </h2>
             </div>
             <div className="lg:col-span-7 lg:col-start-6">
               <p
-                data-reveal="ink"
-                className="text-[1.0625rem] leading-[1.8] text-ink-soft sm:text-lg"
+                data-reveal="fade"
+                className="text-[1.0625rem] leading-[1.75] text-contrast-mute sm:text-lg"
               >
                 {entry.challenge}
               </p>
@@ -160,28 +192,27 @@ export default async function CaseNotePage({ params }: Params) {
       </section>
 
       {/* ── The approach ─────────────────────────────────────────────────── */}
-      <section className="py-14 sm:py-16 lg:py-20">
+      <section className="py-16 sm:py-20 lg:py-28">
         <Container size="wide">
-          <Label foil marker>
+          <h2 className="text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]">
             Our approach
-          </Label>
-          <Rule className="mt-4" />
+          </h2>
 
-          <ol className="mt-10 lg:mt-12">
+          <ol className="mt-12 sm:mt-16">
             {entry.approach.map((step, stepIndex) => (
               <li
                 key={step.title}
                 data-reveal="fade"
-                style={{ ["--reveal-delay" as string]: `${stepIndex * 0.07}s` }}
-                className="grid gap-3 border-t border-rule py-7 first:border-t-0 first:pt-0 sm:py-9 lg:grid-cols-12 lg:gap-8"
+                style={{ ["--reveal-delay" as string]: `${stepIndex * 0.06}s` }}
+                className="grid gap-3 border-t border-rule py-8 lg:grid-cols-12 lg:gap-12 lg:py-10"
               >
-                <span className="text-label-sm text-foil/70 lg:col-span-1">
+                <span className="text-sm tabular-nums text-ink-mute lg:col-span-1">
                   {String(stepIndex + 1).padStart(2, "0")}
                 </span>
-                <h2 className="font-display text-[1.6rem] font-light leading-tight tracking-[-0.02em] sm:text-[1.85rem] lg:col-span-5">
+                <h3 className="text-[1.375rem] font-semibold leading-snug tracking-[-0.025em] sm:text-2xl lg:col-span-4">
                   {step.title}
-                </h2>
-                <p className="max-w-2xl text-[0.9375rem] leading-[1.75] text-ink-soft lg:col-span-6">
+                </h3>
+                <p className="max-w-2xl text-[0.9375rem] leading-[1.75] text-ink-soft lg:col-span-7">
                   {step.body}
                 </p>
               </li>
@@ -190,19 +221,16 @@ export default async function CaseNotePage({ params }: Params) {
         </Container>
       </section>
 
-      {/* ── More of the product ──────────────────────────────────────────── */}
+      {/* ── Screens ──────────────────────────────────────────────────────── */}
       {(entry.gallery.length > 0 || entry.mobileImage) && (
-        <section className="border-t border-rule py-14 sm:py-16 lg:py-20">
+        <section className="pb-16 sm:pb-20 lg:pb-28">
           <Container size="wide">
-            <Label foil marker>
-              Screens
-            </Label>
-            <Rule className="mt-4" />
+            <h2 className="text-sm font-medium text-ink-mute">Screens</h2>
 
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:mt-12 lg:gap-10">
+            <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:gap-10">
               {entry.gallery.map((shot) => (
                 <figure key={shot.src} data-reveal="plate">
-                  <div className="overflow-hidden rounded-lg border border-rule bg-paper-raised">
+                  <div className="overflow-hidden rounded-[var(--radius-xl)] bg-paper-deep">
                     <Image
                       src={shot.src}
                       alt={shot.alt}
@@ -219,14 +247,14 @@ export default async function CaseNotePage({ params }: Params) {
               ))}
 
               {entry.mobileImage && (
-                <figure data-reveal="plate" className="flex flex-col">
-                  <div className="mx-auto w-full max-w-[15rem] overflow-hidden rounded-[1.5rem] border-[5px] border-paper-raised bg-paper-raised shadow-[0_24px_60px_-30px_rgb(0_0_0/0.7)]">
+                <figure data-reveal="plate">
+                  <div className="mx-auto w-full max-w-[16rem] overflow-hidden rounded-[1.5rem] border-[6px] border-paper-deep bg-paper-deep shadow-[0_20px_50px_-30px_rgb(0_0_0/0.5)]">
                     <Image
                       src={entry.mobileImage.src}
                       alt={entry.mobileImage.alt}
                       width={390}
                       height={844}
-                      sizes="240px"
+                      sizes="256px"
                       className="h-auto w-full"
                     />
                   </div>
@@ -241,125 +269,99 @@ export default async function CaseNotePage({ params }: Params) {
         </section>
       )}
 
-      {/* ── The outcome, the facts, and the stack ────────────────────────── */}
-      <section className="border-t border-rule bg-paper-deep py-14 sm:py-16 lg:py-20">
+      {/* ── Where it stands ──────────────────────────────────────────────── */}
+      <section className="pb-16 sm:pb-20 lg:pb-28">
         <Container size="wide">
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-            <div className="lg:col-span-7">
-              <Label foil marker>
-                Where it stands
-              </Label>
-              <Rule className="mt-4" />
-              <p
-                data-reveal="ink"
-                className="mt-8 text-[1.0625rem] leading-[1.8] text-ink-soft sm:text-lg"
-              >
-                {entry.outcome}
-              </p>
-
-              {/* Measured results only. See the note in config/cases.ts. */}
-              {entry.metrics.length > 0 && (
-                <dl className="mt-10 grid gap-6 sm:grid-cols-3">
-                  {entry.metrics.map((metric) => (
-                    <div key={metric.label} data-reveal="fade">
-                      <div aria-hidden className="rule-foil-h mb-4" />
-                      <dt className="text-label-sm text-ink-mute">{metric.label}</dt>
-                      <dd className="font-display mt-2 text-[clamp(2rem,4vw,2.75rem)] font-light leading-none tracking-[-0.03em] text-foil">
-                        {metric.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-
-              {entry.quote && (
-                <blockquote
+          <div className="rounded-[var(--radius-card)] bg-paper-deep p-7 sm:p-10 lg:p-14">
+            <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+              <div className="lg:col-span-7">
+                <h2 className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
+                  Where it stands
+                </h2>
+                <p
                   data-reveal="fade"
-                  className="mt-12 border-l border-rule-foil pl-6"
+                  className="mt-6 text-[1.0625rem] leading-[1.75] text-ink-soft"
                 >
-                  <p className="font-display text-[clamp(1.25rem,2.4vw,1.75rem)] font-light leading-[1.3] tracking-[-0.01em]">
-                    {entry.quote.text}
+                  {entry.outcome}
+                </p>
+
+                {/* Measured results only — see the note in config/cases.ts. */}
+                {entry.metrics.length > 0 && (
+                  <dl className="mt-10 grid gap-8 sm:grid-cols-3">
+                    {entry.metrics.map((metric) => (
+                      <div key={metric.label}>
+                        <dt className="text-sm text-ink-mute">{metric.label}</dt>
+                        <dd className="mt-2 text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold tracking-[-0.035em]">
+                          {metric.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+
+                {entry.quote && (
+                  <blockquote className="mt-10 border-l-2 border-ink pl-6">
+                    <p className="text-[clamp(1.125rem,2.2vw,1.5rem)] font-medium leading-[1.4] tracking-[-0.02em]">
+                      {entry.quote.text}
+                    </p>
+                    <footer className="mt-4 text-sm text-ink-mute">
+                      <span className="font-medium text-ink">
+                        {entry.quote.author}
+                      </span>
+                      {" · "}
+                      {entry.quote.role}
+                    </footer>
+                  </blockquote>
+                )}
+              </div>
+
+              <div className="lg:col-span-4 lg:col-start-9">
+                <h3 className="text-sm text-ink-mute">Built with</h3>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {entry.stack.map((item) => (
+                    <li
+                      key={item}
+                      className="rounded-full border border-rule px-3 py-1.5 text-sm text-ink-soft"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                {entry.metrics.length === 0 && (
+                  <p className="mt-8 border-t border-rule pt-6 text-sm leading-relaxed text-ink-mute">
+                    No outcome figures are published for this project, because no
+                    baseline was measured before it began. We would rather leave
+                    this empty than fill it with an estimate.
                   </p>
-                  <footer className="text-label-sm mt-5 text-ink-mute">
-                    <span className="text-foil">{entry.quote.author}</span>
-                    <span className="normal-case tracking-[0.1em]">
-                      {" "}
-                      · {entry.quote.role}
-                    </span>
-                  </footer>
-                </blockquote>
-              )}
-            </div>
-
-            <div className="lg:col-span-4 lg:col-start-9">
-              <Label>Details</Label>
-              <ul className="mt-5">
-                {entry.facts.map((fact) => (
-                  <li
-                    key={fact.label}
-                    data-reveal="fade"
-                    className="flex items-baseline justify-between gap-4 border-b border-rule py-3.5"
-                  >
-                    <span className="text-label-sm text-ink-mute">{fact.label}</span>
-                    <span className="text-right text-sm text-ink-soft">
-                      {fact.value}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Label className="mt-10 block">Built with</Label>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {entry.stack.map((item) => (
-                  <li
-                    key={item}
-                    className="text-label-sm border border-rule px-3 py-2 text-ink-mute"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
-              {entry.metrics.length === 0 && (
-                <Marginalia figure="On numbers" className="mt-10">
-                  No outcome figures are published for this project because no
-                  baseline was measured before it began. We would rather leave
-                  this empty than fill it with an estimate.
-                </Marginalia>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </Container>
       </section>
 
       {/* ── Turn the page ────────────────────────────────────────────────── */}
-      <section className="border-t border-rule-foil py-14 sm:py-16">
+      <section className="pb-20 sm:pb-24 lg:pb-32">
         <Container size="wide">
-          <div className="flex flex-wrap items-end justify-between gap-8">
+          <div className="flex flex-wrap items-end justify-between gap-10 border-t border-rule pt-12">
             <div>
-              <Label foil marker>
-                Start a project
-              </Label>
-              <p className="font-display mt-5 max-w-md text-[clamp(1.5rem,3vw,2.25rem)] font-light leading-[1.1] tracking-[-0.02em]">
-                Tell us what you are trying to build.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-6">
+              <h2 className="max-w-md text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
+                Tell us what you are trying to build
+              </h2>
+              <div className="mt-8">
                 <Button href={primaryCta.href} size="lg">
                   {primaryCta.label}
-                  <ArrowUpRightIcon width={14} height={14} />
-                </Button>
-                <Button href="/work" variant="ghost" size="md">
-                  All work
-                  <ArrowRightIcon width={13} height={13} />
+                  <ArrowUpRightIcon width={15} height={15} />
                 </Button>
               </div>
             </div>
 
             {cases.length > 1 && (
               <Link href={`/work/${next.slug}`} className="group/turn max-w-xs">
-                <Label>Next →</Label>
-                <p className="font-display mt-3 text-2xl font-light tracking-[-0.02em] transition-colors duration-300 group-hover/turn:text-foil">
-                  {next.client}
+                <span className="text-sm text-ink-mute">Next project</span>
+                <p className="mt-2 text-2xl font-semibold tracking-[-0.03em] transition-opacity duration-200 group-hover/turn:opacity-70">
+                  {next.client} →
                 </p>
               </Link>
             )}

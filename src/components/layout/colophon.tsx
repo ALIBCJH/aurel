@@ -1,70 +1,68 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
-import { Wordmark } from "@/components/brand/wordmark";
-import { Rule } from "@/components/editorial/rule";
-import { Label } from "@/components/editorial/typography";
-import { Engraving } from "@/components/editorial/engraving";
+import { GemMark } from "@/components/brand/gem-mark";
+import { services } from "@/config/services";
 import { businessInfo, mainNav, siteConfig } from "@/config/site";
 
-/** "+254797942186" → "+254 797 942 186". Display only; links use the raw E.164. */
+/** "+254797942186" → "+254 797 942 186". Display only; links use raw E.164. */
 function formatPhone(e164: string): string {
   const match = e164.match(/^(\+\d{3})(\d{3})(\d{3})(\d{3})$/);
   return match ? `${match[1]} ${match[2]} ${match[3]} ${match[4]}` : e164;
 }
 
-/**
- * Colophon — the last page.
- *
- * Printed matter closes by telling you how it was made: the types used, where
- * it was set, who to write to. That is exactly what this footer does, with the
- * wordmark stamped across the full measure above it.
- */
 const legal = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ];
 
+/**
+ * The footer.
+ *
+ * Rebuilt off the print-editorial version, which stamped an outsized gold
+ * wordmark over an engraved plate watermark and set every label in
+ * mono uppercase. That belonged to a direction the rest of the site no longer
+ * uses — and being site-wide, it was quietly undoing the new system on every
+ * page.
+ *
+ * It now does the two things a footer is actually for: give someone who has
+ * scrolled to the bottom a way to contact you, and a way to keep looking.
+ */
 export function Colophon() {
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-rule-foil bg-paper-deep">
-      {/* a very large, very faint plate behind the whole colophon */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-24 -top-32 h-[32rem] w-[32rem] opacity-[0.07]"
-      >
-        <Engraving variant={1} drift />
-      </div>
-
-      <Container size="wide" className="relative">
-        {/* the stamp */}
-        <div className="pt-20 sm:pt-24">
-          <div data-reveal="fade" className="flex justify-center">
-            <Wordmark size="xl" foil className="opacity-90" />
-          </div>
-          <Rule foil className="mt-12" />
-        </div>
-
-        {/* three columns of apparatus */}
-        <div className="grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-          <div data-reveal="fade" className="lg:col-span-2 lg:max-w-xs">
-            <Label>Colophon</Label>
-            <p className="mt-5 text-sm leading-relaxed text-ink-mute">
-              Set in Inter, with Geist Mono for figures and labels. Designed
-              and engineered in Nyeri and Nairobi — working worldwide.
+    <footer className="mt-auto border-t border-rule">
+      <Container size="wide">
+        <div className="grid gap-12 py-16 sm:py-20 lg:grid-cols-12 lg:gap-8">
+          {/* the mark and the pitch */}
+          <div className="lg:col-span-4">
+            <Link
+              href="/"
+              aria-label="Aurel — home"
+              className="inline-flex items-center gap-3"
+            >
+              <GemMark
+                compact
+                strokeWidth={1.75}
+                className="h-5 w-5 shrink-0 text-ink"
+              />
+              <span className="text-lg font-semibold tracking-[-0.02em]">
+                Aurel
+              </span>
+            </Link>
+            <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed text-ink-soft">
+              A software studio in {siteConfig.location}. Websites, mobile apps,
+              AI automation and search — built end to end.
             </p>
           </div>
 
-          <nav data-reveal="fade" style={{ ["--reveal-delay" as string]: "0.08s" }} aria-label="Index">
-            <Label>Index</Label>
-            <ul className="mt-3 space-y-1">
-              {mainNav.map((item, index) => (
-                <li key={item.href} className="flex items-baseline gap-3">
-                  <span className="text-label-sm text-foil/70">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+          {/* pages */}
+          <nav aria-label="Footer" className="lg:col-span-2">
+            <h2 className="text-sm text-ink-mute">Pages</h2>
+            <ul className="mt-4 space-y-1">
+              {mainNav.map((item) => (
+                <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="link-rule tap inline-flex py-2.5 text-sm text-ink-soft transition-colors duration-300 hover:text-ink"
+                    className="tap inline-flex py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
                   >
                     {item.label}
                   </Link>
@@ -73,13 +71,31 @@ export function Colophon() {
             </ul>
           </nav>
 
-          <div data-reveal="fade" style={{ ["--reveal-delay" as string]: "0.16s" }}>
-            <Label>Enquiries</Label>
-            <ul className="mt-3 space-y-3 text-sm">
+          {/* services */}
+          <nav aria-label="Services" className="lg:col-span-3">
+            <h2 className="text-sm text-ink-mute">Services</h2>
+            <ul className="mt-4 space-y-1">
+              {services.map((service) => (
+                <li key={service.slug}>
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className="tap inline-flex py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
+                  >
+                    {service.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* contact */}
+          <div className="lg:col-span-3">
+            <h2 className="text-sm text-ink-mute">Contact</h2>
+            <ul className="mt-4 space-y-1">
               <li>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="link-rule tap inline-flex py-2.5 text-ink-soft transition-colors duration-300 hover:text-ink"
+                  className="tap inline-flex break-all py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
                 >
                   {siteConfig.email}
                 </a>
@@ -88,7 +104,7 @@ export function Colophon() {
                 <li>
                   <a
                     href={`tel:${businessInfo.telephone}`}
-                    className="link-rule tap inline-flex py-2.5 text-ink-soft transition-colors duration-300 hover:text-ink"
+                    className="tap inline-flex py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
                   >
                     {formatPhone(businessInfo.telephone)}
                   </a>
@@ -97,42 +113,37 @@ export function Colophon() {
               {businessInfo.whatsapp && (
                 <li>
                   {/* WhatsApp is the default business channel in this market —
-                      it belongs in the footer as a named route in, not as an
-                      icon nobody recognises. */}
+                      it belongs here as a named route in, not as an icon. */}
                   <a
                     href={`https://wa.me/${businessInfo.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="link-rule tap inline-flex py-2.5 text-ink-soft transition-colors duration-300 hover:text-ink"
+                    className="tap inline-flex py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
                   >
-                    WhatsApp us
+                    WhatsApp
                   </a>
                 </li>
               )}
-              <li className="text-ink-mute">{siteConfig.location}</li>
-              <li className="text-ink-mute">Replies within one business day.</li>
             </ul>
+            <p className="mt-4 text-sm text-ink-mute">
+              Replies within one business day.
+            </p>
           </div>
         </div>
 
-        <Rule />
-
         {/* the foot */}
-        <div className="text-label-sm flex flex-col gap-2 py-6 text-ink-mute sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <p className="py-2">{siteConfig.copyright}</p>
+        <div className="flex flex-col gap-3 border-t border-rule py-6 text-sm text-ink-mute sm:flex-row sm:items-center sm:justify-between">
+          <p>{siteConfig.copyright}</p>
           <div className="flex items-center gap-6">
             {legal.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="link-rule tap inline-flex py-3 transition-colors duration-300 hover:text-foil"
+                className="tap inline-flex py-2 transition-colors hover:text-ink"
               >
                 {item.label}
               </Link>
             ))}
-            <span aria-hidden className="hidden text-foil/60 sm:inline">
-              ◆
-            </span>
           </div>
         </div>
       </Container>
