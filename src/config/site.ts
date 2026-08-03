@@ -17,8 +17,8 @@ export const siteConfig = {
     "Aurel is a premium digital transformation studio helping ambitious businesses modernise, grow, and lead — custom software, AI, and design, crafted end to end.",
   url: "https://aurel.studio",
   email: "hello@aurel.studio",
-  location: "Kenya · Working worldwide",
-  copyright: "© 2026 Aurel — Kenya & worldwide",
+  location: "Nyeri & Nairobi, Kenya",
+  copyright: "© 2026 Aurel — Nyeri & Nairobi, Kenya",
 } as const;
 
 /**
