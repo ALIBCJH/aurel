@@ -46,6 +46,8 @@ export type ShowcaseSlide = {
   caption: string;
   client: string;
   href: string;
+  /** Live host, e.g. "datani.co.ke" — shown in the frame's address bar. */
+  host?: string;
 };
 
 /** Dwell per slide. Long enough to actually read the caption and look. */
@@ -105,12 +107,34 @@ export function WorkShowcase({ slides }: { slides: ShowcaseSlide[] }) {
       onMouseLeave={() => setHovered(false)}
     >
       {/* ---- the plate ---- */}
-      <div
-        // A fixed 16:10 box. Every capture is 1440×900, but the aspect is
-        // pinned here anyway so a future screenshot at another size crops
-        // rather than resizing the plate mid-cycle and shunting the page.
-        className="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-card)] bg-paper-deep shadow-[0_40px_80px_-40px_rgb(0_0_0/0.45)]"
-      >
+      {/* Browser chrome, and it is not decoration. These are captures of pages
+          that are live right now, and the argument of this whole section is
+          that you could go and open them. A frame with the real host in it says
+          that before the caption gets a chance to, and it turns a floating
+          rectangle into a window onto something. The address updates as the
+          screens cycle, so it is never showing the wrong site. */}
+      <div className="overflow-hidden rounded-[var(--radius-card)] border border-rule bg-paper shadow-[0_40px_80px_-40px_rgb(0_0_0/0.45)]">
+        <div className="flex items-center gap-3 border-b border-rule px-4 py-3 sm:px-5">
+          <span aria-hidden className="flex shrink-0 items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-rule-strong" />
+            <span className="h-2.5 w-2.5 rounded-full bg-rule-strong" />
+            <span className="h-2.5 w-2.5 rounded-full bg-rule-strong" />
+          </span>
+          {active.host && (
+            <span className="flex min-w-0 flex-1 justify-center">
+              <span className="truncate rounded-full bg-field px-3 py-1 font-mono text-[0.8125rem] text-ink-mute">
+                {active.host}
+              </span>
+            </span>
+          )}
+        </div>
+
+        <div
+          // A fixed 16:10 box. Every capture is 2200×1375, but the aspect is
+          // pinned here anyway so a future screenshot at another size crops
+          // rather than resizing the plate mid-cycle and shunting the page.
+          className="relative aspect-[16/10] overflow-hidden bg-paper-deep"
+        >
         {slides.map((slide, i) => {
           if (i > reach) return null;
           const isActive = i === index;
@@ -149,6 +173,7 @@ export function WorkShowcase({ slides }: { slides: ShowcaseSlide[] }) {
             </Link>
           );
         })}
+        </div>
       </div>
 
       {/* ---- the caption and the controls ---- */}

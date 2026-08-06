@@ -132,23 +132,33 @@ export const cases: Case[] = [
       "Tailwind CSS",
     ],
     image: {
-      src: "/work/rj-interiors.png",
+      src: "/work/rj-home.webp",
       alt: "The R&J Interiors homepage: a furnished sitting room with a live fabric selector offering sheer, blackout, and linen options.",
     },
     mobileImage: {
-      src: "/work/rj-mobile.png",
-      alt: "R&J Interiors on a phone, with the real-time fabric selector filling the screen.",
+      src: "/work/rj-catalog-phone.webp",
+      alt: "The R&J catalogue on a phone: custom-knit curtain panels, each with its own price and lead time.",
     },
     gallery: [
       {
-        src: "/work/rj-experience.png",
-        alt: "The R&J studio entry screen, headed 'Step Inside Your Home. Before It Exists.', with fabric colour swatches floating on a dark field.",
-        caption: "The studio entry — colour selection before you walk in",
+        src: "/work/rj-studio.webp",
+        alt: "The live R&J configurator: a curtained window previewing in real time, with tabs for fabric, window and walls, colour swatches, and a Pay to Book button.",
+        caption: "The configurator — change fabric, window or wall and the room updates as you watch",
       },
       {
-        src: "/work/rj-catalog.png",
-        alt: "The R&J catalogue: a filterable grid of curtain products with best-seller and new badges.",
-        caption: "The catalogue, filterable by neutrals, earthy tones, bold colours and sheers",
+        src: "/work/rj-catalog.webp",
+        alt: "The R&J catalogue, headed 'Curtains & Fabrics', with every panel custom-knit to order and consultation, production, delivery and installation included.",
+        caption: "The catalogue — every panel custom-knit, with fitting included in the price",
+      },
+      {
+        src: "/work/rj-founding.webp",
+        alt: "The R&J founding customers page: 'Reserve your place. Be among the first.' with a form to join the launch list.",
+        caption: "The launch list — reserving a place before booking opens",
+      },
+      {
+        src: "/work/rj-track.webp",
+        alt: "The R&J order tracking page: enter an order number and the phone number used at checkout.",
+        caption: "Order tracking — an order number and the phone used to pay",
       },
     ],
   },
@@ -209,18 +219,33 @@ export const cases: Case[] = [
       "Structured content",
     ],
     image: {
-      src: "/work/datani-insurance.png",
-      alt: "The Datani Insurance Agency homepage, showing the tagline 'Insurance that puts you first' and a Get Your Quote call to action.",
+      src: "/work/datani-products.webp",
+      alt: "The Datani products page: cover for personal, family, life and business, each product its own page, with a free quote call to action.",
     },
     mobileImage: {
-      src: "/work/datani-mobile.png",
-      alt: "Datani Insurance on a phone: a domestic package cover offer with a Get Your Quote button.",
+      src: "/work/datani-home-phone.webp",
+      alt: "The Datani homepage on a phone, with the phone number, WhatsApp and a quote button reachable without scrolling.",
     },
     gallery: [
       {
-        src: "/work/datani-quote.png",
-        alt: "The Datani quote request form: name, phone, email and cover type, with a promise of an agent call within one business day.",
-        caption: "The quote path — three required fields, then a human calls",
+        src: "/work/datani-quote.webp",
+        alt: "The Datani quote page: 'Get a free quote', asking for a little about you and promising options in plain language with no pressure.",
+        caption: "The quote path — a short form, then a person calls back",
+      },
+      {
+        src: "/work/datani-claims.webp",
+        alt: "The Datani claims page, 'How Claims Work', set out as three numbered steps: notify us, submit documents, review and compensation.",
+        caption: "Claims explained as three steps, in the order they actually happen",
+      },
+      {
+        src: "/work/datani-faqs.webp",
+        alt: "The Datani FAQ page answering settlement times, required documents, excess and co-payments, and whether a police abstract is needed.",
+        caption: "The questions people actually ask, answered on the page",
+      },
+      {
+        src: "/work/datani-testimonial.webp",
+        alt: "The Datani testimonials page, 'What our clients say', with accounts from farms, family health cover and small shops.",
+        caption: "Clients in their own words — farms, family health, small shops",
       },
     ],
   },

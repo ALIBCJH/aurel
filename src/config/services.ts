@@ -191,8 +191,8 @@ export const services: Service[] = [
       },
     ],
     showcase: {
-      src: "/work/datani-insurance.png",
-      alt: "The Datani Insurance website we built: a product-led homepage with a prominent quote call to action.",
+      src: "/work/datani-home.webp",
+      alt: "The Datani Insurance homepage we built, headed 'Insurance that puts you first', with the phone number, WhatsApp and a quote button all in reach.",
     },
   },
 
@@ -293,8 +293,8 @@ export const services: Service[] = [
       },
     ],
     showcase: {
-      src: "/work/rj-mobile.png",
-      alt: "R&J Interiors on a phone, with the real-time fabric selector filling the screen.",
+      src: "/work/rj-home-phone.webp",
+      alt: "R&J Interiors on a phone: the full-screen room preview, readable and usable on a handset.",
       portrait: true,
     },
   },
@@ -410,8 +410,12 @@ export const services: Service[] = [
       },
     ],
     showcase: {
-      src: "/work/rj-experience.png",
-      alt: "The R&J studio entry screen, where colour selection happens before the customer walks into the 3D room.",
+      // The honest weak spot on this page. Nothing we have shipped is a
+      // picture of automation, so this is the nearest true thing: a live
+      // system of ours doing real work in the browser as you use it. The alt
+      // text says exactly what it is and does not imply it is an AI product.
+      src: "/work/rj-experience.webp",
+      alt: "The R&J experience page we built, headed 'Step Inside' — a room a customer can walk through before a single curtain is made.",
     },
   },
 
@@ -521,8 +525,8 @@ export const services: Service[] = [
       },
     ],
     showcase: {
-      src: "/work/datani-quote.png",
-      alt: "The Datani quote page, structured around the cover types people actually search for.",
+      src: "/work/datani-motor.webp",
+      alt: "Datani's motor insurance page — one page per product, written around what people search for: private cars, matatus, lorries and fleets.",
     },
   },
 ];
