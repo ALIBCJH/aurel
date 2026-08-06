@@ -41,33 +41,39 @@ import { businessInfo, primaryCta, siteConfig } from "@/config/site";
  * plate beside it rather than from a change of temperature.
  */
 /**
- * Every desktop capture we have, in the order a stranger should meet them:
- * each product's lead shot first, then the screens that prove the detail.
+ * The screens the opening cycles through: each product's lead shot, then two
+ * more that prove the detail.
  *
- * Derived rather than listed, so adding a gallery entry to a case adds a frame
- * to the opening — there is no second place to remember to update. The portrait
- * phone captures are left out on purpose: they are 780×1688 against the plate's
- * 16:10 and would either letterbox or crop to a stripe.
+ * Derived rather than listed, so adding a gallery entry to a case feeds the
+ * opening automatically. The portrait phone captures are left out on purpose —
+ * they are 780×1688 against the plate's 16:10 and would crop to a stripe.
+ *
+ * PER_CASE is a real limit, not a formality. The galleries carry four or five
+ * screens each now, and at a 5.4s dwell the full set would take the best part
+ * of a minute to come round — long past the point anyone is still watching.
+ * Three per product is enough to show range without asking for that patience.
  */
+const PER_CASE = 3;
+
 function buildSlides(): ShowcaseSlide[] {
   return cases.flatMap((entry) => {
     const href = `/work/${entry.slug}`;
-    return [
-      {
-        src: entry.image.src,
-        alt: entry.image.alt,
-        caption: entry.summary,
-        client: entry.client,
-        href,
-      },
+    // The host, not the full URL: it is chrome on a frame, and
+    // "https://www.rjinteriors.studio/" reads as a paste rather than a place.
+    const host = entry.url
+      ? new URL(entry.url).hostname.replace(/^www\./, "")
+      : undefined;
+
+    const shots = [
+      { src: entry.image.src, alt: entry.image.alt, caption: entry.summary },
       ...entry.gallery.map((shot) => ({
         src: shot.src,
         alt: shot.alt,
         caption: shot.caption,
-        client: entry.client,
-        href,
       })),
-    ];
+    ].slice(0, PER_CASE);
+
+    return shots.map((shot) => ({ ...shot, client: entry.client, href, host }));
   });
 }
 
