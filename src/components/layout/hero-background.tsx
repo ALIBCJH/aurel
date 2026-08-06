@@ -27,7 +27,7 @@ export function HeroBackground({ className }: { className?: string }) {
       <div className="hero-glow absolute bottom-[-30%] left-[-10%] h-[460px] w-[460px] rounded-full opacity-60 blur-2xl" />
 
       {/* 3 — film grain */}
-      <div className="bg-grain absolute inset-0 opacity-[0.035] mix-blend-overlay dark:opacity-[0.06]" />
+      <div className="bg-grain absolute inset-0 opacity-[0.035] mix-blend-overlay" />
 
       {/* soft fade into the page below */}
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />

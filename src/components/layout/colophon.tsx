@@ -37,7 +37,7 @@ export function Colophon() {
             <Link
               href="/"
               aria-label="Aurel — home"
-              className="inline-flex items-center gap-3"
+              className="tap inline-flex items-center gap-3"
             >
               <GemMark
                 compact

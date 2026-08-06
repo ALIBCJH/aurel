@@ -12,9 +12,9 @@ import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Website, app, AI and SEO services in Kenya",
   description:
-    "Websites, mobile apps, AI automation, and SEO for businesses in Kenya. Four disciplines, one team — with indicative pricing published up front.",
+    "What Aurel builds for Kenyan businesses: websites, mobile apps, AI automation and SEO. One team for all four, with starting prices published up front.",
   alternates: { canonical: "/services" },
 };
 
@@ -80,9 +80,9 @@ export default function ServicesPage() {
               style={{ ["--reveal-delay" as string]: "0.1s" }}
               className="mt-7 max-w-2xl text-[1.0625rem] leading-[1.6] text-ink-soft sm:text-xl"
             >
-              We used to list eight. Four is the honest number — the disciplines
-              we actually ship, deep enough to be worth hiring for. Engage us for
-              one or the whole transformation; the standard does not change.
+              We used to list eight. Four is the honest number — the four things
+              we actually do, and do properly. Hire us for one of them or for all
+              four; the standard is the same either way.
             </p>
           </div>
 
@@ -227,7 +227,7 @@ export default function ServicesPage() {
       <section className="py-20 sm:py-24 lg:py-32">
         <Container size="wide">
           <SectionHead
-            title="How an engagement runs"
+            title="How we work with you"
             deck="The same four stages whatever the discipline, so you always know where a project is and what happens next."
           />
 

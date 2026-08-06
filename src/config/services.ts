@@ -11,7 +11,15 @@
  * discovery phase in every engagement rather than a product of its own.
  *
  * Copy rules, so this file stays coherent as it grows:
- *  - `headline` states the outcome, never the discipline.
+ *  - Plain words. Write for a business owner comparing three quotes, not for
+ *    another engineer. If a term would need explaining across a desk, it does
+ *    not belong here — "RAG", "CMS", "API", "on-page", "agentic" and "deploy
+ *    narrow" all lived in this file and all told the reader nothing.
+ *  - Short sentences. No idioms, no metaphors: "earns its keep" and "survives a
+ *    real network" are good English and bad signage.
+ *  - `headline` is the page's H1 and its first job is to be findable. It should
+ *    contain the words somebody would actually type into Google — "website
+ *    design in Kenya", not "a website that earns its keep".
  *  - Nothing claims a result we cannot point at real work for.
  *  - The local angle is a genuine engineering constraint, not a marketing nod.
  */
@@ -27,6 +35,15 @@ export type Service = {
   name: string;
   /** Outcome-led H1 for the detail page. */
   headline: string;
+  /**
+   * The <title> for the detail page — kept separate from `headline` because
+   * the two have different jobs. The H1 talks to a reader who has already
+   * arrived; this talks to somebody scanning a page of Google results, where
+   * roughly 60 characters survive before truncation and the useful words have
+   * to come first. These pages used to title themselves `service.name`, so the
+   * strongest search page on the site announced itself as "Websites".
+   */
+  seoTitle: string;
   /** One-line summary for compact grids and the home index. */
   summary: string;
   /** Search-facing meta description, ~150–160 chars. */
@@ -53,7 +70,18 @@ export type Service = {
    * an abstract stand-in, because the entire argument of the services page is
    * that these are things we have done rather than things we offer.
    */
-  showcase: { src: string; alt: string };
+  showcase: {
+    src: string;
+    alt: string;
+    /**
+     * True for the phone captures, which are 780×1688 against the landscape
+     * captures' 1440×900. Without the flag a shared plate crops a phone screen
+     * to a horizontal strip through its middle, which shows nothing. Set here
+     * rather than sniffed from the filename so a future rename cannot silently
+     * break the layout.
+     */
+    portrait?: boolean;
+  };
 };
 
 export const services: Service[] = [
@@ -61,58 +89,59 @@ export const services: Service[] = [
     slug: "websites",
     index: "01",
     name: "Websites",
-    headline: "A website that earns its keep.",
-    summary: "Fast, credible sites that turn visitors into enquiries.",
+    seoTitle: "Website Design & Development in Kenya",
+    headline: "Website design in Kenya that brings you customers",
+    summary: "Websites that open fast and bring you enquiries.",
     metaDescription:
-      "Custom website design and development in Kenya. Fast, mobile-first sites built to convert — engineered for real Kenyan network conditions and M-Pesa payments.",
+      "Website design and development in Kenya. We build fast, mobile-friendly websites that bring in enquiries, take M-Pesa payments, and that you can update yourself.",
     description:
-      "Most business websites are a brochure nobody reads. We build the other kind: a site that loads instantly on a phone on mobile data, says the right thing in the first five seconds, and makes it obvious what to do next.",
+      "Many business websites just sit there. We build the other kind: a site that opens quickly on a phone, says what you do in the first few seconds, and makes it clear what to do next.",
     problem:
-      "You have a website, and it does nothing. It was built once, by someone who has since disappeared, on a platform you cannot edit. It takes eight seconds to load on a phone, which is how almost everyone will see it. It describes what you do in language nobody searches for. Meanwhile a competitor with a worse product and a faster site is taking the enquiries that should be yours.",
+      "You have a website and it brings you nothing. It was built once, by someone you can no longer reach, on a system you cannot edit. It takes eight seconds to open on a phone, which is how nearly everyone will see it. It describes your work in words nobody types into Google. Meanwhile a competitor with a faster site is getting the calls that should be coming to you.",
     deliverables: [
       {
-        title: "A site built around one decision",
-        body: "Every page has a job: get the visitor to enquire, book, or buy. We work out what that action is before we design anything, then remove whatever does not serve it. Most sites fail because they try to say everything to everyone.",
+        title: "Built around one clear action",
+        body: "Every page has one job: get the visitor to call, book, or buy. We agree what that action is before we design anything, then remove whatever gets in its way. Most sites fail because they try to say everything to everyone.",
       },
       {
-        title: "Performance as a feature, not a checkbox",
-        body: "We build for a mid-range Android phone on a congested 4G cell, because that is the real device and the real network. That means small pages, images that are actually optimised, and no third-party script that costs a second of load time for a metric nobody reads.",
+        title: "It opens fast on a phone",
+        body: "We build for an ordinary Android phone on a busy network, because that is what your customers are using. That means light pages, properly sized images, and none of the extra add-ons that slow a site down for no real benefit.",
       },
       {
-        title: "Identity that matches the ambition",
-        body: "Logo, colour, type, and the rules that hold them together — enough of a brand system that your site, your quotation, and your WhatsApp profile look like the same company.",
+        title: "A look that matches your business",
+        body: "Logo, colours and fonts, plus simple rules for using them — enough that your website, your quotation and your WhatsApp profile all look like the same company.",
       },
       {
-        title: "Content you can change yourself",
-        body: "A CMS you can actually use, so updating a price or adding a product does not require an invoice. We hand over the keys and show you how it works.",
+        title: "You can change it yourself",
+        body: "A simple editing tool you can actually use, so changing a price or adding a product does not mean paying someone. We hand over the logins and show you how it works.",
       },
       {
-        title: "Payments and enquiries that arrive",
-        body: "M-Pesa checkout where you sell, and forms that reach a real inbox with a real notification — not a contact page that has been silently failing for a year.",
+        title: "Payments and enquiries that reach you",
+        body: "M-Pesa payments where you sell, and contact forms that land in an inbox you check and alert you when they do — not a contact page that has quietly been failing for a year.",
       },
     ],
     includes: [
-      "Discovery & positioning",
+      "Understanding your business",
       "Design",
-      "Build",
-      "CMS & handover",
-      "M-Pesa / payments",
-      "Analytics & search setup",
+      "Building the site",
+      "You can edit it yourself",
+      "M-Pesa payments",
+      "Google setup and tracking",
     ],
     localAngle: {
-      title: "Built for how Kenya actually browses",
-      body: "Around nine in ten Kenyan visitors arrive on a phone, often on metered data where every megabyte is a decision. A heavy site does not just load slowly here — it costs the visitor money to open, and they leave. We treat page weight as a hard budget, ship images in modern formats at the size they are displayed, and render meaningful content before any JavaScript runs. The same discipline is why this site loads the way it does.",
+      title: "Built for how Kenya browses",
+      body: "About nine in ten Kenyan visitors arrive on a phone, usually on bundles, where every megabyte costs them something. A heavy site does not just open slowly here — it spends the visitor's money to open, so they leave. We keep every page light, send images at the size they are actually shown, and put your words on screen before anything else has to load. It is the same reason this site opens the way it does.",
     },
     process: [
       {
         step: "01",
-        title: "Discovery",
-        body: "We learn your business, your customer, and the one action the site exists to produce. Half a day, and it changes everything downstream.",
+        title: "We learn your business",
+        body: "We sit down and go through what you do, who buys from you, and the one action the site is there to produce. It takes half a day and it shapes everything after it.",
       },
       {
         step: "02",
-        title: "Structure & copy",
-        body: "Sitemap and words first, design second. Designing before the copy exists is how sites end up with beautiful sections that say nothing.",
+        title: "Words and layout",
+        body: "We agree the pages and write the words first, then design. Designing before the words exist is how sites end up looking good and saying nothing.",
       },
       {
         step: "03",
@@ -121,8 +150,8 @@ export const services: Service[] = [
       },
       {
         step: "04",
-        title: "Build & launch",
-        body: "Engineering, content loading, performance and search setup, then handover with a walkthrough so you are not dependent on us to change a price.",
+        title: "Build and go live",
+        body: "We build it, load your content, set it up for Google, and hand it over with a walkthrough — so you never have to call us to change a price.",
       },
     ],
     pricing: {
@@ -148,7 +177,7 @@ export const services: Service[] = [
       {
         question: "Can you integrate M-Pesa?",
         answer:
-          "Yes — Daraja STK Push for checkout, with proper handling of the cases that actually happen in production: the customer who cancels on their handset, the callback that arrives twice, and the payment that is confirmed minutes late.",
+          "Yes. Your customer gets the familiar M-Pesa prompt on their phone and pays without leaving your site. We also handle the awkward cases that really happen: the customer who cancels on their handset, the payment recorded twice, and the one confirmed several minutes late.",
       },
       {
         question: "What happens if something breaks after launch?",
@@ -171,64 +200,65 @@ export const services: Service[] = [
     slug: "mobile-apps",
     index: "02",
     name: "Mobile apps",
-    headline: "Apps that survive a real phone on a real network.",
-    summary: "Android and iOS apps built for how your business works.",
+    seoTitle: "Mobile App Development in Kenya",
+    headline: "Mobile app development in Kenya, built around your business",
+    summary: "Android and iPhone apps built around how you actually work.",
     metaDescription:
-      "Mobile app development in Kenya. Android and iOS apps engineered for low-end devices, patchy networks, offline use, and M-Pesa — built around how your business actually works.",
+      "Mobile app development in Kenya. Android and iPhone apps built for everyday phones, weak network, working offline, and M-Pesa — shaped around how your business actually runs.",
     description:
-      "Software your team and your customers carry in their pocket, built around how your business actually runs rather than forced into an off-the-shelf template. Engineered for the phones and networks your users really have.",
+      "An app your team and your customers carry in their pocket, built around how your business really runs instead of squeezed into ready-made software. Made for the phones and the network your people actually have.",
     problem:
-      "Your operation runs on WhatsApp messages, a shared spreadsheet, and someone's memory. It works until it doesn't — an order is missed, a payment goes unrecorded, a field team submits yesterday's numbers tomorrow. Off-the-shelf software almost fits, but the gap between almost and actually is where the errors live, and you end up paying a monthly fee to keep working around it.",
+      "Your business runs on WhatsApp messages, a shared spreadsheet and somebody's memory. It works until it does not — an order is missed, a payment is never recorded, a team in the field sends yesterday's numbers tomorrow. Ready-made software almost fits, and the gap between almost and properly is where the mistakes happen. You end up paying every month for something you still have to work around.",
     deliverables: [
       {
-        title: "Apps that work without signal",
-        body: "A field team in a coverage hole should keep working, not stop. We build offline-first: the app holds its own data, keeps functioning, and reconciles when the connection returns — with a deliberate answer for what happens when two people edited the same record.",
+        title: "It works without network",
+        body: "A team out in the field should keep working when the network drops, not stop. The app keeps its own copy of the information, carries on, and updates everything once the connection returns — including a clear rule for what happens when two people changed the same thing.",
       },
       {
-        title: "Built for the phones people own",
-        body: "We test on low-end Android, not just a current-generation flagship. That governs bundle size, memory use, and how much work happens on the device — the difference between an app that feels instant and one that gets uninstalled.",
+        title: "Built for the phones people actually own",
+        body: "We test on ordinary, affordable Android phones, not only the newest ones. That decides how big the app is and how hard it makes the phone work — the difference between an app that feels quick and one that gets deleted.",
       },
       {
-        title: "M-Pesa where money moves",
-        body: "Daraja integration done properly: STK push, C2B and B2C, callbacks that are idempotent, and reconciliation that stands up when a payment lands late or arrives twice.",
+        title: "M-Pesa built in",
+        body: "M-Pesa done properly: paying in, paying out, and the pop-up prompt on the customer's phone. It still adds up correctly when a payment arrives late or is recorded twice, which happens more often than people expect.",
       },
       {
-        title: "The back office behind it",
-        body: "An app is the visible tenth. Underneath sits the API, the database, the admin dashboard your team uses, and the reporting that tells you what happened — all of which we build too.",
+        title: "The system behind it",
+        body: "The app is only the part people see. Behind it sits the records, the dashboard your team works from, and the reports that tell you what happened. We build all of that too.",
       },
     ],
     includes: [
-      "Product definition",
-      "UX & interface design",
-      "Android & iOS build",
-      "API & backend",
-      "Admin dashboard",
-      "Store submission",
+      "Agreeing what it should do",
+      "Design and screens",
+      "Android and iPhone apps",
+      "The system behind it",
+      "A dashboard for your team",
+      "Getting it on Play Store and App Store",
     ],
     localAngle: {
-      title: "The network is a design constraint, not an assumption",
-      body: "Most app tutorials assume permanent connectivity and a recent iPhone. Neither holds for a delivery rider in Kiambu or a field officer in Nyeri. We treat intermittent connectivity, expensive data, and three-year-old Android hardware as the baseline the app must be good on — and where a full app is the wrong answer, we will tell you that a USSD flow or a well-built mobile site reaches more of your customers for less money.",
+      title: "We build for the network people really have",
+      body: "Most app advice assumes constant network and a new iPhone. Neither is true for a delivery rider in Kiambu or a field officer in Nyeri. We take patchy network, costly data and a three-year-old Android phone as the normal case the app has to be good on. And where an app is the wrong answer, we will say so — sometimes a simple *384# style menu, or a good mobile site, reaches more of your customers for less money.",
     },
     process: [
       {
         step: "01",
-        title: "Define",
-        body: "We map the workflow the app replaces and cut the first release to what genuinely matters. The biggest risk in app projects is building a year of features nobody asked for.",
+        title: "Agree what it does",
+        body: "We map out the work the app is replacing and cut the first version down to what really matters. The biggest risk in app projects is spending a year building things nobody asked for.",
       },
       {
         step: "02",
-        title: "Design & prototype",
-        body: "A clickable prototype you can hand to the people who will use it daily, before engineering starts. Their reaction changes the build — cheaply, at this stage.",
+        title: "Design and a working sample",
+        body: "We give you a tappable sample you can hand to the people who will use it every day, before we start building. What they say changes the plan — and at this stage, changing it is cheap.",
       },
       {
         step: "03",
         title: "Build",
-        body: "Two-week cycles with something installable at the end of each, so you watch it take shape instead of waiting months for a reveal.",
+        body: "We work in two-week rounds, and at the end of each one you get a version you can install on your own phone. You watch it take shape instead of waiting months to be shown something.",
       },
       {
         step: "04",
-        title: "Launch & iterate",
-        body: "Store submission, monitoring, and a first round of changes driven by what real usage reveals.",
+        title: "Launch, then improve",
+        body: "We put it on Play Store and App Store, keep an eye on it, and make a first round of changes based on how people actually use it.",
       },
     ],
     pricing: {
@@ -239,7 +269,7 @@ export const services: Service[] = [
       {
         question: "Do I need both Android and iOS?",
         answer:
-          "Usually not at first. Android carries the overwhelming majority of the Kenyan market, so launching there and adding iOS once the product has proven itself is normally the better use of budget. We build with a shared codebase, so adding the second platform later is an increment rather than a second project.",
+          "Usually not at first. Almost everyone in Kenya is on Android, so starting there and adding iPhone once the app has proved itself is normally the better use of your money. We build it in a way that shares most of the work between the two, so adding iPhone later is a small extra job rather than a second project.",
       },
       {
         question: "Should I build an app at all?",
@@ -254,17 +284,18 @@ export const services: Service[] = [
       {
         question: "Who owns the code and the store listings?",
         answer:
-          "You do. Repositories, developer accounts, and infrastructure are all in your name, and we hand over full access at launch.",
+          "You do. The code, the Play Store and App Store accounts, and the servers are all in your name, and we hand over full access at launch.",
       },
       {
         question: "Can it work with our existing systems?",
         answer:
-          "Generally yes. We integrate with accounting packages, inventory systems, payment providers, and internal databases. Where a system has no API we will say plainly what is and is not possible rather than promising a bridge that will be fragile.",
+          "Usually yes. We connect to accounting packages, stock systems, payment providers and your own records. Where a system has no proper way to connect, we will tell you plainly what is and is not possible instead of promising a link that will keep breaking.",
       },
     ],
     showcase: {
       src: "/work/rj-mobile.png",
       alt: "R&J Interiors on a phone, with the real-time fabric selector filling the screen.",
+      portrait: true,
     },
   },
 
@@ -272,68 +303,69 @@ export const services: Service[] = [
     slug: "ai-automation",
     index: "03",
     name: "AI & automation",
-    headline: "AI that does the work, not the talking.",
-    summary: "Put the repetitive work on autopilot — properly.",
+    seoTitle: "AI & Automation for Kenyan Businesses",
+    headline: "AI and automation for businesses in Kenya",
+    summary: "Let software handle the repetitive work, properly.",
     metaDescription:
-      "AI integration and automation for Kenyan businesses. RAG assistants, document processing, and WhatsApp bots that handle real back-office work — built by engineers, measured on hours saved.",
+      "AI and automation for Kenyan businesses. Assistants that answer from your own documents, software that reads your paperwork, and WhatsApp helpers that do real office work — measured on hours saved.",
     description:
-      "Every business is being sold AI right now, and most of what is on offer is a chatbot bolted onto a website that irritates customers. The money is somewhere far less glamorous: the repetitive, rules-heavy work that quietly consumes your team's week.",
+      "Everyone is being sold AI right now, and most of it is a chat window stuck onto a website that annoys customers. The real saving is somewhere much duller: the repeated, rule-following work that quietly eats your team's week.",
     problem:
-      "Someone in your office retypes invoice details into a spreadsheet. Someone answers the same eleven questions on WhatsApp all day. Someone reconciles M-Pesa statements against orders by eye. None of it needs judgement, all of it needs doing, and every hour spent on it is an hour not spent on work that grows the business. Meanwhile the AI vendors circling you are quoting for a chatbot that will not touch any of it.",
+      "Someone in your office retypes invoice details into a spreadsheet. Someone answers the same eleven questions on WhatsApp all day. Someone checks M-Pesa statements against orders by eye. None of it needs thinking, all of it needs doing, and every hour spent there is an hour not spent growing the business. Meanwhile the people selling you AI are quoting for a chat window that will not touch any of it.",
     deliverables: [
       {
-        title: "Assistants that actually know your business",
-        body: "A general chatbot knows nothing about your prices, your policies, or your stock, so it invents them. We build retrieval-grounded assistants: the model answers from your own documents and data, cites what it used, and is built to say it does not know rather than produce a confident fabrication. That difference is the whole difference between useful and dangerous.",
+        title: "An assistant that knows your business",
+        body: "A general chat tool knows nothing about your prices, your rules or your stock, so it makes them up. We build assistants that answer only from your own documents and records, show you which document each answer came from, and say \"I do not know\" instead of inventing something. That is the difference between useful and dangerous.",
       },
       {
-        title: "Document and data processing",
-        body: "Invoices, delivery notes, claim forms, statements, applications — read, extracted into structured data, and pushed into the system that needs them. This is usually the fastest return in the entire engagement, because the work is high volume, low judgement, and currently done by a person who would rather be doing something else.",
+        title: "It reads your paperwork for you",
+        body: "Invoices, delivery notes, claim forms, statements, applications — read automatically, turned into clean records, and sent straight into the system that needs them. This usually pays back fastest, because there is a lot of it, it needs no judgement, and right now a person is doing it who would rather be doing something else.",
       },
       {
-        title: "WhatsApp assistants that hold a real conversation",
-        body: "WhatsApp is where Kenyan businesses actually meet customers. We build assistants that answer the routine questions around the clock, check an order, take a booking — and hand over to a human the moment the conversation stops being routine, which is the part most implementations get wrong.",
+        title: "WhatsApp assistants that actually help",
+        body: "WhatsApp is where Kenyan businesses meet their customers. We build assistants that answer the everyday questions at any hour, check an order, or take a booking — and pass the chat to a real person the moment it stops being routine. That hand-over is the part most people get wrong.",
       },
       {
-        title: "Agentic workflows for multi-step work",
-        body: "Where a task spans several systems and several decisions — receive an order, verify stock, raise an invoice, notify the customer, update the ledger — we build agents that carry the whole sequence, with checkpoints where a human should still sign off.",
+        title: "Software that handles a whole sequence",
+        body: "Where a job runs across several systems and several steps — take an order, check stock, raise an invoice, tell the customer, update the books — we build something that carries the whole sequence, and stops for a person to approve it at the points that matter.",
       },
       {
-        title: "The unglamorous automation underneath",
-        body: "Often the highest-value thing we do involves no model at all: connecting two systems that were passing data through a human being. We will always tell you when that is the cheaper answer.",
+        title: "The quiet fixes underneath",
+        body: "Often the most valuable thing we do involves no AI at all: connecting two systems that were only talking to each other through a person. We will always tell you when that is the cheaper answer.",
       },
     ],
     includes: [
-      "Opportunity audit",
-      "Proof of concept on your data",
-      "RAG & assistant build",
-      "Document processing",
-      "WhatsApp & channel integration",
-      "Monitoring & evaluation",
+      "Finding what is worth automating",
+      "A test on your own data",
+      "An assistant that knows your business",
+      "Reading your paperwork",
+      "WhatsApp integration",
+      "Checking it keeps working",
     ],
     localAngle: {
       title: "English, Swahili, and the way people actually type",
-      body: "Kenyan customers do not write in clean English. They code-switch mid-sentence, mix Swahili and Sheng, abbreviate heavily, and send voice notes. An assistant tuned on tidy American support tickets falls apart on the first real message. We evaluate against your actual conversation history — the messy, misspelt, code-switched reality — and we would rather ship something narrow that works than something broad that embarrasses you in front of a customer.",
+      body: "Kenyan customers do not write in tidy English. They switch language mid-sentence, mix Swahili and Sheng, shorten words heavily, and send voice notes. An assistant built on neat American support tickets falls apart on the first real message. We test ours against your own chat history — misspellings, mixed languages and all — and we would rather give you something narrow that works than something broad that embarrasses you in front of a customer.",
     },
     process: [
       {
         step: "01",
-        title: "Find the expensive work",
-        body: "We sit with your team and count: which tasks consume the most hours for the least judgement. The best candidate is almost never the one you expected, and it is rarely a chatbot.",
+        title: "Find what is costing you time",
+        body: "We sit with your team and count which tasks take the most hours and need the least thinking. The best one to start with is almost never the one you expected, and it is rarely a chat window.",
       },
       {
         step: "02",
-        title: "Prove it on your data",
-        body: "A narrow proof of concept on your real documents and real messages, measured against how the work is done today. If it does not clear that bar we say so and stop, rather than proceeding on enthusiasm.",
+        title: "Test it on your own data",
+        body: "We build a small working test on your real documents and real messages, and compare it against how the job is done today. If it does not beat that, we say so and stop rather than carry on out of excitement.",
       },
       {
         step: "03",
-        title: "Deploy narrow",
-        body: "Into production on one workflow, with a human reviewing output at first. Trust is earned on a small surface before it is extended.",
+        title: "Start with one job",
+        body: "We put it to work on a single task, with someone from your team checking the results at first. It earns your trust on something small before it takes on anything more.",
       },
       {
         step: "04",
-        title: "Measure and widen",
-        body: "We track accuracy, hours saved, and running cost. What works expands; what does not gets switched off. This is the step vendors selling AI by the seat tend to skip.",
+        title: "Check it works, then do more",
+        body: "We track how accurate it is, how many hours it saves, and what it costs to run. What works we extend; what does not we switch off. This is the step most AI sellers skip.",
       },
     ],
     pricing: {
@@ -344,27 +376,27 @@ export const services: Service[] = [
       {
         question: "Is this going to replace my staff?",
         answer:
-          "That is not what we build for, and in practice it is not what happens. The work best suited to automation is the work nobody wants: retyping, copying between systems, answering the same question for the ninth time. Teams we have automated for do not shrink; they stop spending their afternoons on data entry. If your goal is specifically headcount reduction, we are probably not the right partner.",
+          "That is not what we build for, and it is not what happens in practice. The work best suited to this is the work nobody wants: retyping, copying between systems, answering the same question for the ninth time. Teams we have done this for do not get smaller; they stop losing their afternoons to data entry. If your aim is specifically to cut jobs, we are probably not the right people.",
       },
       {
         question: "What happens when the AI gets something wrong?",
         answer:
-          "It will, so the system is designed around that. Assistants are grounded in your documents and cite what they used, so an answer can be checked. Anything consequential — money, commitments, customer promises — routes to a human. And we monitor output in production rather than assuming launch-day accuracy holds.",
+          "It will, so we design for it. Every answer comes from your documents and shows which one it used, so it can be checked. Anything that matters — money, promises, commitments to a customer — goes to a person first. And we keep watching it after launch instead of assuming it stays accurate.",
       },
       {
         question: "Is our data safe? Does it train someone else's model?",
         answer:
-          "We use providers whose business terms exclude your data from training, and we tell you exactly which provider processes what. Where data is genuinely sensitive we can keep processing self-hosted so nothing leaves infrastructure you control. You get a plain-language summary of where your data goes — not a link to a privacy policy.",
+          "We use providers whose terms say plainly that your data is not used to train their systems, and we tell you exactly which one handles what. Where the information is truly sensitive we can keep everything on servers you control, so nothing leaves your hands. You get a plain summary of where your data goes, not a link to a privacy policy.",
       },
       {
         question: "Do we need a lot of data to start?",
         answer:
-          "Less than people expect. Retrieval-based assistants work from the documents you already have — price lists, policies, past correspondence — with no training run required. If you have a shared drive and a WhatsApp history, you have enough to start.",
+          "Less than people expect. These assistants work straight from the documents you already have — price lists, policies, past emails — with no lengthy setup. If you have a shared folder and a WhatsApp history, you have enough to start.",
       },
       {
         question: "What does it cost to run each month?",
         answer:
-          "It depends on volume, and we will model it against your real numbers before you commit. For most SME workloads the monthly cost is a small fraction of the labour it displaces. We would rather show you that arithmetic than talk about transformation.",
+          "It depends on how much you run through it, and we will work it out against your real numbers before you commit. For most small and medium businesses the monthly cost is a small fraction of the time it saves. We would rather show you those figures than talk in big words.",
       },
       {
         question: "Can it handle Swahili?",
@@ -374,7 +406,7 @@ export const services: Service[] = [
       {
         question: "Everyone is selling us AI. Why should we believe you?",
         answer:
-          "Because we will tell you when the answer is not AI. A good share of what we are asked for is better solved by connecting two systems properly, and we say so — it is a smaller invoice and a better outcome. Ask any vendor to show you the measurement plan before the build starts; that is the question the serious ones can answer.",
+          "Because we will tell you when the answer is not AI. A good share of what we are asked for is better solved by connecting two systems properly, and we say so — it is a smaller bill and a better result. Ask anyone selling to you how they will measure it before the work starts. The serious ones can answer that.",
       },
     ],
     showcase: {
@@ -387,68 +419,69 @@ export const services: Service[] = [
     slug: "seo",
     index: "04",
     name: "SEO",
-    headline: "Be the answer when Kenya searches for what you sell.",
+    seoTitle: "SEO Services in Kenya",
+    headline: "SEO services in Kenya that bring you customers",
     summary: "Get found by the customers already looking for you.",
     metaDescription:
-      "SEO services in Kenya. Technical foundations, Google Business Profile, and local search that put you in front of customers already searching — measured on enquiries, not rankings.",
+      "SEO services in Kenya. We fix your website, set up your Google Business Profile, and get you showing up in local searches — measured on the enquiries you receive, not on rankings.",
     description:
-      "Somebody typed what you sell into Google this morning, in your town, ready to buy. They found a competitor. Search is the only channel where the customer arrives already wanting the thing — and unlike advertising, the position you build keeps working after you stop paying for it.",
+      "Somebody typed what you sell into Google this morning, in your town, ready to buy. They found a competitor instead. Search is the one place customers arrive already wanting what you have — and unlike adverts, the position you build keeps working after you stop paying.",
     problem:
-      "You rely on referrals and a Facebook page. It has carried you this far, but it does not scale and it does not compound — every month starts from zero. Somewhere a competitor with a worse product has a Google Business Profile with forty reviews and a site that loads in a second, and they are collecting the customers who searched instead of asking a friend. The gap is not talent or budget. It is that nobody has done the unglamorous work.",
+      "You depend on referrals and a Facebook page. It has brought you this far, but every month starts from zero and it cannot grow much further. Somewhere a competitor with a weaker product has a Google Business Profile with forty reviews and a website that opens in a second, and they are taking the customers who searched instead of asking a friend. The difference is not skill or money. It is that nobody has done the boring groundwork.",
     deliverables: [
       {
-        title: "Technical foundations",
-        body: "Everything that decides whether Google can crawl, understand, and trust your site: speed on mobile, crawlability, sitemaps and robots, structured data, canonicals, and the internal linking that tells search engines what matters. Nothing else works until this does.",
+        title: "Fixing the basics on your site",
+        body: "Everything that decides whether Google can read, understand and trust your site: how fast it opens on a phone, whether Google can reach every page, and whether the pages describe themselves properly. Nothing else works until this does.",
       },
       {
-        title: "Google Business Profile and the local pack",
-        body: "For a business serving a town or a county this is the single highest-leverage asset there is, and it sits mostly unclaimed. Correct categories, complete information, consistent name-address-phone across the web, real photographs, and a system for actually collecting reviews.",
+        title: "Your Google Business Profile",
+        body: "This is the listing that shows on the map when somebody searches near you, and for a business serving a town or county it is the most valuable thing you own online. Most are never even claimed. We set yours up properly: right categories, full details, the same name, address and phone everywhere online, real photographs, and a simple way to keep collecting reviews.",
       },
       {
-        title: "Pages that answer real queries",
-        body: "We research what your customers actually type — which is rarely the language you use internally — and build pages that answer those questions properly. One thorough page beats ten thin ones, every time.",
+        title: "Pages that answer what people ask",
+        body: "We find out what your customers actually type into Google — which is rarely the words you use inside the business — and build pages that answer those questions properly. One thorough page beats ten thin ones, every time.",
       },
       {
-        title: "Content that compounds",
-        body: "A publishing plan you can sustain, aimed at the questions asked just before someone buys. This is slow and it is the part most businesses abandon at month three, which is precisely why it works for the ones who do not.",
+        title: "Writing that keeps working",
+        body: "A plan for what to publish that you can actually keep up with, aimed at the questions people ask just before they buy. It is slow, and it is the part most businesses give up on by month three — which is exactly why it works for the ones who do not.",
       },
       {
-        title: "Measurement that means something",
-        body: "Search Console and analytics configured to report enquiries and calls, not vanity rankings. A number-one position for a phrase nobody searches is not a result.",
+        title: "Reporting that means something",
+        body: "We set up your reporting to show enquiries and calls, not just positions on a page. Being number one for something nobody searches is not a result.",
       },
     ],
     includes: [
-      "Technical audit",
-      "Keyword & intent research",
-      "On-page optimisation",
-      "Google Business Profile",
-      "Content plan",
-      "Reporting",
+      "Checking what is holding you back",
+      "Finding what people search for",
+      "Fixing your pages so Google understands them",
+      "Your Google Business Profile",
+      "A plan for what to publish",
+      "Monthly reporting",
     ],
     localAngle: {
-      title: "Local intent is where the game is winnable",
-      body: "Competing nationally for a broad commercial phrase is expensive and slow. Competing for the searches happening in Nyeri, Nanyuki, Thika, or a Nairobi suburb is neither, because most local competitors have never claimed their Google Business Profile, have no reviews, and run a site that fails on mobile. That is an open goal. We would rather put you first for the searches that end in a phone call from someone twenty minutes away than fortieth for a national term that would never have converted.",
+      title: "Local searches are the ones you can win",
+      body: "Competing across the whole country for a broad phrase is expensive and slow. Competing for the searches happening in Nyeri, Nanyuki, Thika or a Nairobi suburb is neither, because most local competitors have never claimed their Google listing, have no reviews, and run a site that struggles on a phone. That is an open goal. We would rather put you first for the searches that end in a call from someone twenty minutes away than fortieth for a national phrase that would never have brought you work.",
     },
     process: [
       {
         step: "01",
-        title: "Audit",
-        body: "A full technical and content audit against the competitors actually outranking you, delivered as a prioritised list of what is costing you the most — yours to keep whether or not you continue with us.",
+        title: "Check what is there",
+        body: "We go through your site and compare it against the competitors currently above you, then give you an ordered list of what is costing you the most. It is yours to keep whether or not you continue with us.",
       },
       {
         step: "02",
-        title: "Fix the foundations",
-        body: "Speed, crawlability, structured data, and the on-page work. This is where most of the early movement comes from, because most sites are carrying obvious unforced errors.",
+        title: "Fix the basics",
+        body: "Speed, making sure Google can reach every page, and getting each page to describe itself properly. Most of the early improvement comes from here, because most sites are carrying obvious mistakes.",
       },
       {
         step: "03",
-        title: "Build presence",
-        body: "Google Business Profile, local citations, review generation, and the first tranche of pages targeting the queries closest to a purchase.",
+        title: "Build your presence",
+        body: "Your Google Business Profile, listings on the directories that matter, a way to keep collecting reviews, and the first set of pages aimed at the searches closest to a sale.",
       },
       {
         step: "04",
         title: "Publish and measure",
-        body: "Sustained content against the plan, reported monthly against enquiries. We show you the searches you gained and the ones you lost.",
+        body: "We keep publishing to the plan and report every month against enquiries. You see the searches you gained and the ones you lost.",
       },
     ],
     pricing: {

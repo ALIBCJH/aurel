@@ -163,7 +163,7 @@ export const cases: Case[] = [
     relationship:
       "Commissioned by the agency and delivered as a contracted engagement. The site is live and in production.",
     services: ["websites", "seo"],
-    headline: "Making a broker's reputation searchable.",
+    headline: "Making a good broker easy to find online.",
     summary:
       "A product-by-product site and quote path for an agency that ran entirely on referral.",
     metaDescription:
@@ -205,7 +205,7 @@ export const cases: Case[] = [
       "Web build",
       "Quote capture",
       "WhatsApp integration",
-      "On-page SEO",
+      "Search setup",
       "Structured content",
     ],
     image: {

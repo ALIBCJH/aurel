@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 import { mainNav, primaryCta, siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { AnimatedLogo } from "@/components/layout/animated-logo";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Magnetic } from "@/components/motion/magnetic";
 import { RollText } from "@/components/motion/roll-text";
 
@@ -338,7 +337,6 @@ export function Navbar() {
               scrolled ? "py-1.5" : "py-2",
             )}
           >
-            <ThemeToggle />
 
             {/* Desktop CTA */}
             <div className="hidden lg:block">

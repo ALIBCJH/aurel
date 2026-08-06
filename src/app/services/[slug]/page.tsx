@@ -34,11 +34,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const path = `/services/${service.slug}`;
 
   return {
-    title: service.name,
+    title: service.seoTitle,
     description: service.metaDescription,
     alternates: { canonical: path },
     openGraph: {
-      title: `${service.name} — ${siteConfig.name}`,
+      title: `${service.seoTitle} — ${siteConfig.name}`,
       description: service.metaDescription,
       url: path,
       type: "article",
@@ -318,7 +318,7 @@ export default async function ServiceDetailPage({ params }: Params) {
                   <h3 className="mt-5 text-xl font-bold tracking-[-0.02em]">
                     <Link
                       href={`/work/${entry.slug}`}
-                      className="transition-colors duration-200 hover:text-foil"
+                      className="tap transition-colors duration-200 hover:text-foil"
                     >
                       {entry.client}
                     </Link>

@@ -23,13 +23,14 @@
  * ---------------------------------------------------------------------------
  */
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 /* ===========================================================================
-   1. EDITIONS (palette)
+   1. PALETTE
    =========================================================================== */
-/* ---- LIGHT (default) ------------------------------------------------------
-   White wall, near-black ink. Contrast does the work; colour is rationed.
+/* White wall, near-black ink. Contrast does the work; colour is rationed.
+
+   There is one palette. A dark edition existed and was removed: it doubled
+   every colour decision on the site to serve a preference nobody had asked
+   for, and the brand lives on white.
    `--invert-*` is the core device of this direction: full-width cards that
    flip to the opposite of the page, so a section can go loud without
    introducing a new hue. */
@@ -93,57 +94,7 @@
   --ring: color-mix(in srgb, #0a0a0a 55%, transparent);
 }
 
-/* ---- DARK -----------------------------------------------------------------
-   Kept coherent rather than designed-for. Everything inverts, including the
-   invert tokens, so a "loud" card is white on a black page. */
-.dark {
-  color-scheme: dark;
 
-  --paper: #0a0a0b;
-  --paper-deep: #141416;
-  --paper-raised: #17171a;
-  --ink: #fafafa;
-  --ink-soft: #b4b4b8;
-  --ink-mute: #8a8a8f;
-
-  --invert-bg: #fafafa;
-  --invert-ink: #0a0a0a;
-  --invert-ink-mute: #55555a;
-
-  --foil: #e3b45f;
-  --foil-bright: #f2cc85;
-  --foil-pale: #ffe4a8;
-  --foil-ink: #0a0a0a;
-
-  /* Warmer and a touch stronger on near-black, where a low-opacity tint
-     disappears entirely. */
-  --glow: color-mix(in srgb, #e3b45f 16%, transparent);
-  --glow-edge: color-mix(in srgb, #e3b45f 30%, transparent);
-
-  --tint: color-mix(in srgb, #e3b45f 9%, #0a0a0b);
-
-  --rule: color-mix(in srgb, #fafafa 12%, transparent);
-  --rule-strong: color-mix(in srgb, #fafafa 24%, transparent);
-  --rule-foil: color-mix(in srgb, #e3b45f 38%, transparent);
-  --field: color-mix(in srgb, #fafafa 6%, transparent);
-
-  --grain-opacity: 0;
-  --grain-blend: normal;
-  --vignette: transparent;
-
-  --background: var(--paper);
-  --foreground: var(--ink);
-  --surface: var(--paper-raised);
-  --surface-muted: var(--paper-deep);
-  --muted-foreground: var(--ink-mute);
-  --border: var(--rule);
-  --border-strong: var(--rule-strong);
-  --accent: var(--ink);
-  --accent-hover: #d8d8dc;
-  --accent-foreground: #0a0a0a;
-  --accent-soft: color-mix(in srgb, #fafafa 8%, transparent);
-  --ring: color-mix(in srgb, #fafafa 60%, transparent);
-}
 
 /* ===========================================================================
    2. TOKEN MAPPING
@@ -506,12 +457,6 @@
       0 18px 40px -28px color-mix(in srgb, var(--ink) 55%, transparent);
   }
 
-  .dark .sheet {
-    box-shadow:
-      0 1px 0 0 color-mix(in srgb, var(--foil) 8%, transparent),
-      0 18px 40px -24px rgb(0 0 0 / 0.7);
-  }
-
   /* Vignette at the sheet's edges. */
   .edge-vignette {
     background: radial-gradient(
@@ -552,7 +497,7 @@
 /* ===========================================================================
    7. REVEAL SYSTEM
    Motion is applied only once JavaScript has confirmed itself (`html.js`,
-   set pre-paint by ThemeScript). Without JS — and for crawlers — every element
+   set pre-paint in the root layout). Without JS — and for crawlers — every element
    renders in its final, fully legible state. `RevealObserver` adds `.is-in`
    when an element enters the viewport.
    =========================================================================== */
@@ -819,15 +764,20 @@
     position: relative;
   }
 
+  /* Both axes. It enforced height only, which is fine for a wide link and
+     useless for a narrow one — "SEO" in the footer was a 29px-wide target,
+     and a thumb is about 45px across. The pseudo-element now centres on the
+     link and grows in whichever direction is short. */
   .tap::before {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 50%;
     top: 50%;
+    width: 100%;
+    min-width: 44px;
     height: 100%;
     min-height: 44px;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
   }
 
   /* Field inputs: ruled lines, not boxes.
@@ -904,5 +854,54 @@
   .nav-marker {
     background: var(--foil);
     box-shadow: 0 0 10px -2px color-mix(in srgb, var(--foil) 70%, transparent);
+  }
+}
+
+/* ===========================================================================
+   12. THE OPENING BAND
+   Atmosphere for the hero. Two static layers, no client component and no
+   animation loop: a surveyor's grid and one warm bloom. The previous hero ran a
+   rotating conic aurora, a cursor-tracked spotlight, and four levitating pills
+   — all of it costing a client boundary and a permanent compositor layer, and
+   none of it telling a visitor what the studio does. Restraint here is the
+   point, not a compromise.
+
+   These values were tuned against near-black and have been re-tuned for white,
+   which is a different problem: on a dark field a warm wash reads as light, and
+   on white the same wash reads as a stain. Everything here is weaker and wider
+   than its dark-band equivalent.
+   =========================================================================== */
+@layer utilities {
+  /* Fine measured grid — reads as drafting paper, not as a tech-startup mesh.
+     96px cells keep it sparse enough to sit under type without vibrating. */
+  .band-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--foil) 14%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--foil) 14%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 96px 96px;
+    /* Faded at the edges so the grid has no visible last line — a grid that
+       stops mid-air is the tell that it is decoration. */
+    mask-image: radial-gradient(
+      120% 90% at 50% 30%,
+      #000 0%,
+      transparent 78%
+    );
+  }
+
+  /* One warm bloom, anchored behind the claim. */
+  .band-bloom {
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--foil) 13%, transparent),
+      transparent 100%
+    );
   }
 }
