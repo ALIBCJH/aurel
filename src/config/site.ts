@@ -12,9 +12,13 @@ export type NavItem = {
 
 export const siteConfig = {
   name: "Aurel",
-  tagline: "Digital transformation studio",
+  // The tagline is the default page title after the studio name, so it has to
+  // be a phrase somebody would actually type into Google. "Digital
+  // transformation studio" was neither searched for nor understood — it told a
+  // business owner nothing about what they could buy here.
+  tagline: "Websites, apps and software for Kenyan businesses",
   description:
-    "Aurel is a premium digital transformation studio helping ambitious businesses modernise, grow, and lead — custom software, AI, and design, crafted end to end.",
+    "Aurel builds websites, mobile apps, AI automation and SEO for businesses in Kenya. Based in Nyeri and Nairobi. Clear prices, work you own, and a reply within one business day.",
   url: "https://aurel.studio",
   email: "hello@aurel.studio",
   location: "Nyeri & Nairobi, Kenya",

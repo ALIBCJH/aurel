@@ -9,9 +9,9 @@ import { businessInfo, siteConfig } from "@/config/site";
 import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Start a project",
+  title: "Contact Aurel — website and app developers in Kenya",
   description:
-    "Tell us what you are trying to build. Email, call or WhatsApp Aurel in Nyeri and Nairobi — we reply within one business day.",
+    "Tell us what you want to build. Call, email or WhatsApp Aurel in Nyeri and Nairobi. We read every message ourselves and reply within one business day.",
   alternates: { canonical: "/contact" },
 };
 
@@ -234,7 +234,7 @@ export default function ContactPage() {
         <Container size="wide">
           <SectionHead
             title="What happens next"
-            deck="No funnel, no nurture sequence. Three steps, and a person at the end of each of them."
+            deck="No sales process. Three steps, and a real person at the end of each one."
           />
 
           <ol className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 lg:grid-cols-3">

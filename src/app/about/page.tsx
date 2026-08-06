@@ -13,9 +13,9 @@ import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Aurel — a software studio in Nyeri and Nairobi",
   description:
-    "Aurel is a small Kenyan software studio in Nyeri and Nairobi. Meet the person who builds the work, and the standards the studio holds to.",
+    "Aurel is a small software studio in Nyeri and Nairobi. Meet the person who builds the work, and see what we promise every client.",
   alternates: { canonical: "/about" },
 };
 
@@ -234,7 +234,7 @@ export default function AboutPage() {
       <section className="bg-paper-deep py-20 sm:py-24 lg:py-32">
         <Container size="wide">
           <SectionHead
-            title="What you can hold us to"
+            title="What we promise you"
             deck="Commitments rather than adjectives — each one is something you could reasonably hold against us if we broke it."
           />
 

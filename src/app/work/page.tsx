@@ -11,9 +11,9 @@ import { primaryCta } from "@/config/site";
 import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "Our work — websites and apps built in Kenya",
   description:
-    "Selected work from Aurel — a real-time 3D showroom for R&J Interiors, and a searchable product-by-product site for Datani Insurance Agency. Both live, both linked.",
+    "Work Aurel has built in Kenya: a 3D showroom for R&J Interiors and a product-by-product website for Datani Insurance Agency. Both are live, and both are linked here so you can open them.",
   alternates: { canonical: "/work" },
 };
 

@@ -38,7 +38,7 @@ export const team: Person[] = [
     name: "Simon Juma",
     role: "Founder · Engineer",
     location: "Nyeri & Nairobi, Kenya",
-    bio: "Simon founded Aurel and builds most of what leaves it. He works across the whole stack — cloud infrastructure and APIs through to the interface — with a particular focus on agentic AI systems and retrieval pipelines, the parts of this field where the gap between a demo and something that survives production is widest.",
+    bio: "Simon started Aurel and builds most of the work himself. He handles every part of a project — the servers, the systems behind the scenes, and the screens you actually see. His main focus is AI tools that hold up in daily use, not just in a demo.",
     quote:
       "Build systems that hold up for people who can't afford for them to fail.",
     credentials: [
@@ -57,8 +57,8 @@ export const team: Person[] = [
       "AWS",
       "Terraform",
       "Docker",
-      "RAG pipelines",
-      "Agentic AI",
+      "AI assistants",
+      "Automation",
     ],
     links: [
       { label: "GitHub", href: "https://github.com/ALIBCJH" },
