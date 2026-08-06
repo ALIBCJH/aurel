@@ -1,49 +1,41 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-} from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Container } from "@/components/layout/container";
 import { GemMark } from "@/components/brand/gem-mark";
-import { ThemeToggle } from "@/components/theme/edition-toggle";
+import { Pebble, usePebble } from "@/components/layout/pebble";
 import { ArrowUpRightIcon } from "@/components/icons";
-import { mainNav, primaryCta, siteConfig } from "@/config/site";
+import { mainNav, primaryCta } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /**
  * The masthead.
  *
- * Three things carry it, and each is doing a job rather than decorating:
+ * It holds still. That is the entire design, and it is a correction rather than
+ * a preference — the previous bar condensed after 24px of scroll from a
+ * full-width grid into a centred `max-w-fit` capsule, which meant every label
+ * physically slid to a new position as you began to read. Reach for "Work",
+ * scroll a pixel, and the target moves out from under you. The wordmark
+ * animated to zero width on the way, and the active-page marker had to be
+ * re-measured on a timer afterwards because the layout had changed underneath
+ * it. None of that was soothing; all of it was the bar reacting to the document
+ * instead of to the reader.
  *
- *  1. It condenses. At the top of the page the bar spans the full measure and
- *     is transparent, so the page begins at the very top of the viewport with
- *     nothing sitting on it. Once you scroll, it contracts into a floating
- *     glass capsule — smaller, self-contained, and clearly a layer above the
- *     page rather than part of it.
+ * So: fixed height, fixed positions, always the same. Scrolling fades in a
+ * frosted surface behind it — an opacity change on a layer that is already
+ * there, so nothing reflows and nothing moves. The only travelling object is
+ * the pebble, and it travels because *you* pointed at something.
  *
- *  2. A rule follows the pointer. A short line is measured from the live DOM
- *     and sprung beneath the entries, so the nav has momentum and always shows
- *     where you are. It was a filled chip; at rest that read as a selected
- *     filter tag and became the second-loudest object in the bar, competing
- *     with the call to action it sits beside.
+ * The magnetic call to action is gone too. It leaned toward the cursor as you
+ * approached, which is a party trick that makes the one button on the page you
+ * most want pressed harder to press.
  *
- *  3. The call to action is magnetic. It leans very slightly toward the cursor
- *     as you approach, which makes it feel like the one object on the bar that
- *     wants to be pressed.
- *
- * All of it is pointer-driven and all of it is disabled under reduced motion,
- * where the bar simply sits there and works.
+ * Below `lg` this is a slim brand strip; navigation lives in the ThumbBar at
+ * the bottom of the screen, in reach of a thumb.
  */
-const EASE = [0.22, 1, 0.36, 1] as const;
-const SPRING = { stiffness: 420, damping: 40, mass: 0.7 };
 
 /** `/` must match exactly, or Home would be active on every page. */
 function isActive(pathname: string, href: string): boolean {
@@ -52,367 +44,102 @@ function isActive(pathname: string, href: string): boolean {
 
 export function Masthead() {
   const pathname = usePathname();
-  const reduce = useReducedMotion();
-
-  const [condensed, setCondensed] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (value) => {
-    setCondensed(value > 24);
+    setScrolled(value > 16);
   });
-
-  // ---- the travelling highlight -------------------------------------------
-  const navRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef(new Map<string, HTMLAnchorElement | null>());
-  const [hovered, setHovered] = useState<string | null>(null);
-  const settled = useRef(false);
-
-  const x = useSpring(0, SPRING);
-  const width = useSpring(0, SPRING);
-  const [visible, setVisible] = useState(false);
 
   const activeHref =
     mainNav.find((item) => isActive(pathname, item.href))?.href ?? null;
 
-  const measure = useCallback(() => {
-    const target = hovered ?? activeHref;
-    if (!target || !navRef.current) {
-      setVisible(false);
-      return;
-    }
-    const node = itemRefs.current.get(target);
-    if (!node) {
-      setVisible(false);
-      return;
-    }
-
-    // The first measurement must not fly in from zero.
-    if (!settled.current) {
-      x.jump(node.offsetLeft);
-      width.jump(node.offsetWidth);
-      settled.current = true;
-    } else {
-      x.set(node.offsetLeft);
-      width.set(node.offsetWidth);
-    }
-    setVisible(true);
-  }, [activeHref, hovered, width, x]);
-
-  useLayoutEffect(measure, [measure]);
-
-  // The capsule changes the nav's width, so the highlight has to be
-  // re-measured after that transition settles or it points at the old layout.
-  useEffect(() => {
-    const timer = window.setTimeout(measure, 420);
-    return () => window.clearTimeout(timer);
-  }, [condensed, measure]);
-
-  useEffect(() => {
-    const onResize = () => {
-      settled.current = false;
-      measure();
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [measure]);
-
-  // ---- the magnetic call to action ----------------------------------------
-  const ctaRef = useRef<HTMLAnchorElement>(null);
-  const magnetX = useSpring(0, { stiffness: 260, damping: 22 });
-  const magnetY = useSpring(0, { stiffness: 260, damping: 22 });
-
-  function pullCta(event: React.PointerEvent<HTMLAnchorElement>) {
-    if (reduce || event.pointerType !== "mouse") return;
-    const box = ctaRef.current?.getBoundingClientRect();
-    if (!box) return;
-    // A third of the distance from centre, so it leans rather than lurches.
-    magnetX.set((event.clientX - (box.left + box.width / 2)) * 0.32);
-    magnetY.set((event.clientY - (box.top + box.height / 2)) * 0.32);
-  }
-
-  function releaseCta() {
-    magnetX.set(0);
-    magnetY.set(0);
-  }
-
-  // ---- the full-screen index ----------------------------------------------
-  const [menuPath, setMenuPath] = useState(pathname);
-  if (menuPath !== pathname) {
-    setMenuPath(pathname);
-    setMenuOpen(false);
-  }
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [menuOpen]);
+  const { trackRef, register, pos, size, visible } =
+    usePebble<HTMLDivElement>({ activeKey: hovered ?? activeHref });
 
   return (
-    <>
-      <header className="fixed inset-x-0 top-0 z-50">
-        <Container size="wide" className="pointer-events-none">
-          <motion.div
-            initial={false}
-            animate={{
-              // Height is animated on the capsule rather than left to the
-              // logo's row height. At the full 80px the "pill" is really just
-              // a tall bar with rounded ends; contracting to 60 is what makes
-              // it read as a discrete floating object.
-              height: condensed ? 60 : 80,
-              marginTop: condensed ? 12 : 0,
-              paddingLeft: condensed ? 16 : 0,
-              paddingRight: condensed ? 8 : 0,
-              borderRadius: condensed ? 999 : 0,
-              backgroundColor: condensed
-                ? "color-mix(in srgb, var(--paper) 78%, transparent)"
-                : "color-mix(in srgb, var(--paper) 0%, transparent)",
-              borderColor: condensed ? "var(--rule)" : "rgba(0,0,0,0)",
-              boxShadow: condensed
-                ? "0 18px 40px -28px rgb(0 0 0 / 0.35)"
-                : "0 0 0 0 rgb(0 0 0 / 0)",
-            }}
-            transition={{ duration: 0.4, ease: EASE }}
-            // Three zones at rest — logo left, index centred, actions right —
-            // so the bar reads as one composed object. Right-aligning
-            // everything left the logo stranded beside ~650px of dead space at
-            // desktop widths. Condensed it collapses to a flex row, because a
-            // capsule should hug its contents rather than hold a grid open.
+    <header className="fixed inset-x-0 top-0 z-50">
+      {/* The surface. A layer that is always present and only changes opacity,
+          so the bar's geometry is identical at every scroll position. */}
+      <motion.div
+        aria-hidden
+        initial={false}
+        animate={{ opacity: scrolled ? 1 : 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-0 border-b border-rule bg-[color:color-mix(in_srgb,var(--paper)_82%,transparent)] backdrop-blur-xl backdrop-saturate-150"
+      />
+
+      <Container size="wide" className="relative">
+        <div className="flex h-16 items-center justify-between gap-6 lg:h-20">
+          {/* the mark */}
+          <Link
+            href="/"
+            aria-label="Aurel — home"
+            className="group/mark -ml-1 flex h-12 shrink-0 items-center gap-2.5 rounded-full px-1"
+          >
+            <GemMark
+              compact
+              strokeWidth={1.75}
+              className="h-[1.05rem] w-[1.05rem] shrink-0 text-foil transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
+            />
+            {/* It no longer collapses. A brand name that disappears when you
+                scroll is a brand name you have shown for two seconds. */}
+            <span className="text-lg font-semibold tracking-[-0.02em]">
+              Aurel
+            </span>
+          </Link>
+
+          {/* the index */}
+          <nav
+            aria-label="Main"
+            className="hidden lg:block"
+            onMouseLeave={() => setHovered(null)}
+          >
+            <div ref={trackRef} className="relative flex items-center">
+              <Pebble
+                pos={pos}
+                size={size}
+                visible={visible}
+                className="absolute inset-y-1.5 left-0 -z-10 rounded-full bg-[color:color-mix(in_srgb,var(--foil)_13%,transparent)]"
+              />
+
+              {mainNav.map((item) => {
+                const active = isActive(pathname, item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    ref={register(item.href)}
+                    onMouseEnter={() => setHovered(item.href)}
+                    onFocus={() => setHovered(item.href)}
+                    onBlur={() => setHovered(null)}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "relative flex h-12 items-center px-4 text-[0.9375rem] transition-colors duration-300",
+                      active ? "font-medium text-ink" : "text-ink-soft hover:text-ink",
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* the call to action — it presses, it does not chase */}
+          <Link
+            href={primaryCta.href}
             className={cn(
-              "pointer-events-auto mx-auto items-center border transition-[backdrop-filter,max-width] duration-500",
-              condensed
-                ? "flex max-w-fit gap-2 backdrop-blur-xl backdrop-saturate-150"
-                : "grid w-full max-w-full grid-cols-[1fr_auto_1fr] gap-6",
+              "hidden h-11 shrink-0 items-center gap-2 rounded-full bg-contrast px-5 text-[0.9375rem] font-medium text-contrast-ink sm:inline-flex",
+              "transition-transform duration-200 ease-[cubic-bezier(0.34,1.2,0.64,1)] active:scale-[0.97]",
             )}
           >
-            {/* the mark */}
-            <Link
-              href="/"
-              aria-label="Aurel — home"
-              className="group/mark flex h-full shrink-0 items-center gap-2.5 justify-self-start"
-            >
-              {/* Gold again. It was switched to ink because a single coloured
-                  glyph beside black lettering read as a stray artifact — which
-                  was true while gold appeared nowhere else. Now that the accent
-                  also carries the eyebrows and the active rule it reads as part
-                  of a system rather than an orphan, and the bar is the one
-                  place the brand colour is guaranteed to be on screen.
-
-                  The mark still does not rotate on scroll: turning an "A" on
-                  its side makes it read as an arrow. The capsule is the motion;
-                  the mark stays itself. */}
-              <GemMark
-                compact
-                strokeWidth={1.75}
-                className="h-[1.05rem] w-[1.05rem] shrink-0 text-foil transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
-              />
-              <motion.span
-                initial={false}
-                animate={{
-                  width: condensed ? 0 : "auto",
-                  opacity: condensed ? 0 : 1,
-                  marginRight: condensed ? -10 : 0,
-                }}
-                transition={{ duration: 0.35, ease: EASE }}
-                className="overflow-hidden whitespace-nowrap text-lg font-semibold tracking-[-0.02em]"
-              >
-                Aurel
-              </motion.span>
-            </Link>
-
-            {/* the index */}
-            <nav
-              aria-label="Main"
-              className={cn("hidden lg:block", !condensed && "justify-self-center")}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <div ref={navRef} className="relative flex items-center">
-                {/* the travelling highlight */}
-                <motion.span
-                  aria-hidden
-                  style={{ x, width }}
-                  animate={{ opacity: visible ? 1 : 0 }}
-                  transition={{ duration: 0.25, ease: EASE }}
-                  className="absolute bottom-1 left-0 h-0.5 rounded-full bg-foil"
-                />
-
-                {mainNav.map((item) => {
-                  const active = isActive(pathname, item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      ref={(node) => {
-                        itemRefs.current.set(item.href, node);
-                      }}
-                      onMouseEnter={() => setHovered(item.href)}
-                      onFocus={() => setHovered(item.href)}
-                      onBlur={() => setHovered(null)}
-                      aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "relative flex h-11 items-center px-3.5 text-[0.9375rem]",
-                        "transition-colors duration-200",
-                        active
-                          ? "font-medium text-ink"
-                          : "text-ink-mute hover:text-ink",
-                      )}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            </nav>
-
-            <div
-              // Explicitly column 3. Below `lg` the index is `display: none`,
-              // which removes it from grid flow entirely — without this the
-              // actions slide into the empty middle column and sit stranded in
-              // the centre of the bar on every phone.
-              className={cn(
-                "flex shrink-0 items-center gap-1.5",
-                !condensed && "col-start-3 justify-self-end",
-              )}
-            >
-              <ThemeToggle />
-
-              {/* the magnetic call to action */}
-              <motion.span
-                style={{ x: magnetX, y: magnetY }}
-                className="hidden sm:inline-flex"
-              >
-                <Link
-                  ref={ctaRef}
-                  href={primaryCta.href}
-                  onPointerMove={pullCta}
-                  onPointerLeave={releaseCta}
-                  className="inline-flex h-11 items-center gap-2 rounded-full bg-contrast px-5 text-[0.9375rem] font-medium text-contrast-ink transition-opacity duration-200 hover:opacity-90"
-                >
-                  {primaryCta.label}
-                  <ArrowUpRightIcon width={14} height={14} />
-                </Link>
-              </motion.span>
-
-              {/* index trigger — the only route into the nav below lg */}
-              <button
-                type="button"
-                onClick={() => setMenuOpen(true)}
-                aria-expanded={menuOpen}
-                aria-controls="site-index"
-                aria-label="Open menu"
-                className="flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200 hover:bg-field lg:hidden"
-              >
-                <span aria-hidden className="flex flex-col items-end gap-[5px]">
-                  <span className="block h-0.5 w-5 rounded-full bg-current" />
-                  <span className="block h-0.5 w-3.5 rounded-full bg-current" />
-                </span>
-              </button>
-            </div>
-          </motion.div>
-        </Container>
-      </header>
-
-      {/* ---- the full-screen index ---- */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            id="site-index"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: EASE }}
-            className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-paper lg:hidden"
-          >
-            <Container size="wide">
-              <div className="flex h-16 items-center justify-between sm:h-20">
-                <span className="text-sm text-ink-mute">Menu</span>
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(false)}
-                  aria-label="Close menu"
-                  className="-mr-2 flex h-11 w-11 items-center justify-center rounded-full text-2xl transition-colors duration-200 hover:bg-field"
-                >
-                  <span aria-hidden>×</span>
-                </button>
-              </div>
-
-              <nav aria-label="Menu" className="pb-[max(2rem,env(safe-area-inset-bottom))] pt-6">
-                <ul>
-                  {mainNav.map((item, index) => (
-                    <motion.li
-                      key={item.href}
-                      initial={reduce ? false : { opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.45,
-                        ease: EASE,
-                        delay: 0.04 + index * 0.05,
-                      }}
-                      className="border-b border-rule"
-                    >
-                      <Link
-                        href={item.href}
-                        className="flex items-center justify-between gap-6 py-5"
-                      >
-                        <span className="flex items-baseline gap-4">
-                          <span className="text-sm tabular-nums text-ink-mute">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          <span className="text-[clamp(2rem,9vw,3rem)] font-semibold tracking-[-0.035em]">
-                            {item.label}
-                          </span>
-                        </span>
-                        <ArrowUpRightIcon
-                          width={20}
-                          height={20}
-                          className="shrink-0 text-ink-mute"
-                        />
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-
-                <motion.div
-                  initial={reduce ? false : { opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease: EASE, delay: 0.32 }}
-                  className="mt-10"
-                >
-                  <Link
-                    href={primaryCta.href}
-                    className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-contrast text-base font-medium text-contrast-ink"
-                  >
-                    {primaryCta.label}
-                    <ArrowUpRightIcon width={15} height={15} />
-                  </Link>
-
-                  <div className="mt-8 flex flex-col gap-1 text-[0.9375rem] text-ink-mute">
-                    <a
-                      href={`mailto:${siteConfig.email}`}
-                      className="tap inline-flex py-2 transition-colors hover:text-ink"
-                    >
-                      {siteConfig.email}
-                    </a>
-                    <span className="py-1">{siteConfig.location}</span>
-                  </div>
-                </motion.div>
-              </nav>
-            </Container>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+            {primaryCta.label}
+            <ArrowUpRightIcon width={14} height={14} />
+          </Link>
+        </div>
+      </Container>
+    </header>
   );
 }

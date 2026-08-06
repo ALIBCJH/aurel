@@ -22,12 +22,10 @@ import { cn } from "@/lib/utils";
  */
 export type PanelTone = "loud" | "quiet" | "outline";
 
-// All three tones stay inside the active theme. An earlier version inverted
-// `loud` to a black card on a white page, which gave strong rhythm but meant a
-// stack of cards read as two different palettes fighting each other — and in
-// dark mode it flipped to glaring white slabs. Rhythm now comes from alternating
-// a filled surface against an outlined one, which is quieter and holds together
-// in both themes.
+// An earlier version inverted `loud` to a black card on a white page, which
+// gave strong rhythm but meant a stack of cards read as two different palettes
+// fighting each other. Rhythm now comes from alternating a filled surface
+// against an outlined one, which is quieter.
 const tones: Record<PanelTone, string> = {
   loud: "bg-paper-deep text-ink",
   quiet: "border border-rule bg-paper text-ink",

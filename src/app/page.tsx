@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
-import { Panel, PanelGlow } from "@/components/ui/panel";
 import { SectionHead } from "@/components/layout/section-head";
 import { OpeningSpread } from "@/components/home/opening-spread";
+import { ServiceSwitchboard } from "@/components/home/service-switchboard";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases } from "@/config/cases";
 import { services } from "@/config/services";
@@ -20,22 +20,22 @@ import { primaryCta } from "@/config/site";
 export const metadata: Metadata = {
   title: "Websites, mobile apps, AI & SEO for businesses in Kenya",
   description:
-    "Aurel is a Kenyan software studio building custom websites, mobile apps, AI automation, and SEO for businesses across Kenya and East Africa.",
+    "Aurel builds websites, mobile apps, AI automation and SEO for businesses in Kenya. Based in Nyeri and Nairobi. Starting prices are on the site and you own everything we build.",
   alternates: { canonical: "/" },
 };
 
 const commitments = [
   {
-    title: "One team, end to end",
-    body: "Strategy, design and engineering under one roof. The people who scope your project are the people who build it — no hand-offs, no finger-pointing.",
+    title: "One team, start to finish",
+    body: "Planning, design and building all happen here. The people who sit down with you at the start are the same people who build it — nobody to hand you over to, nobody to blame.",
   },
   {
-    title: "Built for the network you have",
-    body: "Mid-range Android on congested 4G is the baseline we build against, not an afterthought. Page weight is a budget we hold ourselves to.",
+    title: "Built for the network you actually have",
+    body: "We build and test on an ordinary Android phone on a busy network, because that is what your customers use. Every page is kept light, on purpose.",
   },
   {
     title: "You own everything",
-    body: "Code, content, domains, infrastructure and store listings, all in your name. We do not hold work hostage as a retention strategy.",
+    body: "The code, the words, the domain, the hosting and the store listings are all in your name. We do not hold your work hostage to keep you as a client.",
   },
 ];
 
@@ -49,7 +49,7 @@ export default function HomePage() {
         <Container size="wide">
           <SectionHead
             title="What we do"
-            deck="Four disciplines, deep enough to be worth hiring for. Take one or the whole transformation — the standard does not change."
+            deck="Four things we do properly. Take one or take all of them — the standard is the same either way."
             action={
               <Button href="/services" variant="secondary" size="md">
                 All services
@@ -58,33 +58,8 @@ export default function HomePage() {
             }
           />
 
-          <div className="mt-10 flex flex-col gap-4 sm:mt-14 sm:gap-5">
-            {services.map((service, index) => (
-              <div
-                key={service.slug}
-                data-reveal="fade"
-                style={{ ["--reveal-delay" as string]: `${index * 0.06}s` }}
-              >
-                <Panel
-                  href={`/services/${service.slug}`}
-                  tone={index % 2 === 0 ? "loud" : "quiet"}
-                  index={service.index}
-                  title={service.name}
-                  body={service.description}
-                  media={<PanelGlow seed={index} />}
-                  footer={
-                    <span className="inline-flex items-center gap-2 text-[0.9375rem] font-medium">
-                      {service.headline}
-                      <ArrowUpRightIcon
-                        width={14}
-                        height={14}
-                        className="transition-transform duration-300 group-hover/panel:translate-x-0.5 group-hover/panel:-translate-y-0.5"
-                      />
-                    </span>
-                  }
-                />
-              </div>
-            ))}
+          <div className="mt-10 sm:mt-14">
+            <ServiceSwitchboard services={services} />
           </div>
         </Container>
       </section>
@@ -95,8 +70,8 @@ export default function HomePage() {
       <section className="py-20 sm:py-28 lg:py-36">
         <Container size="wide">
           <SectionHead
-            title="Selected work"
-            deck="Two products, both live, both linked. Open them and judge the work rather than the claim."
+            title="Work we have done"
+            deck="Two products, both live. We have linked them, so open them and judge the work for yourself."
             action={
               <Button href="/work" variant="secondary" size="md">
                 All work
@@ -128,7 +103,7 @@ export default function HomePage() {
                 <h3 className="mt-6 text-2xl font-semibold tracking-[-0.03em]">
                   <Link
                     href={`/work/${entry.slug}`}
-                    className="transition-opacity duration-200 hover:opacity-70"
+                    className="tap transition-opacity duration-200 hover:opacity-70"
                   >
                     {entry.client}
                   </Link>
@@ -153,8 +128,8 @@ export default function HomePage() {
       <section className="bg-tint py-16 sm:py-20 lg:py-24">
         <Container size="wide">
           <SectionHead
-            title="Why studios like ours get picked"
-            deck="Small enough that the person you meet is the person who builds it. Serious enough to hand over something you can run for years."
+            title="Why businesses choose us"
+            deck="Small enough that the person you meet is the person who builds it. Serious enough to hand you something you can run for years."
           />
 
           <div className="mt-10 grid gap-4 sm:mt-14 sm:gap-5 lg:grid-cols-3">

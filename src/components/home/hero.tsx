@@ -243,7 +243,7 @@ function LivingBackground({
       <motion.div className="absolute inset-0" style={{ background: spotlight }} />
 
       {/* Film grain + bottom fade into the page */}
-      <div className="bg-grain absolute inset-0 opacity-[0.05] mix-blend-overlay dark:opacity-[0.07]" />
+      <div className="bg-grain absolute inset-0 opacity-[0.05] mix-blend-overlay" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
     </motion.div>
   );

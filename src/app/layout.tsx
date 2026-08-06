@@ -2,9 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
-import { ThemeProvider } from "@/components/theme/theme-provider";
-import { ThemeScript } from "@/components/theme/theme-script";
 import { Masthead } from "@/components/layout/masthead";
+import { ThumbBar } from "@/components/layout/thumb-bar";
 import { Colophon } from "@/components/layout/colophon";
 import { RevealObserver } from "@/components/motion/reveal-observer";
 import { ReadingProgress } from "@/components/motion/reading-progress";
@@ -55,13 +54,36 @@ export const metadata: Metadata = {
   },
 };
 
-// Browser chrome matches the page. A single value, not a prefers-color-scheme
-// pair: the theme is chosen by stored preference and defaults to light, so
-// keying the chrome off the OS setting produced the mismatch where a
-// system-dark visitor got a light page inside dark chrome.
+// Browser chrome matches the page. One value, because there is one palette —
+// keying this off the OS setting would put a light page inside dark chrome.
 export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
+
+/**
+ * Blocking init script.
+ *
+ * Marks <html> with `js` before first paint. Every entrance animation in
+ * globals.css is scoped to `.js [data-reveal]`, so without JavaScript the page
+ * renders fully composed and legible instead of waiting on an observer that
+ * will never run — and setting it pre-paint means no flash of hidden copy.
+ *
+ * This was `components/theme/theme-script.tsx`, which also applied a stored
+ * dark-mode preference. That half is gone with the dark edition; the `js` flag
+ * is unrelated to theming and still load-bearing.
+ *
+ * SECURITY NOTE: `__html` is a build-time constant string literal — no user,
+ * network, or runtime input, so there is no XSS surface.
+ */
+function JsSignalScript() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: "document.documentElement.classList.add('js');",
+      }}
+    />
+  );
+}
 
 export default function RootLayout({
   children,
@@ -80,25 +102,35 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      // Light is the default and the designed state; ThemeScript applies any
-      // stored preference pre-paint.
       className={`${inter.variable} ${geistMono.variable} h-full`}
+      // The blocking script below adds `js` to this element before React
+      // hydrates, so the server's class list never matches the client's. This
+      // was here for the theme class and is still required without it — the
+      // `js` flag alone is enough to trip the warning.
       suppressHydrationWarning
     >
       <head>
-        <ThemeScript />
+        <JsSignalScript />
         <JsonLd data={graph} />
       </head>
-      <body className="flex min-h-full flex-col antialiased">
-        <ThemeProvider>
-          <RevealObserver />
-          <ReadingProgress />
-          <Masthead />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <Colophon />
-        </ThemeProvider>
+      <body
+        // The thumb bar floats over the page on phones, so the document has to
+        // end above it. The bar stands 83px off the bottom edge (71px tall on a
+        // 12px cushion), so 6.5rem leaves it clear with about 20px to spare —
+        // measured, because 5.5rem left the last footer link 15px underneath
+        // it and unreachable. The inset clears the home indicator on handsets
+        // that have one. On `main` alone this would not work: the colophon
+        // renders after it.
+        className="flex min-h-full flex-col antialiased pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-0"
+      >
+        <RevealObserver />
+        <ReadingProgress />
+        <Masthead />
+        <main id="main" className="flex-1">
+          {children}
+        </main>
+        <Colophon />
+        <ThumbBar />
       </body>
     </html>
   );
