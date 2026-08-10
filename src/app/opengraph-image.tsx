@@ -19,11 +19,13 @@ export const alt = `${siteConfig.name} — ${siteConfig.tagline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Night edition tokens, inlined because Satori cannot read our CSS variables.
-const PAPER = "#14120e";
-const INK = "#efe9dc";
-const INK_MUTE = "#948b7a";
-const FOIL = "#c8a35a";
+// The Nexora palette, inlined because Satori cannot read CSS custom properties.
+// These must track --nexora-* in globals.css; a share card in last season's
+// colours is the most public possible place for the palette to drift.
+const PAPER = "#080808"; /* --nexora-black */
+const INK = "#f2efe8"; /* --nexora-white */
+const INK_MUTE = "#b8b5ae"; /* --nexora-gray */
+const FOIL = "#d39a45"; /* --nexora-gold */
 
 export default function OpengraphImage() {
   return new ImageResponse(

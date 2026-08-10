@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { ServiceReel } from "@/components/services/service-reel";
 import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
-import { services } from "@/config/services";
+import { hasPublishedFloor, services } from "@/config/services";
+import { imagery } from "@/config/imagery";
+import { Figure, hasImageAsset } from "@/components/ui/figure";
+import { Screenshot } from "@/components/ui/screenshot";
 import { primaryCta } from "@/config/site";
-import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
+import {
+  JsonLd,
+  buildBreadcrumbSchema,
+  buildServiceListSchema,
+} from "@/components/seo/json-ld";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Website, app, AI and SEO services in Kenya",
+  title: "Web Development, Mobile Apps & SEO Services in Kenya",
   description:
-    "What Aurel builds for Kenyan businesses: websites, mobile apps, AI automation and SEO. One team for all four, with starting prices published up front.",
+    "What Nexora builds for Kenyan businesses: websites, mobile apps, SEO, Google Business Profile, digital strategy and analytics. One team for all six, with starting prices published up front.",
   alternates: { canonical: "/services" },
 };
 
@@ -60,29 +66,36 @@ export default function ServicesPage() {
   return (
     <>
       <JsonLd
-        data={buildBreadcrumbSchema([{ name: "Services", path: "/services" }])}
+        data={[
+          buildServiceListSchema(services),
+          buildBreadcrumbSchema([{ name: "Services", path: "/services" }]),
+        ]}
       />
 
       {/* ── The claim ────────────────────────────────────────────────────── */}
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
-          <div className="max-w-4xl">
-            <Eyebrow data-reveal="fade">Services</Eyebrow>
-            <h1
-              data-reveal="fade"
-              style={{ ["--reveal-delay" as string]: "0.05s" }}
-              className="mt-5 text-[clamp(2.5rem,7vw,5.25rem)] font-semibold leading-[1] tracking-[-0.04em]"
-            >
-              Four things, done properly
-            </h1>
+          {/* Title left, standfirst right — see the note on /work. */}
+          <div className="grid items-end gap-6 lg:grid-cols-12 lg:gap-12">
+            <div className="lg:col-span-7">
+              <Eyebrow data-reveal="fade">Services</Eyebrow>
+              <h1
+                data-reveal="fade"
+                style={{ ["--reveal-delay" as string]: "0.05s" }}
+                className="mt-5 text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1] tracking-[-0.04em]"
+              >
+                Digital solutions built around your business
+              </h1>
+            </div>
             <p
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.1s" }}
-              className="mt-7 max-w-2xl text-[1.0625rem] leading-[1.6] text-ink-soft sm:text-xl"
+              className="max-w-xl text-[1.0625rem] leading-[1.7] text-ink-soft lg:col-span-5 lg:col-start-8"
             >
-              We used to list eight. Four is the honest number — the four things
-              we actually do, and do properly. Hire us for one of them or for all
-              four; the standard is the same either way.
+              From your first website to a complete digital ecosystem, we
+              design and build technology that helps businesses become more
+              visible, accessible and competitive. Six disciplines — take one of
+              them, or take all of them.
             </p>
           </div>
 
@@ -101,6 +114,18 @@ export default function ServicesPage() {
         const loud = index % 2 === 0;
         const flip = index % 2 === 1;
 
+        // Commissioned art only counts if it was actually delivered. Three of
+        // the six disciplines point at files that do not exist, and the
+        // reserved slot they fell back to is a debugging aid, not a page
+        // element — it printed `/images/aurel-seo.webp` in mono where a
+        // visitor was owed a picture of the work. Where the file is missing
+        // the discipline shows its real screenshot instead, which every other
+        // service on the page was already doing. Drop the asset in and the
+        // commissioned art takes over on the next build, exactly as before.
+        const declared = service.heroImage ? imagery[service.heroImage] : null;
+        const commissioned =
+          declared && hasImageAsset(declared.path) ? declared : null;
+
         return (
           <section
             key={service.slug}
@@ -113,7 +138,13 @@ export default function ServicesPage() {
             <Container size="wide">
               <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
                 {/* the words */}
-                <div className={cn("lg:col-span-6", flip && "lg:order-2 lg:col-start-7")}>
+                <div
+                  className={cn(
+                    "min-w-0",
+                    "lg:col-span-6",
+                    flip && "lg:order-2 lg:col-start-7",
+                  )}
+                >
                   <span
                     className={cn(
                       "text-sm tabular-nums text-ink-mute",
@@ -162,39 +193,68 @@ export default function ServicesPage() {
                     style={{ ["--reveal-delay" as string]: "0.18s" }}
                     className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4"
                   >
+                    {/* `whitespace-normal` below `sm`: the label is built from
+                        the discipline name, and "Explore Google Maps &
+                        Business Presence" on one unbreakable line is 372px —
+                        wider than a 390px phone has gutter for, which is what
+                        made this page scroll sideways. The name is also set as
+                        written rather than lowercased; `toLowerCase()` was
+                        turning Google Maps and SEO into common nouns. */}
                     <Button
                       href={`/services/${service.slug}`}
                       size="md"
+                      className="max-w-full whitespace-normal text-center sm:whitespace-nowrap"
                     >
-                      Explore {service.name.toLowerCase()}
+                      Explore {service.name}
                       <ArrowUpRightIcon width={14} height={14} />
                     </Button>
                     <p className="text-sm">
-                      <span className="text-ink-mute">From </span>
+                      {hasPublishedFloor(service) && (
+                        <span className="text-ink-mute">From </span>
+                      )}
                       <span className="font-medium">{service.pricing.from}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* the work */}
-                <div className={cn("lg:col-span-6", flip && "lg:order-1 lg:col-start-1")}>
-                  <Link
-                    href={`/services/${service.slug}`}
-                    data-reveal="plate"
-                    className={cn(
-                      "group/shot block overflow-hidden rounded-[var(--radius-card)]",
-                      loud ? "bg-paper" : "bg-paper-deep",
-                    )}
-                  >
-                    <Image
-                      src={service.showcase.src}
-                      alt={service.showcase.alt}
-                      width={1440}
-                      height={900}
-                      sizes="(min-width: 1024px) 46vw, 100vw"
-                      className="h-auto w-full transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/shot:scale-[1.03]"
-                    />
-                  </Link>
+                {/* `min-w-0`: grid items default to `min-width: auto`, so a
+                    child that cannot wrap sets the floor for the whole track.
+                    The reserved-slot placeholder printed its file path in mono
+                    with no break opportunity, which widened this column past
+                    the gutter and made /services scroll sideways at 390px. */}
+                <div
+                  className={cn(
+                    "min-w-0",
+                    "lg:col-span-6",
+                    flip && "lg:order-1 lg:col-start-1",
+                  )}
+                >
+                  {commissioned ? (
+                    // Commissioned art for the flagship disciplines. Not a
+                    // link: the CTA beside it already goes to the same place,
+                    // and a second target on the same row is noise.
+                    <div data-reveal="plate">
+                      <Figure
+                        image={commissioned}
+                        sizes="(min-width: 1024px) 46vw, 100vw"
+                      />
+                    </div>
+                  ) : (
+                    <Link
+                      href={`/services/${service.slug}`}
+                      data-reveal="plate"
+                      className="group/shot block rounded-[var(--radius-card)]"
+                    >
+                      <Screenshot
+                        src={service.showcase.src}
+                        alt={service.showcase.alt}
+                        portrait={service.showcase.portrait}
+                        sizes="(min-width: 1024px) 46vw, 100vw"
+                        className="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/shot:-translate-y-1"
+                      />
+                    </Link>
+                  )}
                 </div>
               </div>
 
@@ -269,7 +329,14 @@ export default function ServicesPage() {
               </p>
             </div>
 
-            <dl className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius-lg)] bg-rule sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
+            {/* The hairline dividers are a `gap-px` over a `bg-rule` ground,
+                which means any cell the services do not fill shows up as a
+                grey slab rather than as nothing. So the column count has to
+                divide the number of disciplines exactly. At six that is 1, 2
+                or 3 — six columns would give each price about 190px and break
+                the figures onto two lines. If the service count changes again,
+                change these with it. */}
+            <dl className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius-lg)] bg-rule sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
               {services.map((service) => (
                 <div key={service.slug} className="bg-paper-deep p-6 sm:p-7">
                   <dt className="text-sm text-ink-mute">{service.name}</dt>

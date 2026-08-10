@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
+import { Screenshot } from "@/components/ui/screenshot";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases, getCase } from "@/config/cases";
@@ -97,17 +97,13 @@ export default async function CaseNotePage({ params }: Params) {
       <section className="pt-12 sm:pt-14">
         <Container size="wide">
           <figure data-reveal="plate">
-            <div className="overflow-hidden rounded-[var(--radius-card)] bg-paper-deep">
-              <Image
-                src={entry.image.src}
-                alt={entry.image.alt}
-                width={1440}
-                height={900}
-                sizes="(min-width: 1536px) 88rem, 100vw"
-                priority
-                className="h-auto w-full"
-              />
-            </div>
+            <Screenshot
+              src={entry.image.src}
+              alt={entry.image.alt}
+              href={entry.url}
+              sizes="(min-width: 1536px) 88rem, 100vw"
+              priority
+            />
             {entry.url && (
               <figcaption className="mt-5">
                 <a
@@ -231,16 +227,11 @@ export default async function CaseNotePage({ params }: Params) {
             <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:gap-10">
               {entry.gallery.map((shot) => (
                 <figure key={shot.src} data-reveal="plate">
-                  <div className="overflow-hidden rounded-[var(--radius-xl)] bg-paper-deep">
-                    <Image
-                      src={shot.src}
-                      alt={shot.alt}
-                      width={1440}
-                      height={900}
-                      sizes="(min-width: 640px) 45vw, 100vw"
-                      className="h-auto w-full"
-                    />
-                  </div>
+                  <Screenshot
+                    src={shot.src}
+                    alt={shot.alt}
+                    sizes="(min-width: 640px) 45vw, 100vw"
+                  />
                   <figcaption className="mt-3 text-sm leading-relaxed text-ink-mute">
                     {shot.caption}
                   </figcaption>
@@ -249,16 +240,11 @@ export default async function CaseNotePage({ params }: Params) {
 
               {entry.mobileImage && (
                 <figure data-reveal="plate">
-                  <div className="mx-auto w-full max-w-[16rem] overflow-hidden rounded-[1.5rem] border-[6px] border-paper-deep bg-paper-deep shadow-[0_20px_50px_-30px_rgb(0_0_0/0.5)]">
-                    <Image
-                      src={entry.mobileImage.src}
-                      alt={entry.mobileImage.alt}
-                      width={390}
-                      height={844}
-                      sizes="256px"
-                      className="h-auto w-full"
-                    />
-                  </div>
+                  <Screenshot
+                    src={entry.mobileImage.src}
+                    alt={entry.mobileImage.alt}
+                    portrait
+                  />
                   <figcaption className="mt-3 text-center text-sm leading-relaxed text-ink-mute">
                     The same product on a phone — where most of this market
                     actually browses

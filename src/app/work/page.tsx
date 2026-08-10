@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
+import { Screenshot } from "@/components/ui/screenshot";
 import { Eyebrow } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases } from "@/config/cases";
 import { getService } from "@/config/services";
 import { primaryCta } from "@/config/site";
+import { Testimonials } from "@/components/ui/testimonial";
 import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Our work — websites and apps built in Kenya",
+  title: "Nexora Digital Projects & Case Studies",
   description:
-    "Work Aurel has built in Kenya: a 3D showroom for R&J Interiors and a product-by-product website for Datani Insurance Agency. Both are live, and both are linked here so you can open them.",
+    "Work Nexora has built in Kenya: a 3D showroom for R&J Interiors and a product-by-product website for Datani Insurance Agency. Both are live, and both are linked here so you can open them.",
   alternates: { canonical: "/work" },
 };
 
@@ -32,22 +33,30 @@ export default function WorkPage() {
       {/* ── The claim ────────────────────────────────────────────────────── */}
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
-          <div className="max-w-4xl">
-            <Eyebrow data-reveal="fade">Work</Eyebrow>
-            <h1
-              data-reveal="fade"
-              style={{ ["--reveal-delay" as string]: "0.05s" }}
-              className="mt-5 text-[clamp(2.5rem,7vw,5.25rem)] font-semibold leading-[1] tracking-[-0.04em]"
-            >
-              Proof, not promises
-            </h1>
+          {/* Title and standfirst share the row rather than stacking down the
+              left with the right half empty. That layout left roughly 600×250px
+              of blank ground directly above the fold on this page, on /about
+              and on /services — the first thing a visitor met on three of the
+              five pages was a void. */}
+          <div className="grid items-end gap-6 lg:grid-cols-12 lg:gap-12">
+            <div className="lg:col-span-7">
+              <Eyebrow data-reveal="fade">Work</Eyebrow>
+              <h1
+                data-reveal="fade"
+                style={{ ["--reveal-delay" as string]: "0.05s" }}
+                className="mt-5 text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1] tracking-[-0.04em]"
+              >
+                Work built for real businesses
+              </h1>
+            </div>
             <p
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.1s" }}
-              className="mt-7 max-w-2xl text-[1.0625rem] leading-[1.6] text-ink-soft sm:text-xl"
+              className="max-w-xl text-[1.0625rem] leading-[1.7] text-ink-soft lg:col-span-5 lg:col-start-8"
             >
-              Two products, both live, both linked. Go and open them — that is
-              rather the point of a portfolio.
+              We do not build technology for the sake of technology. We build
+              digital experiences that solve real business problems — and both
+              of these are live and linked, so you can open them and judge.
             </p>
           </div>
         </Container>
@@ -63,20 +72,21 @@ export default function WorkPage() {
                   <Link
                     href={`/work/${entry.slug}`}
                     data-reveal="plate"
-                    className="group/shot block overflow-hidden rounded-[var(--radius-card)] bg-paper-deep"
+                    className="group/shot block rounded-[var(--radius-card)]"
                   >
-                    <Image
+                    <Screenshot
                       src={entry.image.src}
                       alt={entry.image.alt}
-                      width={1440}
-                      height={900}
+                      href={entry.url}
+                      phone={entry.mobileImage}
                       sizes="(min-width: 1536px) 88rem, 100vw"
                       priority={index === 0}
-                      className="h-auto w-full transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/shot:scale-[1.02]"
+                      className="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/shot:-translate-y-1"
                     />
                   </Link>
 
-                  <div className="mt-7 grid gap-6 lg:grid-cols-12 lg:gap-12">
+                  {/* Clears the phone inset, which hangs below the mat. */}
+                  <div className="mt-7 grid gap-6 sm:mt-14 lg:grid-cols-12 lg:gap-12">
                     <div className="lg:col-span-7">
                       <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-mute">
                         <span className="tabular-nums">
@@ -189,6 +199,11 @@ export default function WorkPage() {
       </section>
 
       {/* ── The invitation ───────────────────────────────────────────────── */}
+      {/* Renders nothing until a real, attributed quote exists — see
+          config/testimonials.ts. The heading the brief asked for lives in the
+          component, so it appears with the first quote and not before. */}
+      <Testimonials />
+
       <section className="pb-20 sm:pb-24 lg:pb-32">
         <Container size="wide">
           <div className="rounded-[var(--radius-card)] border border-rule bg-paper-deep px-7 py-16 text-center sm:px-10 sm:py-20 lg:py-28">

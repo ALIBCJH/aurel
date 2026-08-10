@@ -20,26 +20,34 @@ import { siteConfig } from "@/config/site";
  * resort, not the mechanism: on its own it loses every lead whose device has no
  * mail client configured, and tells neither party that anything went missing.
  */
-// Mirrors the four disciplines actually sold, plus an escape hatch. It listed
+// Mirrors the disciplines actually sold, plus an escape hatch. It listed
 // eight — including three that no longer exist as services — so a visitor could
 // tick "Strategy" and receive a reply explaining it is not a thing we sell.
+// It then drifted the other way: it still offered "AI & automation" after that
+// discipline was retired, and offered none of the three added with it.
+// Hand-written rather than mapped from `services`, because these are phrased as
+// the thing a client wants ("Website") not as the discipline ("Websites"); keep
+// it in step when a service is added or dropped.
 const NEEDS = [
   "Website",
   "Mobile app",
-  "AI & automation",
   "SEO",
+  "Google Business Profile",
+  "Digital strategy",
+  "Analytics",
   "Not sure yet",
 ];
 
-// KES, matching the ranges published on the services page. These were in USD,
-// which meant the budget a visitor selected here and the prices they had just
-// read were in different currencies — and the brackets did not line up with any
-// figure on the site.
+// KES, and the brackets have to straddle the floors published in
+// `services.ts` — a visitor reads the price and then picks a band, so if the
+// lowest band sits above the cheapest service every enquiry lands in it and
+// the field tells us nothing. Rescaled when prices moved: the old bands began
+// at "Under KES 150,000", which swallowed all four disciplines at once.
 const BUDGETS = [
-  "Under KES 150,000",
-  "KES 150,000 – 400,000",
-  "KES 400,000 – 1M",
-  "KES 1M+",
+  "Under KES 50,000",
+  "KES 50,000 – 100,000",
+  "KES 100,000 – 250,000",
+  "KES 250,000+",
   "Not sure yet",
 ];
 
@@ -106,6 +114,7 @@ export function ProjectForm() {
     const lines = [
       `Name: ${payload.name}`,
       `Email: ${payload.email}`,
+      `Phone: ${payload.phone || "—"}`,
       `Company: ${payload.company}`,
       `Needs: ${needs.join(", ") || "—"}`,
       `Budget: ${payload.budget || "—"}`,
@@ -127,6 +136,7 @@ export function ProjectForm() {
     const payload = {
       name: String(data.get("name") ?? ""),
       email: String(data.get("email") ?? ""),
+      phone: String(data.get("phone") ?? ""),
       company: String(data.get("company") ?? ""),
       budget: String(data.get("budget") ?? ""),
       message: String(data.get("message") ?? ""),
@@ -244,7 +254,20 @@ export function ProjectForm() {
         </Field>
       </div>
 
-      <Field index={3} label="Company" htmlFor="company">
+      <Field index={3} label="Phone" htmlFor="phone">
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          enterKeyHint="next"
+          placeholder="+254 700 000 000"
+          className="field-rule text-lg"
+        />
+      </Field>
+
+      <Field index={4} label="Company or organisation" htmlFor="company">
         <input
           id="company"
           name="company"
@@ -257,7 +280,7 @@ export function ProjectForm() {
 
       <fieldset className="border-t border-rule pt-5">
         <div className="flex items-baseline gap-3">
-          <span className="text-sm tabular-nums text-ink-mute">04</span>
+          <span className="text-sm tabular-nums text-ink-mute">05</span>
           <legend className="text-[0.9375rem] font-medium">What do you need?</legend>
         </div>
         <div className="mt-4 flex flex-wrap gap-2.5">
@@ -284,7 +307,7 @@ export function ProjectForm() {
         </div>
       </fieldset>
 
-      <Field index={5} label="Budget range" htmlFor="budget">
+      <Field index={6} label="Budget range" htmlFor="budget">
         <select
           id="budget"
           name="budget"
@@ -302,7 +325,7 @@ export function ProjectForm() {
         </select>
       </Field>
 
-      <Field index={6} label="Where you want to go" htmlFor="message">
+      <Field index={7} label="Where you want to go" htmlFor="message">
         <textarea
           id="message"
           name="message"

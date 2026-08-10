@@ -92,7 +92,7 @@ export function Wordmark({
   return (
     <Link
       href={href}
-      aria-label="Aurel — home"
+      aria-label="Nexora — home"
       className="tap -ml-1 inline-flex items-center px-1"
     >
       {content}

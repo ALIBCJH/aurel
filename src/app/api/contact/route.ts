@@ -26,6 +26,8 @@ export const runtime = "nodejs";
 type Payload = {
   name: string;
   email: string;
+  /** Optional. In this market a phone number is often the fastest reply path. */
+  phone: string;
   company: string;
   needs: string[];
   budget: string;
@@ -34,7 +36,7 @@ type Payload = {
   website?: string;
 };
 
-const MAX = { name: 120, email: 200, company: 160, budget: 60, message: 5000 };
+const MAX = { name: 120, email: 200, phone: 40, company: 160, budget: 60, message: 5000 };
 
 function str(value: unknown, limit: number): string {
   return typeof value === "string" ? value.trim().slice(0, limit) : "";
@@ -53,6 +55,7 @@ function render(payload: Payload): string {
   return [
     `Name:    ${payload.name}`,
     `Email:   ${payload.email}`,
+    `Phone:   ${payload.phone || "—"}`,
     `Company: ${payload.company || "—"}`,
     `Needs:   ${payload.needs.join(", ") || "—"}`,
     `Budget:  ${payload.budget || "—"}`,
@@ -73,7 +76,7 @@ async function deliver(payload: Payload): Promise<void> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL || "Aurel <onboarding@resend.dev>",
+        from: process.env.CONTACT_FROM_EMAIL || "Nexora <onboarding@resend.dev>",
         to: [to],
         reply_to: payload.email,
         subject: `Project brief — ${payload.name}`,
@@ -129,6 +132,7 @@ export async function POST(request: Request) {
   const payload: Payload = {
     name: str(input.name, MAX.name),
     email: str(input.email, MAX.email),
+    phone: str(input.phone, MAX.phone),
     company: str(input.company, MAX.company),
     needs: Array.isArray(input.needs)
       ? input.needs.filter((n): n is string => typeof n === "string").slice(0, 12)

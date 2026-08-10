@@ -7,15 +7,16 @@ import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { cases } from "@/config/cases";
 import { services } from "@/config/services";
+import { placePhotography } from "@/config/photography";
 import { initials, team } from "@/config/team";
 import { primaryCta, siteConfig } from "@/config/site";
 import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "About Aurel — a software studio in Nyeri and Nairobi",
+  title: "About Nexora Digital Solutions",
   description:
-    "Aurel is a small software studio in Nyeri and Nairobi. Meet the person who builds the work, and see what we promise every client.",
+    "Nexora is a small software studio in Nyeri and Nairobi. Meet the person who builds the work, and see what we promise every client.",
   alternates: { canonical: "/about" },
 };
 
@@ -47,10 +48,19 @@ const principles = [
   },
 ];
 
+/** What technology owes a business. Short enough to be read as a set. */
+const beliefs = [
+  "Solve real problems",
+  "Make businesses easier to discover",
+  "Improve customer experiences",
+  "Create measurable value",
+  "Support long-term growth",
+];
+
 const facts = [
   { label: "Based", value: "Nyeri & Nairobi" },
   { label: "Working", value: "Kenya & remote" },
-  { label: "Disciplines", value: "Four" },
+  { label: "Disciplines", value: "Five" },
   { label: "Reply", value: "One business day" },
 ];
 
@@ -62,24 +72,28 @@ export default function AboutPage() {
       {/* ── The claim ────────────────────────────────────────────────────── */}
       <section className="pt-16 sm:pt-20 lg:pt-24">
         <Container size="wide">
-          <div className="max-w-4xl">
-            <Eyebrow data-reveal="fade">About</Eyebrow>
-            <h1
-              data-reveal="fade"
-              style={{ ["--reveal-delay" as string]: "0.05s" }}
-              className="mt-5 text-[clamp(2.5rem,7vw,5.25rem)] font-semibold leading-[1] tracking-[-0.04em]"
-            >
-              Small studio. Serious work.
-            </h1>
+          {/* Title left, standfirst right — see the note on /work. */}
+          <div className="grid items-end gap-6 lg:grid-cols-12 lg:gap-12">
+            <div className="lg:col-span-7">
+              <Eyebrow data-reveal="fade">About</Eyebrow>
+              <h1
+                data-reveal="fade"
+                style={{ ["--reveal-delay" as string]: "0.05s" }}
+                className="mt-5 text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1] tracking-[-0.04em]"
+              >
+                Technology built with purpose.
+              </h1>
+            </div>
             <p
               data-reveal="fade"
               style={{ ["--reveal-delay" as string]: "0.1s" }}
-              className="mt-7 max-w-2xl text-[1.0625rem] leading-[1.6] text-ink-soft sm:text-xl"
+              className="max-w-xl text-[1.0625rem] leading-[1.7] text-ink-soft lg:col-span-5 lg:col-start-8"
             >
-              Aurel was founded on a straightforward frustration: the calibre of
-              engineering usually reserved for enterprise budgets was out of
-              reach for the ambitious small and medium businesses who needed it
-              most.
+              Nexora is a digital solutions studio helping businesses and
+              organisations establish, improve and grow their presence in the
+              digital world. It was founded on a straightforward frustration:
+              the calibre of engineering usually reserved for enterprise budgets
+              was out of reach for the businesses that needed it most.
             </p>
           </div>
 
@@ -135,13 +149,44 @@ export default function AboutPage() {
                         className="h-auto w-full object-cover"
                       />
                     ) : (
-                      <div className="flex aspect-[4/5] items-center justify-center">
+                      // A white monogram centred in a flat 4:5 panel was the
+                      // largest and palest object on the page — a hole where a
+                      // face should be, and the one element a visitor reads as
+                      // "unfinished" on the page whose whole job is trust. Set
+                      // in foil over the plate texture the site already uses
+                      // for its figures, it reads as a printed device instead.
+                      // It is still second best: get the photograph.
+                      <div className="relative flex aspect-[4/5] items-center justify-center">
+                        <div
+                          aria-hidden
+                          className="plate-grid absolute inset-0 opacity-50"
+                        />
+                        <div
+                          aria-hidden
+                          className="band-bloom absolute inset-0 opacity-70"
+                        />
                         <span
                           aria-hidden
-                          className="text-[clamp(4rem,9vw,7rem)] font-semibold tracking-[-0.05em] text-ink"
+                          className="foil relative font-display text-[clamp(3.5rem,8vw,6rem)] font-light tracking-[0.06em]"
                         >
                           {initials(person.name)}
                         </span>
+                        <span
+                          aria-hidden
+                          className="absolute left-5 top-5 h-3 w-px bg-rule-strong"
+                        />
+                        <span
+                          aria-hidden
+                          className="absolute left-5 top-5 h-px w-3 bg-rule-strong"
+                        />
+                        <span
+                          aria-hidden
+                          className="absolute bottom-5 right-5 h-3 w-px bg-rule-strong"
+                        />
+                        <span
+                          aria-hidden
+                          className="absolute bottom-5 right-5 h-px w-3 bg-rule-strong"
+                        />
                       </div>
                     )}
                   </div>
@@ -220,7 +265,7 @@ export default function AboutPage() {
 
           {team.length === 1 && (
             <p className="mt-12 max-w-2xl text-[0.9375rem] leading-relaxed text-ink-mute">
-              That is the whole studio, and it is deliberate. Aurel is
+              That is the whole studio, and it is deliberate. Nexora is
               principal-led: the person who scopes your project is the person who
               builds it, and there is no account layer between you and the
               engineering. Specialists are brought in for specific work when a
@@ -231,10 +276,76 @@ export default function AboutPage() {
       </section>
 
       {/* ── How we work ──────────────────────────────────────────────────── */}
+      {/* ── What we believe ─────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-24 lg:py-32">
+        <Container size="wide">
+          <SectionHead
+            title="What we believe"
+            deck="Five things we think technology owes a business. They are the reason the work is shaped the way it is."
+          />
+          <ul className="mt-12 grid gap-px overflow-hidden rounded-[var(--radius-lg)] bg-rule sm:mt-16 sm:grid-cols-2 lg:grid-cols-5">
+            {beliefs.map((belief, index) => (
+              <li
+                key={belief}
+                data-reveal="fade"
+                style={{ ["--reveal-delay" as string]: `${index * 0.06}s` }}
+                className="bg-paper p-6 sm:p-7"
+              >
+                <span aria-hidden className="text-label-sm tabular-nums text-foil/70">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="mt-4 text-[0.9375rem] leading-[1.6]">{belief}</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* ── Our approach ─────────────────────────────────────────────────── */}
+      {/* Set as a statement rather than a card grid: it is one idea, and one
+          idea given a whole band reads as a position rather than a feature. */}
+      <section className="border-y border-rule bg-tint py-20 sm:py-24 lg:py-32">
+        <Container size="wide">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-5">
+              <Eyebrow data-reveal="fade">Our approach</Eyebrow>
+              <h2
+                data-reveal="fade"
+                className="mt-5 text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.038em]"
+              >
+                Business first.
+                <br />
+                <span className="text-foil">Technology second.</span>
+              </h2>
+            </div>
+            <div className="lg:col-span-6 lg:col-start-7 lg:pt-3">
+              <p
+                data-reveal="ink"
+                className="text-[1.0625rem] leading-[1.75] text-ink-soft"
+              >
+                We do not start by asking what technology to use. We start by
+                asking what the business needs — who buys from you, how they
+                decide, and what is currently stopping them. The stack is a
+                consequence of that answer, not the starting point.
+              </p>
+              <p
+                data-reveal="ink"
+                className="mt-6 text-[1.0625rem] leading-[1.75] text-ink-soft"
+              >
+                It is why we will sometimes tell you the thing you asked for is
+                not the thing you need, and why the answer is often smaller and
+                cheaper than expected. A supplier paid to build is not incentivised
+                to say that. We would rather say it and keep the relationship.
+              </p>
+            </div>
+          </div>
+        </Container>
+      </section>
+
       <section className="bg-paper-deep py-20 sm:py-24 lg:py-32">
         <Container size="wide">
           <SectionHead
-            title="What we promise you"
+            title="Our values"
             deck="Commitments rather than adjectives — each one is something you could reasonably hold against us if we broke it."
           />
 
@@ -262,6 +373,70 @@ export default function AboutPage() {
       </section>
 
       {/* ── What we do & what we've shipped ──────────────────────────────── */}
+      {/* ---- where we work ----
+          The site names Nyeri and Nairobi on nearly every page and has never
+          shown either. Two photographs, captioned as places rather than as
+          mood: the point is that this is a real address, not a stock idea of
+          "Africa". Deliberately not full-bleed — they sit at the same width as
+          the screens elsewhere so a photograph never outranks the work. */}
+      <section className="py-20 sm:py-24 lg:py-32">
+        <Container size="wide">
+          <SectionHead
+            title="Where the work happens"
+            deck="Two towns, three hours apart on the Nyeri road. We are in one of them most of the week and the other when a client wants us in the room."
+          />
+
+          <div className="mt-12 grid gap-8 sm:mt-16 sm:grid-cols-2 lg:gap-10">
+            {placePhotography.map((photo, index) => (
+              <figure
+                key={photo.src}
+                data-reveal="plate"
+                style={{ ["--reveal-delay" as string]: `${index * 0.08}s` }}
+              >
+                <div className="overflow-hidden rounded-[var(--radius-xl)] bg-paper-deep">
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    width={1200}
+                    height={800}
+                    sizes="(min-width: 640px) 45vw, 100vw"
+                    className="h-auto w-full"
+                  />
+                </div>
+                <figcaption className="mt-3">
+                  <span className="text-sm font-medium">{photo.place}</span>
+                  <span className="text-sm leading-relaxed text-ink-mute">
+                    {" "}
+                    — {photo.note}
+                  </span>
+                  {/* The licence is only valid while the credit is present. */}
+                  <span className="mt-1 block text-xs text-ink-mute">
+                    Photograph:{" "}
+                    <a
+                      href={photo.credit.source}
+                      className="underline underline-offset-2"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {photo.credit.creator}
+                    </a>
+                    ,{" "}
+                    <a
+                      href={photo.credit.licenseUrl}
+                      className="underline underline-offset-2"
+                      rel="license noopener noreferrer"
+                      target="_blank"
+                    >
+                      {photo.credit.license}
+                    </a>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </Container>
+      </section>
+
       <section className="py-20 sm:py-24 lg:py-32">
         <Container size="wide">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
@@ -270,7 +445,7 @@ export default function AboutPage() {
                 What that looks like in practice
               </h2>
               <p className="mt-6 max-w-md text-[1.0625rem] leading-[1.6] text-ink-soft">
-                Four disciplines, and two products live in the world. The work
+                Five disciplines, and two products live in the world. The work
                 is the argument — go and open it.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">

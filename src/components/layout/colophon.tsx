@@ -36,7 +36,7 @@ export function Colophon() {
           <div className="lg:col-span-4">
             <Link
               href="/"
-              aria-label="Aurel — home"
+              aria-label="Nexora — home"
               className="tap inline-flex items-center gap-3"
             >
               <GemMark
@@ -45,7 +45,7 @@ export function Colophon() {
                 className="h-5 w-5 shrink-0 text-ink"
               />
               <span className="text-lg font-semibold tracking-[-0.02em]">
-                Aurel
+                Nexora
               </span>
             </Link>
             <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed text-ink-soft">

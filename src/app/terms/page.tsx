@@ -5,7 +5,8 @@ import { Lead } from "@/components/editorial/typography";
 
 export const metadata: Metadata = {
   title: "Terms",
-  description: "The terms governing use of the Aurel website.",
+  description: "The terms governing use of the Nexora website.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {

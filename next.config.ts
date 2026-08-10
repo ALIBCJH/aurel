@@ -25,6 +25,12 @@ const RETIRED_SERVICE_SLUGS: Array<{ from: string; to: string }> = [
   { from: "/services/strategy", to: "/services" },
   // Immersive/AR/VR is parked rather than sold.
   { from: "/services/immersive", to: "/services" },
+  // AI & automation was retired from the service list in the 2026-08-10
+  // repositioning. The page had accumulated real content and real search
+  // signals, so this is a redirect rather than a deletion — Digital strategy
+  // is where that conversation now starts. The retired copy is preserved in
+  // git history if the discipline is ever brought back.
+  { from: "/services/ai-automation", to: "/services/digital-strategy" },
 ];
 
 const nextConfig: NextConfig = {

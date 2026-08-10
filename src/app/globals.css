@@ -2,19 +2,29 @@
 
 /*
  * ---------------------------------------------------------------------------
- *  AUREL — global design system (Tailwind v4, CSS-first configuration)
+ *  NEXORA — global design system (Tailwind v4, CSS-first configuration)
  * ---------------------------------------------------------------------------
- *  Direction: bold product studio, white-first. High-contrast surfaces,
- *  oversized grotesk type, generous radii, and full-width cards that flip to
- *  the opposite tone. Real product screenshots carry the page; the interface
- *  around them stays quiet and gets out of the way.
+ *  Direction: premium software consulting studio. Near-black ground, warm
+ *  white type, gold rationed to roughly one twentieth of the surface. The
+ *  reference points are premium architecture and luxury editorial rather than
+ *  SaaS — no blue, no gradients, no glass, no glow.
  *
- *  Light is the default and the designed state. Dark exists and is coherent,
- *  but the brand lives on white.
+ *  There is one edition and it is dark. The site was white-first until
+ *  2026-08-10; that direction is gone, not toggled. Nothing here should be
+ *  read as a "dark mode" sitting beside a light one.
  *
- *  Token names (`--paper`, `--ink`, `--foil`) are inherited from an earlier
- *  print-editorial direction. They are kept because they are referenced across
- *  every component and renaming them would be pure churn — read them as
+ *  THE COLOUR CONTRACT, in two layers:
+ *
+ *    1. `--nexora-*` below is the brand palette and the single source of
+ *       truth. Nine values. Nothing else in the codebase may declare a hex.
+ *    2. Everything under it is *semantic* — `--paper`, `--ink`, `--foil` —
+ *       and is defined only in terms of layer 1. Components address the
+ *       semantic layer, never the brand layer, so a brand change is a
+ *       nine-line edit rather than a search across a hundred files.
+ *
+ *  The semantic names are inherited from an earlier print-editorial
+ *  direction. They are kept because they are referenced across every
+ *  component and renaming them would be pure churn — read them as
  *  background / foreground / accent.
  *
  *  Tailwind v4 is configured entirely here via `@theme` — there is no
@@ -26,56 +36,97 @@
 /* ===========================================================================
    1. PALETTE
    =========================================================================== */
-/* White wall, near-black ink. Contrast does the work; colour is rationed.
+/* Near-black ground, warm white ink. Contrast does the work; colour is
+   rationed to the accent.
 
-   There is one palette. A dark edition existed and was removed: it doubled
-   every colour decision on the site to serve a preference nobody had asked
-   for, and the brand lives on white.
-   `--invert-*` is the core device of this direction: full-width cards that
-   flip to the opposite of the page, so a section can go loud without
-   introducing a new hue. */
+   There is one palette and no toggle. `--invert-*` is the core device of this
+   direction: full-width cards that flip to the opposite of the page — here to
+   warm white — so a section can go loud without introducing a second hue. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --paper: #ffffff;
-  --paper-deep: #f4f4f5; /* the quiet card, section bands */
-  --paper-raised: #fafafa;
-  --ink: #0a0a0a;
-  --ink-soft: #4a4a4d;
-  --ink-mute: #6c6c6f; /* 5.23:1 on white, 4.76:1 on the grey band */
+  /* ---- LAYER 1: the Nexora brand palette. The only hex on the site. */
+  --nexora-black: #080808;
+  --nexora-charcoal: #181818;
+  --nexora-charcoal-soft: #282828;
 
-  /* The loud card — black on a white page. */
-  --invert-bg: #0a0a0a;
-  --invert-ink: #ffffff;
-  --invert-ink-mute: #a1a1a6;
+  /* Keyed to the light in the hero photography rather than chosen alongside
+     it. The gold in `nexora-hero-desktop.webp` — the arc, the rim on the
+     plinth, the sphere — samples at hue ~36°, saturation ~0.65 in its core;
+     the palette was sitting at 37° / 0.51, which is the same hue gone dusty.
+     Against the artwork it read as a slightly faded print of the accent the
+     images were actually lit with. These are the sampled values, and the whole
+     site follows them: every other gold token is a `color-mix` of these three,
+     so nothing else needed touching.
 
-  /* Gold is now an accent of last resort, not a wash. It survives for the
-     mark, the occasional emphasis, and focus rings. */
-  --foil: #8a6209;
-  --foil-bright: #a0761a;
-  --foil-pale: #b98f2e;
-  --foil-ink: #ffffff;
+     Contrast against `--nexora-black` improved rather than degraded — 8.1:1
+     for the accent (was 7.5:1), and 8.5:1 for black type set on it in a
+     button. Re-check both if these are ever nudged again. */
+  --nexora-gold: #d39a45;
+  --nexora-gold-light: #e8bd73;
+  --nexora-gold-muted: #a1682b;
 
-  /* The pointer glow on service cards. Gold rather than white, because on a
-     white page a white glow is invisible — and gold is the brand accent, which
-     is otherwise barely used in this direction. */
-  --glow: color-mix(in srgb, #8a6209 20%, transparent);
-  --glow-edge: color-mix(in srgb, #8a6209 34%, transparent);
+  --nexora-white: #f2efe8;
+  --nexora-gray: #b8b5ae;
 
-  /* A single warm band, used once per page to break an otherwise identical
-     vertical rhythm. Kept to a whisper — enough that the eye registers a change
-     of temperature, not enough to read as a coloured section.
-     9% is the working ceiling: at 12% `ink-mute` on this surface falls to
-     4.45:1 and stops clearing AA, and below 8% the band is indistinguishable
-     from white and stops doing its job. */
-  --tint: color-mix(in srgb, #8a6209 9%, #ffffff);
+  --nexora-success: #3f8f65;
 
-  --rule: color-mix(in srgb, #0a0a0a 10%, transparent);
-  --rule-strong: color-mix(in srgb, #0a0a0a 22%, transparent);
-  --rule-foil: color-mix(in srgb, #8a6209 35%, transparent);
-  --field: color-mix(in srgb, #0a0a0a 4%, transparent);
+  /* ---- LAYER 2: semantic tokens, derived. No hex below this line.
 
-  /* No paper texture in this direction — the surfaces are screen, not stock. */
+     The 80 / 15 / 5 balance is a property of these three groups: the surface
+     tokens cover almost everything, the ink tokens cover the type, and gold
+     appears only where a decision is being pointed at. */
+
+  /* Surfaces. Three steps of near-black — the page, the card, the raised
+     element. They are close together on purpose: on a dark ground, a large
+     step reads as a different section rather than a different depth. */
+  --paper: var(--nexora-black);
+  --paper-deep: var(--nexora-charcoal); /* the quiet card, section bands */
+  --paper-raised: var(--nexora-charcoal-soft);
+
+  /* Type. Warm white, never pure #fff — pure white on near-black glares and
+     is the single clearest tell of a template. `ink-mute` is the brand gray,
+     which clears AA comfortably (≈9.7:1 on the page ground). */
+  --ink: var(--nexora-white);
+  --ink-soft: color-mix(in srgb, var(--nexora-white) 82%, var(--nexora-black));
+  --ink-mute: var(--nexora-gray);
+
+  /* The loud card. On a dark page the flip is to warm white — the same device
+     as before, inverted, so a section can go loud without a new hue. */
+  --invert-bg: var(--nexora-white);
+  --invert-ink: var(--nexora-black);
+  --invert-ink-mute: color-mix(in srgb, var(--nexora-black) 62%, var(--nexora-white));
+
+  /* Gold. The accent, and the whole of the 5%. It carries the primary
+     control, the eyebrow labels, the focus ring and the rules that need to
+     announce themselves — and nothing else. */
+  --foil: var(--nexora-gold);
+  --foil-bright: var(--nexora-gold-light);
+  --foil-pale: color-mix(in srgb, var(--nexora-gold-light) 62%, var(--nexora-white));
+  --foil-deep: var(--nexora-gold-muted);
+  --foil-ink: var(--nexora-black); /* type set ON gold */
+
+  /* The pointer glow on service cards — gold, and kept low. Above about 18%
+     on this ground it stops reading as light on a surface and starts reading
+     as a coloured blob, which is the SaaS look this direction avoids. */
+  --glow: color-mix(in srgb, var(--nexora-gold) 14%, transparent);
+  --glow-edge: color-mix(in srgb, var(--nexora-gold) 24%, transparent);
+
+  /* One warm band per page, to break an otherwise identical vertical rhythm.
+     Gold into charcoal rather than into black: the band has to sit *above*
+     the page ground to read as a surface at all. */
+  --tint: color-mix(in srgb, var(--nexora-gold) 7%, var(--nexora-charcoal));
+
+  /* Rules are light on a dark ground. 12% is the floor at which a hairline
+     survives a laptop panel at an angle; 8% vanished on half the screens
+     it was checked on. */
+  --rule: color-mix(in srgb, var(--nexora-white) 12%, transparent);
+  --rule-strong: color-mix(in srgb, var(--nexora-white) 24%, transparent);
+  --rule-foil: color-mix(in srgb, var(--nexora-gold) 42%, transparent);
+  --field: color-mix(in srgb, var(--nexora-white) 6%, transparent);
+
+  /* No texture. The surfaces are screen, not stock, and grain on near-black
+     reads as noise rather than as paper. */
   --grain-opacity: 0;
   --grain-blend: normal;
   --vignette: transparent;
@@ -87,11 +138,15 @@
   --muted-foreground: var(--ink-mute);
   --border: var(--rule);
   --border-strong: var(--rule-strong);
-  --accent: var(--ink);
-  --accent-hover: #2a2a2d;
-  --accent-foreground: #ffffff;
-  --accent-soft: color-mix(in srgb, #0a0a0a 6%, transparent);
-  --ring: color-mix(in srgb, #0a0a0a 55%, transparent);
+
+  /* The primary control is gold with black type. This is the one place the
+     accent is allowed to fill an area rather than mark an edge, and it is
+     what makes the CTA the loudest object on any page it appears on. */
+  --accent: var(--nexora-gold);
+  --accent-hover: var(--nexora-gold-light);
+  --accent-foreground: var(--nexora-black);
+  --accent-soft: color-mix(in srgb, var(--nexora-gold) 12%, transparent);
+  --ring: color-mix(in srgb, var(--nexora-gold) 65%, transparent);
 }
 
 
@@ -100,6 +155,24 @@
    2. TOKEN MAPPING
    =========================================================================== */
 @theme inline {
+  /* The brand palette, exposed so that a one-off can reach for the literal
+     brand colour when the semantic name would be a lie. Reaching past the
+     semantic layer should be rare and should be justified in a comment —
+     `bg-nexora-charcoal` where `bg-paper-deep` says the same thing is how a
+     palette drifts back into being scattered. */
+  --color-nexora-black: var(--nexora-black);
+  --color-nexora-charcoal: var(--nexora-charcoal);
+  --color-nexora-charcoal-soft: var(--nexora-charcoal-soft);
+  --color-nexora-gold: var(--nexora-gold);
+  --color-nexora-gold-light: var(--nexora-gold-light);
+  --color-nexora-gold-muted: var(--nexora-gold-muted);
+  --color-nexora-white: var(--nexora-white);
+  --color-nexora-gray: var(--nexora-gray);
+
+  /* Growth/positive. Used for real measured deltas only — never decoration. */
+  --color-success: var(--nexora-success);
+  --color-foil-deep: var(--foil-deep);
+
   /* Surfaces & ink */
   --color-paper: var(--paper);
   --color-paper-deep: var(--paper-deep);
@@ -905,3 +978,12 @@
     );
   }
 }
+
+/* ===========================================================================
+   10. HERO
+   =========================================================================== */
+/* The hero crossfade is gone. It cycled three finished compositions, two of
+   which had a headline baked into the pixels — see the retirement note in
+   `src/config/imagery.ts`. The opening now sets its own type over a single
+   still frame, so there is no rotation left to drive and `.hero-frame` has
+   been removed rather than left behind for something to accidentally reuse. */

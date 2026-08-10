@@ -5,10 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Container } from "@/components/layout/container";
-import { GemMark } from "@/components/brand/gem-mark";
 import { Pebble, usePebble } from "@/components/layout/pebble";
-import { ArrowUpRightIcon } from "@/components/icons";
-import { mainNav, primaryCta } from "@/config/site";
+import Image from "next/image";
+import { mainNav, siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -75,19 +74,39 @@ export function Masthead() {
           {/* the mark */}
           <Link
             href="/"
-            aria-label="Aurel — home"
+            aria-label="Nexora — home"
             className="group/mark -ml-1 flex h-12 shrink-0 items-center gap-2.5 rounded-full px-1"
           >
-            <GemMark
-              compact
-              strokeWidth={1.75}
-              className="h-[1.05rem] w-[1.05rem] shrink-0 text-foil transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5"
+            {/* The delivered lockup, in its foil edition — this ground only.
+                The supplied file has a near-black wordmark on a white plate,
+                which is invisible here; `nexora-logo-reversed.png` keys the
+                plate out and lifts the wordmark to warm white.
+                `nexora-logo-foil.png` goes one step further and remaps the N
+                mark's blue-violet gradient onto the palette's gold, keeping
+                the gradient's own light-to-dark structure. The mark was the
+                only cool colour anywhere on a site that is otherwise gold end
+                to end, and it read as an asset from another brand.
+
+                This is a screen edition, not a new identity:
+                `public/companylogo.png` remains the master and is what the
+                structured data still points at, so search results, social
+                cards and anything printed keep the delivered colours. If the
+                artwork changes, regenerate both derivatives from the master
+                rather than editing either by hand. */}
+            <Image
+              src="/images/nexora-logo-foil.png"
+              alt={`${siteConfig.name} — home`}
+              width={1171}
+              height={225}
+              priority
+              // Without a `sizes` hint next/image emits the full device
+              // srcset and the browser picks w=3840 — a 3.3x upscale of a
+              // 1171px source that the optimiser stalls on, leaving the
+              // masthead with no logo at all. The lockup renders ~117px wide,
+              // so 160px covers it at 2x on the widest breakpoint.
+              sizes="160px"
+              className="h-5 w-auto shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5 sm:h-[1.4rem]"
             />
-            {/* It no longer collapses. A brand name that disappears when you
-                scroll is a brand name you have shown for two seconds. */}
-            <span className="text-lg font-semibold tracking-[-0.02em]">
-              Aurel
-            </span>
           </Link>
 
           {/* the index */}
@@ -127,17 +146,7 @@ export function Masthead() {
             </div>
           </nav>
 
-          {/* the call to action — it presses, it does not chase */}
-          <Link
-            href={primaryCta.href}
-            className={cn(
-              "hidden h-11 shrink-0 items-center gap-2 rounded-full bg-contrast px-5 text-[0.9375rem] font-medium text-contrast-ink sm:inline-flex",
-              "transition-transform duration-200 ease-[cubic-bezier(0.34,1.2,0.64,1)] active:scale-[0.97]",
-            )}
-          >
-            {primaryCta.label}
-            <ArrowUpRightIcon width={14} height={14} />
-          </Link>
+
         </div>
       </Container>
     </header>
