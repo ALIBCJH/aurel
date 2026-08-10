@@ -140,14 +140,25 @@ export default function AboutPage() {
                     className="overflow-hidden rounded-[var(--radius-card)] border border-rule bg-paper-deep"
                   >
                     {person.photo ? (
-                      <Image
-                        src={person.photo.src}
-                        alt={person.photo.alt}
-                        width={800}
-                        height={1000}
-                        sizes="(min-width: 1024px) 30vw, 100vw"
-                        className="h-auto w-full object-cover"
-                      />
+                      // Held in the same 4:5 box the monogram uses, rather
+                      // than at whatever ratio the file happens to be. A phone
+                      // portrait is 9:16, and `h-auto w-full` would render it
+                      // as a tower nearly twice the height of the biography
+                      // beside it — the column would be a picture with some
+                      // text next to it instead of a person with a face.
+                      //
+                      // `object-position` is biased upward because the subject
+                      // of a portrait is the face, and a centred 4:5 crop of a
+                      // 9:16 frame takes it off the top edge.
+                      <div className="relative aspect-[4/5]">
+                        <Image
+                          src={person.photo.src}
+                          alt={person.photo.alt}
+                          fill
+                          sizes="(min-width: 1024px) 30vw, 100vw"
+                          className="object-cover object-[50%_12%]"
+                        />
+                      </div>
                     ) : (
                       // A white monogram centred in a flat 4:5 panel was the
                       // largest and palest object on the page — a hole where a
