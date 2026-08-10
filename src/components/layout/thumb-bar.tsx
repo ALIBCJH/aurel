@@ -7,10 +7,8 @@ import {
   AboutGlyph,
   HomeGlyph,
   ServicesGlyph,
-  StartGlyph,
   WorkGlyph,
 } from "@/components/layout/nav-icons";
-import { primaryCta } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,9 +26,15 @@ import { cn } from "@/lib/utils";
  * with the label written underneath — icons alone are a guessing game, and the
  * word is what makes this usable by someone who does not enjoy computers.
  *
- * The last slot is the call to action rather than a fifth destination. Contact
- * and "Start a project" are the same page, so listing both would spend a
- * quarter of the bar saying one thing twice.
+ * The bar is four destinations and no call to action. The last slot used to be
+ * a filled "Start" button pointing at /contact, removed at the owner's
+ * request along with the hero CTA on this breakpoint.
+ *
+ * Worth knowing, since nothing else in this component says it: /contact is now
+ * reachable on a phone only from the footer, which carries it in the nav list
+ * plus a mailto, a tel and a WhatsApp link. If a persistent path back to
+ * contact is wanted again, the honest fix is a fifth destination labelled
+ * "Contact" rather than restoring a filled button.
  */
 const DESTINATIONS = [
   { label: "Home", href: "/", Glyph: HomeGlyph },
@@ -46,10 +50,8 @@ function isActive(pathname: string, href: string): boolean {
 export function ThumbBar() {
   const pathname = usePathname();
 
-  const onCta = pathname.startsWith(primaryCta.href);
-  const activeHref = onCta
-    ? primaryCta.href
-    : (DESTINATIONS.find((d) => isActive(pathname, d.href))?.href ?? null);
+  const activeHref =
+    DESTINATIONS.find((d) => isActive(pathname, d.href))?.href ?? null;
 
   const { trackRef, register, pos, size, visible } = usePebble<HTMLDivElement>({
     activeKey: activeHref,
@@ -103,23 +105,6 @@ export function ThumbBar() {
           );
         })}
 
-        {/* The action. Filled, so it reads as the one thing that does something
-            rather than the fifth place to go. */}
-        <Link
-          href={primaryCta.href}
-          ref={register(primaryCta.href)}
-          aria-label={primaryCta.label}
-          aria-current={onCta ? "page" : undefined}
-          className={cn(
-            "relative z-10 flex min-h-[56px] flex-1 flex-col items-center justify-center gap-1 rounded-[1.375rem] bg-contrast py-2.5 text-contrast-ink",
-            "transition-transform duration-200 ease-[cubic-bezier(0.34,1.2,0.64,1)] active:scale-[0.96]",
-          )}
-        >
-          <StartGlyph />
-          <span className="text-[0.6875rem] font-medium leading-none tracking-[-0.01em]">
-            Start
-          </span>
-        </Link>
       </div>
     </nav>
   );

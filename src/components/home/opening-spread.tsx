@@ -24,15 +24,21 @@ import { primaryCta, siteConfig } from "@/config/site";
  * sit in the right half and the left half is empty ground. The copy goes in
  * that empty half, where the composition already made room for it.
  *
- * DESKTOP — full-bleed art, `object-right` so the device cluster is the last
- * thing surrendered when a very wide viewport crops the sides. A scrim runs
- * left-to-right under the copy column and a second one seats the section into
- * the page ground beneath.
+ * DESKTOP — full-bleed art behind the copy. A scrim runs left-to-right under
+ * the copy column and a second one seats the section into the page ground
+ * beneath.
  *
- * MOBILE — the portrait original below the copy, but held in a 3:4 box rather
- * than at its native 0.462. The full-height version put ~90px of empty sky at
- * the top of the frame and ran 844px tall, so the first thing that scrolled
- * into view was nothing at all. Cropping to 3:4 lands the devices dead centre.
+ * MOBILE — no art at all. The opening is the claim, the supporting line and
+ * the two controls, and nothing else. Every arrangement of the picture on a
+ * handset was worse than leaving it out: as a background it sat under 600px of
+ * copy on a 390px screen, and below the copy it was a full extra screen of
+ * scrolling before the page said anything a visitor came for. It also cost a
+ * hero-sized download on the connection least able to afford one, which is the
+ * argument `services.ts` makes about everyone else's sites.
+ *
+ * The desktop art is `hidden md:block`, and a `display: none` image is still
+ * fetched — so `sizes` tells a handset to take the smallest candidate in the
+ * set rather than a full-viewport one for something it will never paint.
  */
 export function OpeningSpread() {
   return (
@@ -44,7 +50,11 @@ export function OpeningSpread() {
           alt=""
           fill
           priority
-          sizes="100vw"
+          // Full width from `md` up, where this is the LCP element. Below it
+          // the wrapper is `display: none` — which does not stop the fetch —
+          // so a handset is pointed at the smallest candidate in the set
+          // instead of downloading a full-viewport hero it will never show.
+          sizes="(min-width: 768px) 100vw, 1px"
           // `100%` horizontally: on a very wide viewport the crop eats the
           // empty left ground first and the devices are the last thing given
           // up. Vertically centred, which the previous asset could not afford
@@ -79,9 +89,15 @@ export function OpeningSpread() {
 
       <Container size="wide" className="relative z-10 w-full">
         <div className="md:max-w-[34rem] lg:max-w-[38rem]">
+          {/* Desktop only. On a handset the opening is down to the claim and
+              one action, and a location line above the headline was the first
+              thing between a visitor and what the studio does. It is still on
+              every other page, in the footer, and in the LocalBusiness schema,
+              so nothing about the Nyeri/Nairobi signal is lost — it is only
+              removed from the top of the smallest screen. */}
           <p
             data-reveal="fade"
-            className="flex items-center gap-2.5 text-label-sm text-ink-mute"
+            className="hidden items-center gap-2.5 text-label-sm text-ink-mute md:flex"
           >
             <span
               aria-hidden
@@ -112,10 +128,17 @@ export function OpeningSpread() {
             style={{ ["--reveal-delay" as string]: "0.16s" }}
             className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
           >
-            <Button href={primaryCta.href} size="lg">
-              {primaryCta.label}
-              <ArrowUpRightIcon width={15} height={15} />
-            </Button>
+            {/* Wrapped rather than given `hidden md:inline-flex` directly:
+                `cn` joins and does not merge, so a display utility passed
+                through `className` loses to the `inline-flex` in the button's
+                own base styles. See the note in `lib/utils.ts` — this has
+                shipped as a real bug on this codebase before. */}
+            <span className="hidden md:inline-flex">
+              <Button href={primaryCta.href} size="lg">
+                {primaryCta.label}
+                <ArrowUpRightIcon width={15} height={15} />
+              </Button>
+            </span>
             <Button href="/work" variant="secondary" size="lg">
               Explore our work
             </Button>
@@ -123,41 +146,6 @@ export function OpeningSpread() {
         </div>
       </Container>
 
-      {/* ---- mobile art ----
-          No `data-reveal`: the reveal observer only fires on scroll-into-view,
-          and hero art below the fold would sit invisible until scrolled past. */}
-      <div className="relative mt-12 aspect-[3/4] overflow-hidden md:hidden">
-        <Image
-          src={imagery.hero.path}
-          alt={imagery.hero.alt}
-          fill
-          priority
-          // Hidden from `md` up, so a desktop browser is told to pick the
-          // smallest candidate rather than a full-viewport one for an element
-          // it will never paint.
-          sizes="(max-width: 767px) 100vw, 1px"
-          // The same artwork, cropped to the phone rather than shot for it.
-          // `nexora-hero-mobile.webp` was purpose-built and is retired anyway:
-          // it has the sentence "Building digital experiences that drive your
-          // business forward" rendered into the pixels on the photographed
-          // phone — which is the `<h1>` immediately above it, so every handset
-          // visitor read the same claim twice, once as text and once as a
-          // picture of text. It also carried "+127%" and a traffic-source
-          // breakdown, numbers this studio publishes nowhere. See the note in
-          // `config/imagery.ts`.
-          //
-          // `70%` lands the laptop, the sphere and the light arc in a 3:4 box.
-          className="object-cover object-[70%_50%]"
-        />
-        {/* Seats the crop into the page rather than ending it on a hard edge.
-            Same reasoning as the desktop scrim above, and kept shorter still:
-            the mobile frame is only 520px tall, so 96px was a fifth of the
-            picture spent on a join. */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-b from-transparent to-[color:var(--nexora-black)]"
-        />
-      </div>
     </section>
   );
 }
