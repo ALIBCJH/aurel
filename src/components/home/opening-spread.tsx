@@ -160,7 +160,7 @@ export function OpeningSpread() {
                 measured at both breakpoints to confirm. */}
             <Button
               href="/work"
-              variant="secondary"
+              variant="foil"
               size="md"
               className="md:h-14 md:px-8 md:text-base"
             >

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * Kept as a plain string generator (no `cva` dependency) and separate from the
  * Button component so the same styles can dress a bare anchor when needed.
  */
-export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "foil" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const base = cn(
@@ -39,6 +39,29 @@ const variants: Record<ButtonVariant, string> = {
   secondary: cn(
     "border border-rule-strong bg-transparent text-ink",
     "hover:border-[color:var(--accent)] hover:bg-field",
+  ),
+  // Gold outline, gold lettering, no fill — the accent stated at the edge
+  // rather than poured into the box.
+  //
+  // This exists so a secondary action can be on-palette without competing
+  // with `primary` for the eye. Reaching for `primary` on a second button in
+  // the same row gives a page two equally loud calls to action and therefore
+  // no primary one; `secondary` is correct there but reads as neutral chrome
+  // where the accent is wanted. This is the middle setting, and it is the one
+  // to use when a supporting action needs to look like it belongs to the
+  // brand.
+  //
+  // Set on the resting state, not just on hover. `--foil` is #d39a45 and
+  // carries 8.1:1 against the page ground, so gold lettering here is a real
+  // text colour rather than a decorative one.
+  //
+  // Do not try to reproduce this by passing classes to `secondary` — its
+  // `text-ink` and `border-rule-strong` are unprefixed, and `cn` joins rather
+  // than merges, so the caller loses. See `lib/utils.ts`.
+  foil: cn(
+    "border border-[color:var(--rule-foil)] bg-transparent text-foil",
+    "hover:border-[color:var(--accent)] hover:bg-[color:var(--accent-soft)]",
+    "hover:text-foil-bright",
   ),
   // Plain lettering with an underline that wipes in. Pinned to the text
   // baseline rather than the box, so the padding that makes this

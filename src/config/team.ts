@@ -41,6 +41,10 @@ export const team: Person[] = [
     bio: "Simon started Nexora and builds most of the work himself. He handles every part of a project — the servers, the systems behind the scenes, and the screens you actually see. His main focus is AI tools that hold up in daily use, not just in a demo.",
     quote:
       "Build systems that hold up for people who can't afford for them to fail.",
+    photo: {
+      src: "/simonjuma.jpeg",
+      alt: "Simon Juma, founder of Nexora, photographed outdoors in Nyeri in a three-piece suit with his arms folded.",
+    },
     credentials: [
       "BSc Information Technology, Dedan Kimathi University of Technology",
       "Founder & technical lead, R&J Interiors",
