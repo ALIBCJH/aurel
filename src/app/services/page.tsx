@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { ServiceReel } from "@/components/services/service-reel";
 import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
+import { ServiceIcon } from "@/components/brand/service-icons";
 import { hasPublishedFloor, services } from "@/config/services";
-import { imagery } from "@/config/imagery";
-import { Figure, hasImageAsset } from "@/components/ui/figure";
-import { Screenshot } from "@/components/ui/screenshot";
 import { primaryCta } from "@/config/site";
 import {
   JsonLd,
@@ -114,17 +111,6 @@ export default function ServicesPage() {
         const loud = index % 2 === 0;
         const flip = index % 2 === 1;
 
-        // Commissioned art only counts if it was actually delivered. Three of
-        // the six disciplines point at files that do not exist, and the
-        // reserved slot they fell back to is a debugging aid, not a page
-        // element — it printed `/images/aurel-seo.webp` in mono where a
-        // visitor was owed a picture of the work. Where the file is missing
-        // the discipline shows its real screenshot instead, which every other
-        // service on the page was already doing. Drop the asset in and the
-        // commissioned art takes over on the next build, exactly as before.
-        const declared = service.heroImage ? imagery[service.heroImage] : null;
-        const commissioned =
-          declared && hasImageAsset(declared.path) ? declared : null;
 
         return (
           <section
@@ -170,23 +156,13 @@ export default function ServicesPage() {
                     {service.description}
                   </p>
 
-                  {/* what an engagement includes, as pills */}
-                  <ul
-                    data-reveal="fade"
-                    style={{ ["--reveal-delay" as string]: "0.12s" }}
-                    className="mt-8 flex flex-wrap gap-2"
-                  >
-                    {service.includes.map((item) => (
-                      <li
-                        key={item}
-                        className={cn(
-                          "rounded-full border border-rule px-3.5 py-2 text-sm text-ink-soft",
-                        )}
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  {/* The `includes` pills used to sit here. They now appear
+                      once, in the specimen card at the top of the page, where
+                      the reel already summarises every discipline. Repeating
+                      them in each band put scope on the page three times over
+                      — as pills here, as the card up there, and as the
+                      deliverables ledger a few centimetres to the right — and
+                      the ledger is the concrete one. */}
 
                   <div
                     data-reveal="fade"
@@ -217,12 +193,26 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                {/* the work */}
-                {/* `min-w-0`: grid items default to `min-width: auto`, so a
-                    child that cannot wrap sets the floor for the whole track.
-                    The reserved-slot placeholder printed its file path in mono
-                    with no break opportunity, which widened this column past
-                    the gutter and made /services scroll sideways at 390px. */}
+                {/* what you actually get */}
+                {/* Was a screenshot. The pictures on this page did not
+                    illustrate the disciplines they sat beside — Google Maps &
+                    Business Presence was shown with a photograph of an
+                    interior-design showroom, Mobile Applications with a
+                    *website* on a phone, SEO with an insurance article page —
+                    because there is no capture of a map listing or a native
+                    app anywhere in the repository. Three of the six were worse
+                    still and rendered a grey placeholder with a file path in
+                    mono.
+
+                    The replacement is not decoration: `deliverables` is a
+                    written list of the concrete things each engagement
+                    produces, in the same plain English as the rest of the
+                    page. Titles only here — the bodies run three or four
+                    sentences each and belong on the discipline's own page.
+
+                    `min-w-0` because grid items default to `min-width: auto`,
+                    so a child that cannot wrap sets the floor for the whole
+                    track and pushes the page into horizontal scroll. */}
                 <div
                   className={cn(
                     "min-w-0",
@@ -230,31 +220,48 @@ export default function ServicesPage() {
                     flip && "lg:order-1 lg:col-start-1",
                   )}
                 >
-                  {commissioned ? (
-                    // Commissioned art for the flagship disciplines. Not a
-                    // link: the CTA beside it already goes to the same place,
-                    // and a second target on the same row is noise.
-                    <div data-reveal="plate">
-                      <Figure
-                        image={commissioned}
-                        sizes="(min-width: 1024px) 46vw, 100vw"
-                      />
+                  <div
+                    data-reveal="plate"
+                    className={cn(
+                      "relative overflow-hidden rounded-[var(--radius-card)] border border-rule p-8 sm:p-10",
+                      loud ? "bg-paper" : "bg-paper-deep",
+                    )}
+                  >
+                    <div aria-hidden className="plate-grid absolute inset-0 opacity-40" />
+                    <span aria-hidden className="absolute left-4 top-4 h-3 w-px bg-rule-strong" />
+                    <span aria-hidden className="absolute left-4 top-4 h-px w-3 bg-rule-strong" />
+                    <span aria-hidden className="absolute bottom-4 right-4 h-3 w-px bg-rule-strong" />
+                    <span aria-hidden className="absolute bottom-4 right-4 h-px w-3 bg-rule-strong" />
+
+                    <div className="relative">
+                      <div className="flex items-center justify-between gap-6">
+                        <h3 className="text-label-sm text-foil">What you get</h3>
+                        <ServiceIcon
+                          slug={service.slug}
+                          width={26}
+                          height={26}
+                          aria-hidden
+                          className="shrink-0 text-foil/70"
+                        />
+                      </div>
+
+                      <ol className="mt-7 space-y-0">
+                        {service.deliverables.map((item, i) => (
+                          <li
+                            key={item.title}
+                            className="flex items-baseline gap-5 border-t border-rule py-4 first:border-t-0 first:pt-0"
+                          >
+                            <span className="w-6 shrink-0 text-sm tabular-nums text-ink-mute">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span className="text-[1.0625rem] leading-snug tracking-[-0.015em]">
+                              {item.title}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
                     </div>
-                  ) : (
-                    <Link
-                      href={`/services/${service.slug}`}
-                      data-reveal="plate"
-                      className="group/shot block rounded-[var(--radius-card)]"
-                    >
-                      <Screenshot
-                        src={service.showcase.src}
-                        alt={service.showcase.alt}
-                        portrait={service.showcase.portrait}
-                        sizes="(min-width: 1024px) 46vw, 100vw"
-                        className="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/shot:-translate-y-1"
-                      />
-                    </Link>
-                  )}
+                  </div>
                 </div>
               </div>
 
