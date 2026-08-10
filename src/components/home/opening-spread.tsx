@@ -126,7 +126,15 @@ export function OpeningSpread() {
           <div
             data-reveal="fade"
             style={{ ["--reveal-delay" as string]: "0.16s" }}
-            className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+            // `mt-14` below `md`, `mt-10` above: with the eyebrow and the
+            // primary CTA both gone from the handset opening, the one
+            // remaining control sat too close under the supporting line and
+            // read as attached to it. The extra 16px gives it its own footing.
+            //
+            // `items-start` matters as much as the size below — in a column
+            // the default `stretch` made the button span the full width of the
+            // screen, which is most of what made it look oversized.
+            className="mt-14 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4 md:mt-10"
           >
             {/* Wrapped rather than given `hidden md:inline-flex` directly:
                 `cn` joins and does not merge, so a display utility passed
@@ -139,7 +147,23 @@ export function OpeningSpread() {
                 <ArrowUpRightIcon width={15} height={15} />
               </Button>
             </span>
-            <Button href="/work" variant="secondary" size="lg">
+            {/* `md` on a handset (48px tall, 15px lettering), stepping up to
+                the `lg` metrics from `md` up so it still matches the primary
+                CTA it sits beside on desktop.
+
+                Passing breakpoint-prefixed utilities through `className` is
+                safe in a way that passing bare ones is not: `md:h-14` and the
+                base `h-12` live in different cascade layers, so the prefixed
+                rule reliably wins above 768px. The hazard `lib/utils.ts`
+                documents is two *unprefixed* utilities from the same group,
+                where emission order decides and the caller loses. Heights
+                measured at both breakpoints to confirm. */}
+            <Button
+              href="/work"
+              variant="secondary"
+              size="md"
+              className="md:h-14 md:px-8 md:text-base"
+            >
               Explore our work
             </Button>
           </div>
