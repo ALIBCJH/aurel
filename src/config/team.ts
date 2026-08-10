@@ -38,7 +38,7 @@ export const team: Person[] = [
     name: "Simon Juma",
     role: "Founder · Engineer",
     location: "Nyeri & Nairobi, Kenya",
-    bio: "Simon started Aurel and builds most of the work himself. He handles every part of a project — the servers, the systems behind the scenes, and the screens you actually see. His main focus is AI tools that hold up in daily use, not just in a demo.",
+    bio: "Simon started Nexora and builds most of the work himself. He handles every part of a project — the servers, the systems behind the scenes, and the screens you actually see. His main focus is AI tools that hold up in daily use, not just in a demo.",
     quote:
       "Build systems that hold up for people who can't afford for them to fail.",
     credentials: [

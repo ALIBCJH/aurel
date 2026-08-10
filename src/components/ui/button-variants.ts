@@ -25,16 +25,20 @@ const base = cn(
 );
 
 const variants: Record<ButtonVariant, string> = {
-  // The solid pill: black on white, white on black. The primary action is the
-  // page's highest-contrast object, which is why it needs no colour at all.
+  // The solid pill, in gold with black lettering. This is the one component
+  // allowed to fill an area with the accent rather than mark an edge with it,
+  // and it is what makes the primary action the loudest object on any page it
+  // appears on. It was `--invert-bg` — warm white — which on a near-black
+  // ground made every CTA the same weight as a plain card.
   primary: cn(
-    "bg-[color:var(--invert-bg)] text-[color:var(--invert-ink)]",
-    "hover:opacity-90",
+    "bg-[color:var(--accent)] text-[color:var(--accent-foreground)]",
+    "hover:bg-[color:var(--accent-hover)]",
   ),
-  // Outline pill — the everyday action.
+  // Outline pill — the everyday action. Its hover border goes to gold rather
+  // than to the inverted ground, so the two variants read as one family.
   secondary: cn(
     "border border-rule-strong bg-transparent text-ink",
-    "hover:border-[color:var(--invert-bg)] hover:bg-field",
+    "hover:border-[color:var(--accent)] hover:bg-field",
   ),
   // Plain lettering with an underline that wipes in. Pinned to the text
   // baseline rather than the box, so the padding that makes this

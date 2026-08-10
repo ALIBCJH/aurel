@@ -7,8 +7,9 @@ import type { SVGProps } from "react";
  * never thought about an interface in their life. Every one is a thing from the
  * world — a house, a window with four panes, a picture in a frame, a person —
  * because abstract marks (chevrons, dots, hamburgers) are a convention you have
- * to have been taught. The four-pane window is doing double duty: the studio
- * sells exactly four disciplines.
+ * to have been taught. The four-pane window was once doing double duty — the
+ * studio sold exactly four disciplines — which stopped being true when a fifth
+ * was added. It stays because it reads as a window, not as a tally.
  *
  * One geometry throughout: 24px box, 1.6 stroke, round caps and joins, no fill.
  * They sit under labels and must never be louder than the words.

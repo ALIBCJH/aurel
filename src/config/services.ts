@@ -1,5 +1,5 @@
 /**
- * The four Aurel services.
+ * The six Nexora services.
  *
  * Single source of truth for the Services page, the home index, the
  * /services/[slug] detail routes, and the Service/FAQPage structured data.
@@ -23,6 +23,8 @@
  *  - Nothing claims a result we cannot point at real work for.
  *  - The local angle is a genuine engineering constraint, not a marketing nod.
  */
+
+import type { ImageryKey } from "@/config/imagery";
 
 export type ServiceFaq = {
   question: string;
@@ -60,10 +62,40 @@ export type Service = {
   localAngle: { title: string; body: string };
   /** How an engagement runs, specific to this discipline. */
   process: Array<{ step: string; title: string; body: string }>;
-  /** Indicative commercials. Ranges, never a fixed quote. */
-  pricing: { from: string; note: string };
+  /**
+   * Indicative commercials. Ranges, never a fixed quote.
+   *
+   * `from` must stay a human-readable string with the currency in it, because
+   * it is rendered directly and `parsePriceFloor` in `json-ld.tsx` strips the
+   * non-digits back out for schema.org. Keeping one source means the figure a
+   * visitor reads and the figure Google reads cannot drift apart.
+   *
+   * `tiers` is optional and exists for disciplines where the honest answer is
+   * a small number of shapes at different prices rather than a single floor.
+   * Where it is present the first tier's price and `from` must agree — they
+   * are rendered within a few centimetres of each other.
+   */
+  pricing: {
+    from: string;
+    note: string;
+    tiers?: Array<{
+      /** What you get, in plain words. Not a package name. */
+      name: string;
+      price: string;
+      body: string;
+    }>;
+  };
   /** Real objections. Rendered visibly on the page and mirrored into FAQPage schema. */
   faqs: ServiceFaq[];
+  /**
+   * A commissioned Nexora image for this discipline, where one exists.
+   *
+   * Four services carry commissioned art; the rest carry a real screen from
+   * shipped work. That split is deliberate rather than a gap: the flagship
+   * disciplines are sold on what they *are*, and the others are sold on what
+   * we have already done. When this is set it wins over `showcase`.
+   */
+  heroImage?: ImageryKey;
   /**
    * A real screen from shipped work that illustrates this discipline.
    * Always a capture of something we actually built — never a stock image or
@@ -87,10 +119,11 @@ export type Service = {
 export const services: Service[] = [
   {
     slug: "websites",
+    heroImage: "hero",
     index: "01",
-    name: "Websites",
+    name: "Website Development",
     seoTitle: "Website Design & Development in Kenya",
-    headline: "Website design in Kenya that brings you customers",
+    headline: "Websites that make your business impossible to ignore",
     summary: "Websites that open fast and bring you enquiries.",
     metaDescription:
       "Website design and development in Kenya. We build fast, mobile-friendly websites that bring in enquiries, take M-Pesa payments, and that you can update yourself.",
@@ -155,8 +188,25 @@ export const services: Service[] = [
       },
     ],
     pricing: {
-      from: "KES 120,000",
-      note: "A focused marketing site for an established business typically lands between KES 120,000 and 400,000 depending on page count, content, and whether payments are involved. Larger platforms are quoted after discovery.",
+      from: "KES 30,000",
+      note: "Three shapes, priced up front. Most businesses start in the middle. What moves the number is page count, whether you need to take money on the site, and how much of the writing we do.",
+      tiers: [
+        {
+          name: "One page, one action",
+          price: "KES 30,000",
+          body: "A single page that loads fast on a phone and points at one thing — call, WhatsApp, or send an enquiry. Right for a business whose customers already know what it does and just need to reach it.",
+        },
+        {
+          name: "A full site you can edit",
+          price: "KES 50,000",
+          body: "Several pages, a page per thing you sell, and an editing tool you control so changing a price never means calling us. Set up for Google and handed over with a walkthrough.",
+        },
+        {
+          name: "A site that takes payments",
+          price: "KES 100,000",
+          body: "Everything above, plus M-Pesa and card payments, a catalogue with stock and lead times, and order confirmations that reach both you and the customer.",
+        },
+      ],
     },
     faqs: [
       {
@@ -198,10 +248,11 @@ export const services: Service[] = [
 
   {
     slug: "mobile-apps",
+    heroImage: "mobileApps",
     index: "02",
-    name: "Mobile apps",
+    name: "Mobile Applications",
     seoTitle: "Mobile App Development in Kenya",
-    headline: "Mobile app development in Kenya, built around your business",
+    headline: "Mobile apps built around your users",
     summary: "Android and iPhone apps built around how you actually work.",
     metaDescription:
       "Mobile app development in Kenya. Android and iPhone apps built for everyday phones, weak network, working offline, and M-Pesa — shaped around how your business actually runs.",
@@ -262,8 +313,8 @@ export const services: Service[] = [
       },
     ],
     pricing: {
-      from: "KES 400,000",
-      note: "A focused first release generally runs KES 400,000 to 1.5M depending on complexity, integrations, and whether both platforms are needed at launch. We will often recommend starting with one platform.",
+      from: "KES 80,000",
+      note: "A focused first release starts at KES 80,000, on one platform. What moves the number is the number of screens, whether it has to work offline, and what it has to connect to. We will usually recommend launching on Android first and adding iPhone once people are using it.",
     },
     faqs: [
       {
@@ -293,138 +344,19 @@ export const services: Service[] = [
       },
     ],
     showcase: {
-      src: "/work/rj-home-phone.webp",
-      alt: "R&J Interiors on a phone: the full-screen room preview, readable and usable on a handset.",
+      src: "/work/rj-studio-phone.webp",
+      alt: "The R&J configurator on a phone: a live room preview above, fabric, window and wall tabs below, and Pay to Book within thumb reach.",
       portrait: true,
     },
   },
 
   {
-    slug: "ai-automation",
-    index: "03",
-    name: "AI & automation",
-    seoTitle: "AI & Automation for Kenyan Businesses",
-    headline: "AI and automation for businesses in Kenya",
-    summary: "Let software handle the repetitive work, properly.",
-    metaDescription:
-      "AI and automation for Kenyan businesses. Assistants that answer from your own documents, software that reads your paperwork, and WhatsApp helpers that do real office work — measured on hours saved.",
-    description:
-      "Everyone is being sold AI right now, and most of it is a chat window stuck onto a website that annoys customers. The real saving is somewhere much duller: the repeated, rule-following work that quietly eats your team's week.",
-    problem:
-      "Someone in your office retypes invoice details into a spreadsheet. Someone answers the same eleven questions on WhatsApp all day. Someone checks M-Pesa statements against orders by eye. None of it needs thinking, all of it needs doing, and every hour spent there is an hour not spent growing the business. Meanwhile the people selling you AI are quoting for a chat window that will not touch any of it.",
-    deliverables: [
-      {
-        title: "An assistant that knows your business",
-        body: "A general chat tool knows nothing about your prices, your rules or your stock, so it makes them up. We build assistants that answer only from your own documents and records, show you which document each answer came from, and say \"I do not know\" instead of inventing something. That is the difference between useful and dangerous.",
-      },
-      {
-        title: "It reads your paperwork for you",
-        body: "Invoices, delivery notes, claim forms, statements, applications — read automatically, turned into clean records, and sent straight into the system that needs them. This usually pays back fastest, because there is a lot of it, it needs no judgement, and right now a person is doing it who would rather be doing something else.",
-      },
-      {
-        title: "WhatsApp assistants that actually help",
-        body: "WhatsApp is where Kenyan businesses meet their customers. We build assistants that answer the everyday questions at any hour, check an order, or take a booking — and pass the chat to a real person the moment it stops being routine. That hand-over is the part most people get wrong.",
-      },
-      {
-        title: "Software that handles a whole sequence",
-        body: "Where a job runs across several systems and several steps — take an order, check stock, raise an invoice, tell the customer, update the books — we build something that carries the whole sequence, and stops for a person to approve it at the points that matter.",
-      },
-      {
-        title: "The quiet fixes underneath",
-        body: "Often the most valuable thing we do involves no AI at all: connecting two systems that were only talking to each other through a person. We will always tell you when that is the cheaper answer.",
-      },
-    ],
-    includes: [
-      "Finding what is worth automating",
-      "A test on your own data",
-      "An assistant that knows your business",
-      "Reading your paperwork",
-      "WhatsApp integration",
-      "Checking it keeps working",
-    ],
-    localAngle: {
-      title: "English, Swahili, and the way people actually type",
-      body: "Kenyan customers do not write in tidy English. They switch language mid-sentence, mix Swahili and Sheng, shorten words heavily, and send voice notes. An assistant built on neat American support tickets falls apart on the first real message. We test ours against your own chat history — misspellings, mixed languages and all — and we would rather give you something narrow that works than something broad that embarrasses you in front of a customer.",
-    },
-    process: [
-      {
-        step: "01",
-        title: "Find what is costing you time",
-        body: "We sit with your team and count which tasks take the most hours and need the least thinking. The best one to start with is almost never the one you expected, and it is rarely a chat window.",
-      },
-      {
-        step: "02",
-        title: "Test it on your own data",
-        body: "We build a small working test on your real documents and real messages, and compare it against how the job is done today. If it does not beat that, we say so and stop rather than carry on out of excitement.",
-      },
-      {
-        step: "03",
-        title: "Start with one job",
-        body: "We put it to work on a single task, with someone from your team checking the results at first. It earns your trust on something small before it takes on anything more.",
-      },
-      {
-        step: "04",
-        title: "Check it works, then do more",
-        body: "We track how accurate it is, how many hours it saves, and what it costs to run. What works we extend; what does not we switch off. This is the step most AI sellers skip.",
-      },
-    ],
-    pricing: {
-      from: "KES 150,000",
-      note: "A scoped audit and a proof of concept on one workflow typically starts around KES 150,000. Full deployments are quoted after the proof, because until we have seen your data any number would be a guess — and running costs are quoted separately and honestly.",
-    },
-    faqs: [
-      {
-        question: "Is this going to replace my staff?",
-        answer:
-          "That is not what we build for, and it is not what happens in practice. The work best suited to this is the work nobody wants: retyping, copying between systems, answering the same question for the ninth time. Teams we have done this for do not get smaller; they stop losing their afternoons to data entry. If your aim is specifically to cut jobs, we are probably not the right people.",
-      },
-      {
-        question: "What happens when the AI gets something wrong?",
-        answer:
-          "It will, so we design for it. Every answer comes from your documents and shows which one it used, so it can be checked. Anything that matters — money, promises, commitments to a customer — goes to a person first. And we keep watching it after launch instead of assuming it stays accurate.",
-      },
-      {
-        question: "Is our data safe? Does it train someone else's model?",
-        answer:
-          "We use providers whose terms say plainly that your data is not used to train their systems, and we tell you exactly which one handles what. Where the information is truly sensitive we can keep everything on servers you control, so nothing leaves your hands. You get a plain summary of where your data goes, not a link to a privacy policy.",
-      },
-      {
-        question: "Do we need a lot of data to start?",
-        answer:
-          "Less than people expect. These assistants work straight from the documents you already have — price lists, policies, past emails — with no lengthy setup. If you have a shared folder and a WhatsApp history, you have enough to start.",
-      },
-      {
-        question: "What does it cost to run each month?",
-        answer:
-          "It depends on how much you run through it, and we will work it out against your real numbers before you commit. For most small and medium businesses the monthly cost is a small fraction of the time it saves. We would rather show you those figures than talk in big words.",
-      },
-      {
-        question: "Can it handle Swahili?",
-        answer:
-          "Yes, including the mixed English-Swahili-Sheng that people actually write. We evaluate against your own message history rather than a clean benchmark, because that is the only test that predicts how it will behave with your customers.",
-      },
-      {
-        question: "Everyone is selling us AI. Why should we believe you?",
-        answer:
-          "Because we will tell you when the answer is not AI. A good share of what we are asked for is better solved by connecting two systems properly, and we say so — it is a smaller bill and a better result. Ask anyone selling to you how they will measure it before the work starts. The serious ones can answer that.",
-      },
-    ],
-    showcase: {
-      // The honest weak spot on this page. Nothing we have shipped is a
-      // picture of automation, so this is the nearest true thing: a live
-      // system of ours doing real work in the browser as you use it. The alt
-      // text says exactly what it is and does not imply it is an AI product.
-      src: "/work/rj-experience.webp",
-      alt: "The R&J experience page we built, headed 'Step Inside' — a room a customer can walk through before a single curtain is made.",
-    },
-  },
-
-  {
     slug: "seo",
-    index: "04",
-    name: "SEO",
+    heroImage: "seo",
+    index: "03",
+    name: "SEO & Digital Visibility",
     seoTitle: "SEO Services in Kenya",
-    headline: "SEO services in Kenya that bring you customers",
+    headline: "Get found by the people looking for you",
     summary: "Get found by the customers already looking for you.",
     metaDescription:
       "SEO services in Kenya. We fix your website, set up your Google Business Profile, and get you showing up in local searches — measured on the enquiries you receive, not on rankings.",
@@ -489,8 +421,8 @@ export const services: Service[] = [
       },
     ],
     pricing: {
-      from: "KES 45,000",
-      note: "A one-off technical and local audit starts at KES 45,000 and is yours regardless of what you do next. Ongoing engagements typically run KES 60,000–150,000 a month depending on competitiveness and how much content is involved.",
+      from: "KES 25,000",
+      note: "A one-off technical and local audit starts at KES 25,000 and is yours regardless of what you do next — including if you take it to someone else. Ongoing work is quoted monthly, and depends on how competitive your searches are and how much writing is involved.",
     },
     faqs: [
       {
@@ -525,11 +457,351 @@ export const services: Service[] = [
       },
     ],
     showcase: {
-      src: "/work/datani-motor.webp",
-      alt: "Datani's motor insurance page — one page per product, written around what people search for: private cars, matatus, lorries and fleets.",
+      // A product page shows what a business sells; it does not show SEO work.
+      // A page written to answer the question someone actually typed does.
+      src: "/work/datani-tips.webp",
+      alt: "Datani's insurance tips page, which we wrote and built: seven plain-language answers to the questions people search for before they buy cover.",
+    },
+  },
+
+  {
+    // Appended as 05 rather than inserted at the front, even though it is the
+    // cheapest way in. Leading with it would renumber every other discipline
+    // and shift each one's engraving, which is a lot of visual churn for an
+    // ordering nobody asked to change.
+    slug: "online-presence",
+    heroImage: "googleMaps",
+    index: "04",
+    name: "Google Maps & Business Presence",
+    headline: "Put your business on the map",
+    seoTitle: "Get Your Business Online in Kenya | Packages from KES 20,000",
+    summary: "Packages that get you findable, from a profile to a full setup.",
+    metaDescription:
+      "Get your Kenyan business online: Google Business Profile, WhatsApp Business, website and SEO in one package. Four options from KES 20,000. Nyeri and Nairobi.",
+    description:
+      "Four packages that take a business from invisible to findable. Each one bundles the pieces that only work properly together — a profile, a way to be contacted, a site, and the basics of being found — so you buy an outcome rather than a list of parts.",
+    problem:
+      "Most businesses do not need a big project. They need to come up when somebody searches their name, to be reachable on the app their customers already use, and to look like a real business when a stranger checks. Right now that is spread across four suppliers and half of it is never finished. The result is a business that exists but cannot be found.",
+    deliverables: [
+      {
+        title: "A Google Business Profile that is actually complete",
+        body: "Claimed, verified, and filled in properly — hours, location, photos, the services you offer, and a way to keep collecting reviews. It is free, it is the highest-return thing most local businesses can fix, and a startling number of them have never claimed it.",
+      },
+      {
+        title: "WhatsApp Business, set up the way people use it",
+        body: "The catalogue, the away message, the quick replies, and the click-to-chat link that goes on everything. Your customers are already on WhatsApp. This is about them reaching you there without it becoming a second full-time job.",
+      },
+      {
+        title: "A website, where the package includes one",
+        body: "Built the same way as everything under Websites — fast on a phone, editable by you, pointed at one clear action. The package price is lower than buying it on its own.",
+      },
+      {
+        title: "The basics of being found",
+        body: "Titles and descriptions written for what people actually type, the technical checks that stop a site being invisible, and listings on the directories that matter in Kenya.",
+      },
+      {
+        title: "Maps, social and analytics on the larger packages",
+        body: "Your location correct on Google Maps, the social profiles that suit your business set up and matching, and analytics configured so you can see what is actually bringing enquiries rather than guessing.",
+      },
+    ],
+    includes: [
+      "Google Business Profile",
+      "WhatsApp Business",
+      "Website (on Digital Presence and up)",
+      "Search basics",
+      "Maps and social setup",
+      "Analytics",
+    ],
+    localAngle: {
+      title: "Findable here means WhatsApp and Maps, not just Google",
+      body: "In Kenya a first contact usually arrives on WhatsApp, and a first check is usually a Maps search or a Google Business Profile rather than a homepage. A package that ships a beautiful site but leaves the profile unclaimed and the WhatsApp number buried has fixed the least important part. We do these together because separately each one leaks.",
+    },
+    process: [
+      {
+        step: "01",
+        title: "See what already exists",
+        body: "Half the time a profile exists, was created by somebody who has left, and has the wrong hours on it. We find what is already out there in your name before building anything new.",
+      },
+      {
+        step: "02",
+        title: "Claim and fix",
+        body: "Profile claimed and verified, WhatsApp Business configured, and the details made consistent everywhere — the same name, the same number, the same address. Inconsistency is what stops you ranking locally.",
+      },
+      {
+        step: "03",
+        title: "Build the rest of the package",
+        body: "The site, the listings, the social profiles and the analytics, depending on which package you chose.",
+      },
+      {
+        step: "04",
+        title: "Hand over and show you",
+        body: "You get every login, and a walkthrough of how to post an update, reply on WhatsApp and read the numbers. The point is that you can run it without us.",
+      },
+    ],
+    pricing: {
+      from: "KES 20,000",
+      note: "Bundled deliberately below the cost of buying the parts separately, because the pieces only work together — a site nobody can find and a profile with no site behind it both underperform. Custom is quoted after a short call.",
+      tiers: [
+        {
+          name: "Online Starter",
+          price: "KES 20,000",
+          body: "Google Business Profile, WhatsApp Business, and the basics of being found. No website — right for a business whose customers need to reach it rather than read about it.",
+        },
+        {
+          name: "Digital Presence",
+          price: "KES 45,000",
+          body: "Everything in Starter, plus a website. The most common starting point for a business that wants to look established to somebody who has never heard of it.",
+        },
+        {
+          name: "Growth",
+          price: "KES 75,000",
+          body: "Everything in Digital Presence, plus Maps, social profiles set up to match, and analytics configured so you can see which of it is actually working.",
+        },
+        {
+          name: "Custom",
+          price: "Quoted after a call",
+          body: "Where the business does not fit a shape — several branches, more than one language, an existing site worth keeping, or a setup somebody else half-built. We quote it once we have seen it.",
+        },
+      ],
+    },
+    faqs: [
+      {
+        question: "Which package should I start with?",
+        answer:
+          "If people already know your name and just need to reach you, Starter is enough. If a stranger has to be convinced you are real, you need a website, so start at Digital Presence. Growth is worth it once you have enquiries coming in and want to know where they came from. We will tell you if a cheaper one is the right answer.",
+      },
+      {
+        question: "Do I own everything at the end?",
+        answer:
+          "Yes. The Google profile, the WhatsApp account, the domain, the site and every login are in your name from the start. That includes the Google Business Profile, which is the one people most often discover is registered to a former supplier and cannot be recovered quickly.",
+      },
+      {
+        question: "Is this cheaper than buying the parts separately?",
+        answer:
+          "Yes, deliberately. A one-page site and a search audit bought on their own come to more than Digital Presence costs. The saving is real work we do not repeat when the pieces are done together.",
+      },
+      {
+        question: "What if I already have a website?",
+        answer:
+          "Then you probably want Starter for the profile and WhatsApp work, or Custom if the site needs fixing rather than replacing. We will not sell you a rebuild of something that is working.",
+      },
+      {
+        question: "How long does it take?",
+        answer:
+          "Starter is usually a week, most of which is waiting for Google to verify the profile — that step is out of our hands and can take a few days. Packages with a website follow the website timeline, which is four to eight weeks depending on content.",
+      },
+    ],
+    showcase: {
+      // The R&J homepage on a handset: a small business looking established to
+      // a stranger on the device that stranger is actually holding, which is
+      // the whole argument of these packages.
+      src: "/work/rj-home-phone.webp",
+      alt: "R&J Interiors on a phone: the full-screen room preview, readable and usable on a handset.",
+      portrait: true,
+    },
+  },
+
+  {
+    slug: "digital-strategy",
+    index: "05",
+    name: "Digital Strategy",
+    seoTitle: "Digital Strategy Consulting for Businesses in Kenya",
+    headline: "Technology with a purpose",
+    summary: "Decide what to build, and what not to, before anyone builds it.",
+    metaDescription:
+      "Digital strategy for Kenyan businesses. We work out what your business actually needs online, in what order, and what it should cost — before a line of code.",
+    description:
+      "The most expensive decisions in a project are made before anyone writes code. This is the work of deciding what to build, in what order, and what to leave alone — so the money goes where it changes something.",
+    problem:
+      "Most digital spending in a small business is reactive. Someone sells you a website, someone else sells you ads, a third person sets up a page, and none of them talk to each other or to what the business is actually trying to do. A year later there are five logins, four suppliers, no measurement, and no way to tell which of it worked.",
+    deliverables: [
+      {
+        title: "What the business actually needs",
+        body: "We start from the business and the customer, not from the technology. Who buys, how they decide, where they look first, and what is currently stopping them. Often the answer is smaller and cheaper than what you came in asking for, and we will say so.",
+      },
+      {
+        title: "An order of work",
+        body: "Everything worth doing, sequenced by what it returns and what it costs. You get a plan you could hand to any competent supplier — not one that only works if you keep hiring us.",
+      },
+      {
+        title: "One joined-up picture",
+        body: "The site, the profile, the app, the ads and the analytics treated as one system rather than five purchases. This is usually where the quiet waste is found.",
+      },
+      {
+        title: "What success looks like, in numbers",
+        body: "Agreed before we start: enquiries, calls, bookings, orders. Written down so that in six months there is a fact to check rather than an argument to have.",
+      },
+    ],
+    includes: [
+      "Business and customer review",
+      "What to build, in order",
+      "Budget shape",
+      "Measurement plan",
+      "Supplier-neutral written plan",
+    ],
+    localAngle: {
+      title: "The plan has to survive a real budget",
+      body: "Strategy decks written for enterprises assume budgets and teams that a Kenyan SME does not have. A plan that cannot be executed for the money in the room is not a plan. We size the sequence to what you can actually spend this year, and say plainly which parts can wait.",
+    },
+    process: [
+      {
+        step: "01",
+        title: "Understand the business",
+        body: "Half a day on what you sell, who buys it, and what currently brings enquiries. Usually the most useful hour in the whole engagement.",
+      },
+      {
+        step: "02",
+        title: "Look at what exists",
+        body: "The site, the profile, the listings, the analytics if any. What is working, what is broken, and what is quietly costing money.",
+      },
+      {
+        step: "03",
+        title: "Decide and sequence",
+        body: "What to build, what to fix, what to stop paying for, and in what order — with the reasoning written down beside each one.",
+      },
+      {
+        step: "04",
+        title: "Hand it over",
+        body: "A written plan you own, and a conversation to walk through it. You are free to execute it with us, with someone else, or in-house.",
+      },
+    ],
+    pricing: {
+      from: "On application",
+      note: "Scoped to the size of the business and the decision in front of it, and quoted after a short call. Where the work continues into a build with us, the strategy fee comes off the build.",
+    },
+    faqs: [
+      {
+        question: "Is this just a document?",
+        answer:
+          "It is a written plan, yes — but one you can hand to any supplier and get comparable quotes against. That is the point of it. If what you need is a build rather than a decision, we will tell you on the call and skip this entirely.",
+      },
+      {
+        question: "Do I have to build it with you?",
+        answer:
+          "No. The plan is yours and it is written to be supplier-neutral. We would rather you executed a good plan elsewhere than a bad one with us.",
+      },
+      {
+        question: "How is this different from discovery?",
+        answer:
+          "Discovery scopes a project you have already decided to do. This decides whether that project is the right one, and what should come before and after it.",
+      },
+    ],
+    showcase: {
+      src: "/work/datani-products.webp",
+      alt: "The Datani products page: cover for personal, family, life and business, each product its own page — the structure that came out of deciding what the site had to do before it was designed.",
+    },
+  },
+
+  {
+    slug: "analytics-growth",
+    index: "06",
+    name: "Analytics & Growth",
+    seoTitle: "Website Analytics & Conversion Tracking in Kenya",
+    headline: "Know what is working. Improve what is not.",
+    summary: "Measurement that tells you where your enquiries actually come from.",
+    metaDescription:
+      "Website analytics and conversion tracking for Kenyan businesses. See which pages, searches and channels bring real enquiries — and what to fix next.",
+    description:
+      "Most businesses cannot say which half of their digital spend works. We set up measurement that answers that question honestly, then use it to improve the things that turn out to matter.",
+    problem:
+      "Analytics is usually either absent or installed and never opened. Either way the effect is the same: decisions get made on impressions. You cannot tell whether the enquiries came from search, from the profile, from a WhatsApp forward or from a poster — so you keep paying for all of it, or you cut the wrong one.",
+    deliverables: [
+      {
+        title: "Measurement that is actually installed correctly",
+        body: "Analytics and search reporting set up properly, with the events that matter defined: a call pressed, a form sent, a WhatsApp opened, an order placed. A page-view count on its own tells you almost nothing.",
+      },
+      {
+        title: "Where enquiries come from",
+        body: "Which searches, pages and channels produce real contacts rather than traffic. This is the number that changes what you spend next month.",
+      },
+      {
+        title: "What people do and where they stop",
+        body: "The path through the site, and the point at which people give up. Usually one or two specific places, and usually cheap to fix once you can see them.",
+      },
+      {
+        title: "Reporting in plain language",
+        body: "What changed, what caused it, and what we propose next. If a month was flat we say so and explain why, rather than finding a chart that went up.",
+      },
+      {
+        title: "Improvements, then measurement again",
+        body: "A change is only finished when the numbers show what it did. We work in small rounds so each one can be attributed.",
+      },
+    ],
+    includes: [
+      "Analytics setup",
+      "Conversion tracking",
+      "Search performance",
+      "User behaviour",
+      "Monthly reporting",
+      "Continuous improvement",
+    ],
+    localAngle: {
+      title: "Most of the journey happens off your website",
+      body: "In this market a customer often finds you on a Google Business Profile, checks you on WhatsApp, and calls a number from a poster. Measurement that only watches the website misses most of that. We track the contact points people here actually use, including the WhatsApp handoff, so the picture is not flattering and wrong.",
+    },
+    process: [
+      {
+        step: "01",
+        title: "Agree what counts",
+        body: "Which actions are worth money to you. Everything else is noise and we deliberately do not report it.",
+      },
+      {
+        step: "02",
+        title: "Install and verify",
+        body: "Set it up, then test every event by performing it, because analytics that were never verified are worse than none — they are confidently wrong.",
+      },
+      {
+        step: "03",
+        title: "Read it properly",
+        body: "A first full picture once there is enough data: where enquiries come from, and where they are being lost.",
+      },
+      {
+        step: "04",
+        title: "Improve, then measure again",
+        body: "Small changes, one at a time, each one checked against the numbers before the next.",
+      },
+    ],
+    pricing: {
+      from: "On application",
+      note: "Setup is a one-off and depends on how many contact points need tracking. Ongoing reporting is monthly and quoted with it. Where we already built the site, setup is usually included.",
+    },
+    faqs: [
+      {
+        question: "Do I need this if I already have Google Analytics?",
+        answer:
+          "Possibly not. But an unconfigured install records page views and nothing else, which cannot tell you where an enquiry came from. We will look at what you have and say honestly whether it needs work or just needs reading.",
+      },
+      {
+        question: "Will you report numbers that make you look bad?",
+        answer:
+          "Yes. That is the entire value of paying someone else to measure it. A report that only ever goes up is a marketing document, not a measurement.",
+      },
+      {
+        question: "Is this GDPR or data-protection compliant?",
+        answer:
+          "We configure analytics to avoid collecting personal data you do not need, and Kenya's Data Protection Act applies to what you do collect. We will tell you what is being stored and where.",
+      },
+    ],
+    showcase: {
+      src: "/work/datani-article.webp",
+      alt: "A published Datani article with its date and read time — the kind of page whose search performance is worth measuring month on month.",
     },
   },
 ];
+
+
+/**
+ * Does this service publish a numeric starting price?
+ *
+ * Two disciplines are quoted after a call rather than from a floor, and their
+ * `pricing.from` reads "On application". Every render site prefixes the value
+ * with the word "From", which turns that into "From On application" — so each
+ * one asks this first. Keyed on the presence of a digit rather than on a
+ * magic string, so any future non-numeric phrasing behaves correctly too.
+ */
+export function hasPublishedFloor(service: Service): boolean {
+  return /\d/.test(service.pricing.from);
+}
 
 export function getService(slug: string): Service | undefined {
   return services.find((service) => service.slug === slug);

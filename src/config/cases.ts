@@ -146,6 +146,15 @@ export const cases: Case[] = [
         caption: "The configurator — change fabric, window or wall and the room updates as you watch",
       },
       {
+        // Second in the list on purpose: the opening spread takes the lead
+        // shot plus the first two gallery entries, and a calendar carrying
+        // real availability is the strongest thing on this site after the
+        // configurator itself.
+        src: "/work/rj-booking.webp",
+        alt: "The R&J booking flow: choose a date, pick a time, leave your details — over a live calendar where the bookable dates are marked and some are already down to a few slots.",
+        caption: "Booking in three steps, over a calendar showing what is actually still free",
+      },
+      {
         src: "/work/rj-catalog.webp",
         alt: "The R&J catalogue, headed 'Curtains & Fabrics', with every panel custom-knit to order and consultation, production, delivery and installation included.",
         caption: "The catalogue — every panel custom-knit, with fitting included in the price",
@@ -159,6 +168,11 @@ export const cases: Case[] = [
         src: "/work/rj-track.webp",
         alt: "The R&J order tracking page: enter an order number and the phone number used at checkout.",
         caption: "Order tracking — an order number and the phone used to pay",
+      },
+      {
+        src: "/work/rj-experience.webp",
+        alt: "The R&J experience page, headed 'Step Inside' — a room a customer can walk through before a single curtain is made.",
+        caption: "Step Inside — the room walked through before anything is cut",
       },
     ],
   },
@@ -246,6 +260,16 @@ export const cases: Case[] = [
         src: "/work/datani-testimonial.webp",
         alt: "The Datani testimonials page, 'What our clients say', with accounts from farms, family health cover and small shops.",
         caption: "Clients in their own words — farms, family health, small shops",
+      },
+      {
+        src: "/work/datani-article.webp",
+        alt: "A published Datani article, 'Digital Disruption: How Technology Is Changing Insurance in Kenya', dated and timed to read, with the rest of the series listed beside it.",
+        caption: "The writing that keeps earning searches, months after it went up",
+      },
+      {
+        src: "/work/datani-motor.webp",
+        alt: "Datani's motor insurance page — one page per product, written around what people search for: private cars, matatus, lorries and fleets.",
+        caption: "One page per product, each written around what people actually search",
       },
     ],
   },

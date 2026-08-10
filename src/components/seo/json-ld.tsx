@@ -60,6 +60,22 @@ export function JsonLd({ data }: { data: JsonLdValue | JsonLdValue[] }) {
   );
 }
 
+/**
+ * The places this studio serves, as schema.org nodes.
+ *
+ * One helper for all three builders so the geography cannot say one thing on
+ * the services page and another in the site-wide entity. The country is typed
+ * as `Country` and every town or county as `Place` — the distinction is real to
+ * a consumer, and emitting "Kenya" as both (which is what listing it twice
+ * produced) is the kind of redundancy that makes a graph look auto-generated.
+ */
+function areaServedNodes(): JsonLdValue[] {
+  return businessInfo.serviceAreas.map((name) => ({
+    "@type": name === "Kenya" ? "Country" : "Place",
+    name,
+  }));
+}
+
 /** The studio as an entity. Safe to emit everywhere; needs no address. */
 export function buildOrganizationSchema(): JsonLdValue {
   const sameAs = businessInfo.profiles.filter(Boolean);
@@ -74,9 +90,32 @@ export function buildOrganizationSchema(): JsonLdValue {
     email: siteConfig.email,
     logo: {
       "@type": "ImageObject",
-      url: `${BASE}/logo.png`,
+      // The delivered brand artwork. Kept on its white plate deliberately: this
+      // is the file Google renders in search surfaces, usually on white, and a
+      // transparent PNG whose wordmark is near-black disappears there.
+      url: `${BASE}/companylogo.png`,
     },
-    ...(businessInfo.telephone && { telephone: businessInfo.telephone }),
+    // The towns served, stated explicitly. Without a published street address
+    // this is the only thing telling Google where the studio operates, and it
+    // is what makes a Nyeri query winnable rather than conceded to Nairobi.
+    areaServed: areaServedNodes(),
+    // English and Swahili. A genuine separator from the offshore agencies
+    // bidding on the same Kenyan search terms.
+    knowsLanguage: businessInfo.languages,
+    // A contact point rather than a bare telephone field: this is the shape
+    // that can surface as a callable number beside the result, and it carries
+    // the languages and the area with it.
+    ...(businessInfo.telephone && {
+      telephone: businessInfo.telephone,
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "sales",
+        telephone: businessInfo.telephone,
+        email: siteConfig.email,
+        availableLanguage: businessInfo.languages,
+        areaServed: "KE",
+      },
+    }),
     ...(sameAs.length > 0 && { sameAs }),
   };
 }
@@ -95,12 +134,30 @@ export function buildWebSiteSchema(): JsonLdValue {
 }
 
 /**
- * The local-pack entry. Returns null until there is a real phone number.
+ * The local entry, for a business that travels to its customers.
  *
- * Google cross-references this against your Google Business Profile; publishing
- * a placeholder address or number does not get you a provisional listing, it
- * gets you a mismatch that suppresses local ranking. Silence is strictly better
- * than a guess here.
+ * Returns null until there is a real phone number: Google cross-references this
+ * against your Google Business Profile, and publishing a placeholder does not
+ * earn a provisional listing, it earns a mismatch that suppresses local
+ * ranking. Silence beats a guess.
+ *
+ * WHY THERE IS NO STREET ADDRESS. This is modelled as a service-area business,
+ * which is what a studio without a staffed, visitable office actually is. Two
+ * consequences worth understanding before anyone "fixes" this by adding an
+ * address:
+ *
+ *  - A service-area business cannot rank in the local pack on proximity, so
+ *    `areaServed` carries the geography instead. That is why the towns are
+ *    listed individually rather than collapsed to "Kenya" — each named place is
+ *    a place this business can be matched against.
+ *  - Publishing a home address to game proximity is the most common way Kenyan
+ *    businesses get their Google Business Profile suspended. The address field
+ *    stays empty until an office genuinely exists, and if one does it must be
+ *    byte-identical here and on the profile.
+ *
+ * `address` is still emitted with locality, region and country. That is valid
+ * without a street line and tells search engines where the business is based,
+ * which is a different claim from where it will travel.
  */
 export function buildLocalBusinessSchema(): JsonLdValue | null {
   if (!businessInfo.telephone) return null;
@@ -114,9 +171,18 @@ export function buildLocalBusinessSchema(): JsonLdValue | null {
     email: siteConfig.email,
     telephone: businessInfo.telephone,
     description: siteConfig.description,
-    image: `${BASE}/logo.png`,
+    image: `${BASE}/companylogo.png`,
     priceRange: businessInfo.priceRange,
+    // Both are named because a business owner comparing quotes wants to know
+    // their customers can pay the way they already pay. M-Pesa leads for that
+    // reason, and the currency states that published prices are shillings.
+    paymentAccepted: businessInfo.paymentAccepted.join(", "),
+    currenciesAccepted: businessInfo.currenciesAccepted,
+    knowsLanguage: businessInfo.languages,
+    // Derived, not restated. Spelling the hours out here would let the schema
+    // drift from config the first time the studio changes them.
     openingHours: businessInfo.openingHours,
+    areaServed: areaServedNodes(),
     address: {
       "@type": "PostalAddress",
       ...(businessInfo.streetAddress && {
@@ -131,8 +197,27 @@ export function buildLocalBusinessSchema(): JsonLdValue | null {
   };
 }
 
+/**
+ * Pull the numeric floor out of a published price string.
+ *
+ * `pricing.from` is written for humans ("KES 30,000") because it is rendered
+ * on the page; schema.org needs a bare number. Parsed rather than duplicated
+ * into a second field, so the figure a visitor reads and the figure Google
+ * reads cannot disagree — disagreement is the usual reason price markup gets
+ * ignored.
+ *
+ * Returns null when the string carries no digits, so a future "On application"
+ * degrades to omitting the offer rather than advertising a price of zero.
+ */
+function parsePriceFloor(from: string): number | null {
+  const digits = from.replace(/[^\d]/g, "");
+  return digits ? Number(digits) : null;
+}
+
 /** A single discipline, for /services/[slug]. */
 export function buildServiceSchema(service: Service): JsonLdValue {
+  const floor = parsePriceFloor(service.pricing.from);
+
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -141,10 +226,27 @@ export function buildServiceSchema(service: Service): JsonLdValue {
     description: service.description,
     url: `${BASE}/services/${service.slug}`,
     provider: { "@id": ORG_ID },
-    areaServed: [
-      { "@type": "Country", name: "Kenya" },
-      { "@type": "Place", name: "East Africa" },
-    ],
+    // The towns are named individually, not collapsed into "Kenya". Each named
+    // place is something a local query can be matched against, and Nyeri is
+    // ground the Nairobi agencies are not contesting.
+    areaServed: areaServedNodes(),
+    // A real starting figure in shillings. "How much does a website cost in
+    // Kenya" is among the highest-intent things anyone in this market types,
+    // and this is what makes the page eligible to answer it with a number.
+    // `minPrice` rather than `price`, because it is a floor and saying
+    // otherwise would be a promise the studio has not made.
+    ...(floor !== null && {
+      offers: {
+        "@type": "Offer",
+        priceCurrency: businessInfo.currenciesAccepted,
+        priceSpecification: {
+          "@type": "PriceSpecification",
+          priceCurrency: businessInfo.currenciesAccepted,
+          minPrice: floor,
+        },
+        seller: { "@id": ORG_ID },
+      },
+    }),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: `${service.name} — what an engagement includes`,
@@ -194,5 +296,65 @@ export function buildFaqSchema(
       name: faq.question,
       acceptedAnswer: { "@type": "Answer", text: faq.answer },
     })),
+  };
+}
+
+/**
+ * The services index as an ordered list of the four disciplines.
+ *
+ * Without this the index page is, to a crawler, an unstructured wall of prose
+ * that happens to link elsewhere. `ItemList` states that it is a list of four
+ * distinct offerings and names them, which is what lets the individual service
+ * pages be understood as children of a coherent set rather than as four
+ * unrelated pages that happen to share a URL prefix.
+ *
+ * Takes the services rather than importing them, so this module stays a pure
+ * schema layer with one direction of dependency.
+ */
+export function buildServiceListSchema(items: Service[]): JsonLdValue {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${BASE}/services#list`,
+    name: `${siteConfig.name} — services`,
+    description: siteConfig.description,
+    numberOfItems: items.length,
+    itemListElement: items.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: service.name,
+      description: service.summary,
+      url: `${BASE}/services/${service.slug}`,
+    })),
+  };
+}
+
+/**
+ * The contact page.
+ *
+ * Small but worth emitting: it marks one page as the place a human reaches the
+ * business, and hangs the phone number and languages off an entity Google
+ * already knows. On a service-area business with no street address, every extra
+ * corroboration of the contact details is doing real work.
+ */
+export function buildContactPageSchema(): JsonLdValue {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${BASE}/contact#page`,
+    url: `${BASE}/contact`,
+    name: `Contact ${siteConfig.name}`,
+    isPartOf: { "@id": SITE_ID },
+    about: { "@id": ORG_ID },
+    ...(businessInfo.telephone && {
+      mainEntity: {
+        "@type": "ContactPoint",
+        contactType: "sales",
+        telephone: businessInfo.telephone,
+        email: siteConfig.email,
+        availableLanguage: businessInfo.languages,
+        areaServed: "KE",
+      },
+    }),
   };
 }

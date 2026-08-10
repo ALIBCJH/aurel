@@ -6,12 +6,16 @@ import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { services } from "@/config/services";
 import { businessInfo, siteConfig } from "@/config/site";
-import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
+import {
+  JsonLd,
+  buildBreadcrumbSchema,
+  buildContactPageSchema,
+} from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Contact Aurel — website and app developers in Kenya",
+  title: "Contact Nexora",
   description:
-    "Tell us what you want to build. Call, email or WhatsApp Aurel in Nyeri and Nairobi. We read every message ourselves and reply within one business day.",
+    "Tell us what you want to build. Call, email or WhatsApp Nexora in Nyeri and Nairobi. We read every message ourselves and reply within one business day.",
   alternates: { canonical: "/contact" },
 };
 
@@ -80,7 +84,10 @@ export default function ContactPage() {
   return (
     <>
       <JsonLd
-        data={buildBreadcrumbSchema([{ name: "Contact", path: "/contact" }])}
+        data={[
+          buildContactPageSchema(),
+          buildBreadcrumbSchema([{ name: "Contact", path: "/contact" }]),
+        ]}
       />
 
       {/* ── The claim ────────────────────────────────────────────────────── */}

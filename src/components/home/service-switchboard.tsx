@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRightIcon } from "@/components/icons";
-import type { Service } from "@/config/services";
+import { hasPublishedFloor, type Service } from "@/config/services";
 import { cn } from "@/lib/utils";
 
 /**
@@ -269,11 +269,13 @@ export function ServiceSwitchboard({ services }: { services: Service[] }) {
               {/* "from", and a plain word about what that means. A bare number
                   on a studio page invites the reading that it is the price;
                   the honest version costs one short sentence. */}
-              From{" "}
+              {hasPublishedFloor(service) && "From "}
               <span className="font-medium text-ink">{service.pricing.from}</span>
-              <span className="mt-0.5 block text-[0.8125rem]">
-                This is a starting price. We agree the real one after we talk.
-              </span>
+              {hasPublishedFloor(service) && (
+                <span className="mt-0.5 block text-[0.8125rem]">
+                  This is a starting price. We agree the real one after we talk.
+                </span>
+              )}
             </p>
 
             <Link

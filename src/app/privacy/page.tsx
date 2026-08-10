@@ -5,7 +5,8 @@ import { Lead } from "@/components/editorial/typography";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How Aurel handles your data.",
+  description: "How Nexora handles your data.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

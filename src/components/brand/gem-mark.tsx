@@ -1,61 +1,57 @@
 import { cn } from "@/lib/utils";
 
 /**
- * GemMark — the faceted "A" gem, drawn in fine gold line strokes.
+ * GemMark — the faceted "N" gem, drawn in fine line strokes.
  *
- * A transparent, theme-aware SVG reproduction of the brand mark (see
- * public/logo.png), so it sits cleanly on both obsidian and off-white
- * backgrounds and can be scaled or made to glow without artefacts.
+ * A theme-aware SVG reproduction of the Nexora mark: the letter set inside a
+ * facetted frame, echoing the containing shape of the supplied artwork. Drawn
+ * rather than embedded because the delivered logo is a raster whose wordmark
+ * is near-black — on this site's #080808 ground it is invisible, and keying it
+ * to a light colour would mean recolouring somebody else's artwork. A vector
+ * that inherits `currentColor` scales to any size, tints with the palette and
+ * carries no background plate. The delivered raster is kept for the contexts
+ * that need a literal logo file — see `public/companylogo.png`.
+ *
+ * Was a faceted "A" until the 2026-08-10 rename from Nexora.
  *
  * Size is controlled by the caller via `className` (e.g. `h-6 w-6`). Colour
  * defaults to the gold accent via `currentColor`.
  */
 /** The gem's facet path data, shared with the animated variant. */
 export const GEM_PATH = [
-  // outer triangle
-  "M60 8 L12 112 L108 112 Z",
-  // apex fans to the crossbar ends (primary gem facets)
-  "M60 8 L44 92",
-  "M60 8 L76 92",
-  // central spine + inner A counter
-  "M60 8 L60 50",
-  "M60 50 L44 92",
-  "M60 50 L76 92",
-  // crossbar
-  "M44 92 L76 92",
-  // lower outer facets
-  "M44 92 L12 112",
-  "M76 92 L108 112",
-  // lower centre facets
-  "M44 92 L60 112",
-  "M76 92 L60 112",
-  // small top facet
-  "M48 44 L60 22 L72 44",
+  // the containing facet — the slanted frame the supplied mark sits inside
+  "M16 16 L104 16 L104 108 L16 108 Z",
+  // the letterform: two stems and the diagonal that joins them
+  "M34 94 L34 30",
+  "M86 94 L86 30",
+  "M34 30 L86 94",
+  // corner facets, fanning frame to letter — the gem's depth
+  "M16 16 L34 30",
+  "M104 16 L86 30",
+  "M16 108 L34 94",
+  "M104 108 L86 94",
 ].join(" ");
 
 /**
  * The mark reduced to its four load-bearing strokes, for small sizes.
  *
- * `GEM_PATH` carries thirteen sub-paths across a 120×124 field. With
+ * `GEM_PATH` carries eight sub-paths across a 120×124 field. With
  * `vectorEffect="non-scaling-stroke"` each of those keeps its full device-pixel
  * width no matter how far the artwork is scaled down, so below roughly 28px the
  * facets stop resolving, run together, and the mark fills in as a solid
  * triangle with a notch — which reads as a warning icon sitting next to the
  * company name, not as a gem.
  *
- * This variant is an *open* letterform — two legs, a crossbar, and the apex
- * spine that keeps the gem's facet. The closed base is deliberately dropped:
- * any closed triangle at this size reads as a caution glyph no matter how the
- * interior is drawn, whereas an open A reads as a letter.
+ * This variant is the bare letterform — the containing frame and the corner
+ * facets are dropped. At small sizes the frame closes up around the N and the
+ * mark reads as a filled box with a scratch in it; three strokes still read as
+ * a letter at 16px.
  */
 export const GEM_PATH_COMPACT = [
-  // the two legs
-  "M60 12 L18 112",
-  "M60 12 L102 112",
-  // crossbar
-  "M36 84 L84 84",
-  // apex spine — the one surviving facet
-  "M60 12 L60 84",
+  // the letterform alone — the frame and facets are dropped
+  "M32 100 L32 24",
+  "M88 100 L88 24",
+  "M32 24 L88 100",
 ].join(" ");
 
 type GemMarkProps = {

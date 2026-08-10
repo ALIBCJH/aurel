@@ -137,7 +137,7 @@ export function Hero() {
             variants={itemV}
             className="mt-8 max-w-xl text-lg leading-relaxed text-muted"
           >
-            Aurel helps ambitious businesses modernise, grow, and lead — custom
+            Nexora helps ambitious businesses modernise, grow, and lead — custom
             software, AI, and design, crafted end to end by a partner you can
             trust.
           </motion.p>

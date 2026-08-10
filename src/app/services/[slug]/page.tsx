@@ -11,7 +11,7 @@ import { Label, Marginalia } from "@/components/editorial/typography";
 import { PointerTilt } from "@/components/motion/pointer-tilt";
 import { ArrowUpRightIcon, ArrowRightIcon } from "@/components/icons";
 import { casesForService } from "@/config/cases";
-import { getService, services } from "@/config/services";
+import { getService, hasPublishedFloor, services } from "@/config/services";
 import { primaryCta, siteConfig } from "@/config/site";
 import {
   JsonLd,
@@ -260,9 +260,11 @@ export default async function ServiceDetailPage({ params }: Params) {
                 data-reveal="fade"
                 className="font-display mt-8 text-[clamp(2.25rem,5vw,3.25rem)] font-light leading-none tracking-[-0.03em]"
               >
-                <span className="text-label-sm mr-3 align-middle text-ink-mute">
-                  From
-                </span>
+                {hasPublishedFloor(service) && (
+                  <span className="text-label-sm mr-3 align-middle text-ink-mute">
+                    From
+                  </span>
+                )}
                 <span className="foil-flat">{service.pricing.from}</span>
               </p>
               <p
@@ -271,6 +273,29 @@ export default async function ServiceDetailPage({ params }: Params) {
               >
                 {service.pricing.note}
               </p>
+
+              {/* Only some disciplines publish shapes rather than a single
+                  floor. Rendered as a definition list because that is what it
+                  is — a price and what the price buys. */}
+              {service.pricing.tiers && (
+                <dl data-reveal="fade" className="mt-8 border-t border-rule">
+                  {service.pricing.tiers.map((tier) => (
+                    <div key={tier.name} className="border-b border-rule py-5">
+                      <div className="flex items-baseline justify-between gap-4">
+                        <dt className="text-[0.9375rem] font-medium tracking-[-0.015em]">
+                          {tier.name}
+                        </dt>
+                        <dd className="shrink-0 text-[0.9375rem] font-medium tabular-nums">
+                          {tier.price}
+                        </dd>
+                      </div>
+                      <dd className="mt-2 text-sm leading-[1.7] text-ink-soft">
+                        {tier.body}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
               <div data-reveal="fade" className="mt-9">
                 <Button href={primaryCta.href} size="lg" className="w-full sm:w-auto">
                   {primaryCta.label}

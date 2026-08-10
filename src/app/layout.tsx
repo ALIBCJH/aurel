@@ -45,19 +45,78 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.url),
+  // Every page sets its own canonical; this is the fallback so that a route
+  // added without one still points at itself rather than inheriting nothing.
+  alternates: { canonical: "/" },
+  applicationName: siteConfig.name,
+  /**
+   * Crawler directives.
+   *
+   * The default when this is absent is "index, follow" — which is correct but
+   * silent, and silence costs real estate. The googleBot block is the part that
+   * earns: without `max-image-preview: large` Google shows a thumbnail instead
+   * of a full-width image, and without `max-snippet: -1` it truncates the
+   * description at its own discretion. Both directly change how much of the
+   * result a searcher sees before deciding whether to click.
+   */
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: siteConfig.name,
     type: "website",
+    // Names the market this site is written for. The generic `en_US` default
+    // would be a quiet misstatement on a site built for Kenyan buyers.
+    locale: siteConfig.ogLocale,
   },
+  /**
+   * The Twitter card block, which is misleadingly named.
+   *
+   * WhatsApp, Slack and several link previewers read these tags in preference
+   * to Open Graph, or fall back to them when OG is incomplete. On a Kenyan
+   * B2B site that makes this the more important of the two: referrals here
+   * travel by WhatsApp far more than by any social network, and a link that
+   * unfurls as a grey box is a referral that arrives looking untrustworthy.
+   */
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    description: siteConfig.description,
+  },
+  /**
+   * Search Console ownership.
+   *
+   * Set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` at deploy time to the token
+   * Google issues, and the meta tag appears. Until the property is verified
+   * there is no way to submit the sitemap, see which queries the site is
+   * actually surfacing for, or find out that something has been deindexed —
+   * so this is the first thing to do after the domain is pointed.
+   */
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    },
+  }),
 };
 
 // Browser chrome matches the page. One value, because there is one palette —
 // keying this off the OS setting would put a light page inside dark chrome.
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  // Must equal --nexora-black in globals.css. It cannot read the custom
+  // property: this is serialised into a <meta> tag at build time, long before
+  // any stylesheet is parsed. If the brand ground changes, change it here too.
+  themeColor: "#080808",
 };
 
 /**
@@ -101,7 +160,9 @@ export default function RootLayout({
 
   return (
     <html
-      lang="en"
+      // `en-KE`, not bare `en` — see siteConfig.locale for why the region
+      // subtag is load-bearing on a site targeting one English-speaking market.
+      lang={siteConfig.locale}
       className={`${inter.variable} ${geistMono.variable} h-full`}
       // The blocking script below adds `js` to this element before React
       // hydrates, so the server's class list never matches the client's. This

@@ -1,7 +1,7 @@
 import type { SVGProps } from "react";
 
 /**
- * Custom line icons for the eight services.
+ * Custom line icons for the six services.
  *
  * One consistent geometric system: 24×24 grid, ~1.5px gold strokes (via
  * currentColor), round joins, no fills. Minimal and abstract — no photos,
@@ -108,13 +108,57 @@ function ImmersiveIcon(props: IconProps) {
   );
 }
 
+
+// Mobile applications — handset with a live surface
+function MobileAppsIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="7" y="2.5" width="10" height="19" rx="2.2" />
+      <path d="M10.6 5.2h2.8" />
+      <path d="M9.5 9.5h5M9.5 12.5h5M9.5 15.5h3" />
+    </svg>
+  );
+}
+
+// Google Maps & business presence — a pin over ground
+function PresenceIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 21s6-5.3 6-10a6 6 0 1 0-12 0c0 4.7 6 10 6 10z" />
+      <circle cx="12" cy="11" r="2.2" />
+    </svg>
+  );
+}
+
+// Analytics & growth — a rising series, not a decorative squiggle
+function AnalyticsIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3.5 20h17" />
+      <path d="M6.5 20v-5M11 20v-9M15.5 20v-4M20 20v-12" />
+    </svg>
+  );
+}
+
+/**
+ * Keyed by the live service slugs. The retired slugs (software, branding,
+ * process, immersive, ai-automation) are kept here on purpose: `next.config.ts`
+ * still redirects their URLs, and an old link that reaches a redirect should
+ * not also lose its icon on the way through.
+ */
 const iconBySlug = {
+  // Live disciplines.
   websites: WebsitesIcon,
+  "mobile-apps": MobileAppsIcon,
+  seo: SeoIcon,
+  "online-presence": PresenceIcon,
+  "digital-strategy": StrategyIcon,
+  "analytics-growth": AnalyticsIcon,
+  // Retired, still reachable through redirects.
   software: SoftwareIcon,
   "ai-automation": AiIcon,
   strategy: StrategyIcon,
   branding: BrandingIcon,
-  seo: SeoIcon,
   process: ProcessIcon,
   immersive: ImmersiveIcon,
 } as const;
