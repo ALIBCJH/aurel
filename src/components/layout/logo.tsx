@@ -4,8 +4,8 @@ import { siteConfig } from "@/config/site";
 import { GemMark } from "@/components/brand/gem-mark";
 
 /**
- * Brand lockup — the faceted "A" gem beside the "AUREL" wordmark
- * (uppercase, thin, wide letter-spacing).
+ * Brand lockup — the faceted "M" gem beside the wordmark (uppercase, thin,
+ * wide letter-spacing).
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -22,8 +22,10 @@ export function Logo({ className }: { className?: string }) {
         className="h-7 w-7 shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5"
         strokeWidth={2.2}
       />
+      {/* The short name: at 0.34em tracking the full "Mojah Investments" is
+          wider than a phone masthead. See components/brand/wordmark.tsx. */}
       <span className="text-lg font-light uppercase tracking-[0.34em] text-foreground">
-        {siteConfig.name}
+        {siteConfig.shortName}
       </span>
     </Link>
   );

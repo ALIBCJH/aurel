@@ -6,8 +6,14 @@
  * not weakened by this file: nothing here may ever be used to illustrate a
  * product, a service or a case study, because those pages argue that the work
  * exists and a photograph cannot carry that argument. These images do a
- * different job — the site says "Nyeri and Nairobi" on nearly every page and
- * has never once shown either place.
+ * different job — the site says "Nyeri" on nearly every page and would
+ * otherwise never show it.
+ *
+ * A licensed landscape is second best and is here because it is honest and
+ * available. The right photograph for this slot is one of Mojah's own: the
+ * shopfront at Old Batian House, or the workshop bench. Replace this the day
+ * such a photograph exists — and when you do, drop the `credit` block, since
+ * it exists only to satisfy the licence on somebody else's work.
  *
  * Sourced through Openverse, filtered to licences that permit commercial use
  * and modification. NonCommercial and NoDerivatives were both excluded: NC
@@ -41,7 +47,7 @@ export const placePhotography: Photograph[] = [
     src: "/place/nyeri.webp",
     alt: "The Nyeri countryside in full sun — smallholdings, banana and coffee under mature trees, with the peaks of Mount Kenya rising over the ridge behind.",
     place: "Nyeri",
-    note: "Where the studio is. Mount Kenya is the ridge on the horizon, about forty kilometres out.",
+    note: "Where we are. Mount Kenya is the ridge on the horizon, about forty kilometres out.",
     credit: {
       creator: "Ninara",
       creatorUrl: "https://www.flickr.com/photos/37583176@N00/51936152848/",
@@ -51,19 +57,9 @@ export const placePhotography: Photograph[] = [
         "https://commons.wikimedia.org/wiki/File:Nyeri,_Kenya_-_51936152848.jpg",
     },
   },
-  {
-    src: "/place/nairobi.webp",
-    alt: "A matatu, hand-painted end to end, pulling through a Nairobi city-centre junction past shopfronts and pedestrians in the middle of the day.",
-    place: "Nairobi",
-    note: "The other half of the week. Most of our clients' customers arrive on one of these.",
-    credit: {
-      // CC0 waives the attribution requirement. Credited anyway: the
-      // photographer did the work, and a studio that asks clients to value
-      // craft should not quietly take someone else's.
-      creator: "Francis Akuka for the Wikimedia Foundation",
-      license: "CC0 1.0",
-      licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      source: "https://commons.wikimedia.org/wiki/File:Matatu_bus.jpg",
-    },
-  },
+  // The Nairobi matatu photograph that sat here has been removed. Mojah trades
+  // from Nyeri and travels across the Mount Kenya region; a picture captioned
+  // "the other half of the week" in Nairobi was a claim about where the
+  // business operates, made by an image rather than in text. `public/place/
+  // nairobi.webp` is still on disk and nothing references it.
 ];

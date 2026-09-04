@@ -18,74 +18,80 @@ import { cases } from "@/config/cases";
  * proof → what clients say → what to do next. Each section answers the
  * question the previous one raises, which is why the process sits before the
  * work rather than after it: a visitor who has just seen the disciplines wants
- * to know how an engagement actually runs before spending attention on a case.
+ * to know how a job actually runs before spending attention on a case.
  *
- * "What we do" is currently a heading with nothing under it — the six service
- * cards were removed and a replacement has not landed yet. The order above is
- * the intended argument, and the first step of it is presently unmade.
+ * "What we do" is a heading with nothing under it — a reserved slot rather
+ * than an accident. The six disciplines are still reachable from the masthead,
+ * the thumb bar and the footer, and /services is still the canonical listing,
+ * so nothing is orphaned. The obvious thing to put here is the six-service
+ * index; it is left alone rather than half-built.
  *
- * The title leads with what is sold and where, not with positioning: "premium
- * digital solutions studio" is not a phrase anyone searches, and a title is a
- * query-matching surface before it is a brand surface.
+ * The title leads with what is sold and where, not with positioning: "ICT
+ * solutions provider" is a phrase businesses use about themselves and almost
+ * nobody types into Google, whereas "computer repair" and the town name are
+ * typed constantly. A title is a query-matching surface before it is a brand
+ * surface.
  */
 export const metadata: Metadata = {
-  title: "Digital Solutions & Software Consulting in Kenya",
+  title: "ICT Solutions, Computer Repair & Networks in Nyeri",
   description:
-    "Nexora builds websites, mobile apps, SEO and digital presence for businesses in Kenya. Based in Nyeri and Nairobi. Starting prices published, and you own everything we build.",
+    "Mojah Investments supplies and repairs computers, printers and photocopiers, installs networks and CCTV, and builds software and websites. Nyeri, Kenya. Open six days a week.",
   alternates: { canonical: "/" },
 };
 
-/** Why a business picks this studio over the next one. Claims we can keep. */
+/** Why a business picks Mojah over the next supplier. Claims we can keep. */
 const reasons = [
   {
-    title: "Built around your business",
-    body: "We start from what the business needs, not from what we like building. Often the answer is smaller and cheaper than what you came in asking for, and we will say so before you spend the money.",
+    title: "One supplier for the whole thing",
+    body: "The machines, the network they sit on, the software that runs on them and the cameras watching the door. When something breaks, there is nobody to point at somebody else — which is most of what makes ICT problems take weeks instead of days.",
   },
   {
-    title: "One team, start to finish",
-    body: "Planning, design and engineering all happen here. The people who sit down with you at the start are the people who build it — nobody to hand you over to, and nobody to blame.",
+    title: "We tell you when not to spend",
+    body: "Sometimes the honest answer is that a machine is worth repairing, that you do not need the bigger package, or that the system you have is fine. A supplier paid to sell is not incentivised to say that. We would rather say it and keep the relationship.",
   },
   {
-    title: "Designed for growth",
-    body: "A site nobody can find is a brochure. We build the visibility in from the start — search, profile, maps and measurement — rather than selling it back to you a year later.",
+    title: "You can find us",
+    body: "There is a shop at Old Batian House with people in it six days a week. You can walk in with a laptop under your arm. That is a different proposition from a phone number that answers when it feels like it.",
   },
   {
-    title: "You own everything",
-    body: "Code, content, domain, hosting and store accounts are in your name from day one. Nothing is held hostage as a retention strategy, and leaving is never made difficult.",
+    title: "It is yours",
+    body: "Accounts, passwords, logins and code are in your name from the start. Nothing is held back as a way of keeping you, and moving to somebody else is never made difficult.",
   },
 ];
 
 /**
- * The five-stage engagement.
+ * The five stages every job shares.
  *
  * Distinct from the per-discipline `process` in `services.ts`: that describes
- * how one kind of work runs, this describes the shape every engagement shares.
+ * how one kind of work runs, this describes the shape they all have in common.
+ * It is written to cover a photocopier repair and a network installation
+ * equally, because both go through it.
  */
 const howWeWork = [
   {
     step: "01",
-    title: "Discover",
-    body: "Understand the business, the customers and the goal. Half a day that changes everything downstream — the cheapest hour in the project, and the one most often skipped.",
+    title: "Understand",
+    body: "What the business actually needs, before anything is quoted. It is the cheapest conversation in the job and the one most often skipped — and skipping it is why so much equipment is bought and then worked around.",
   },
   {
     step: "02",
-    title: "Design",
-    body: "Structure, words and strategy first, then interface. Designing before the content exists is how projects end up beautiful and mute.",
+    title: "Look at it",
+    body: "A diagnosis on the bench, or a walk round the building. We do not price work we have not seen: a quote written from a phone description is a guess with a number on it.",
   },
   {
     step: "03",
-    title: "Build",
-    body: "Develop the website, application or system in two-week cycles, with something you can open at the end of each one. You watch it take shape rather than waiting months for a reveal.",
+    title: "Quote plainly",
+    body: "What we propose, what it costs, and why — written down, with the reasoning attached so you can compare it fairly against anyone else's. Including where the cheaper option is the right one.",
   },
   {
     step: "04",
-    title: "Launch",
-    body: "Deploy it, connect it to the places your customers already look, and hand over every login. You leave the launch owning the whole thing.",
+    title: "Do the work",
+    body: "Installed, repaired or built, and tested doing the job it is actually there to do rather than merely powering on. Labelled and documented as we go, not afterwards.",
   },
   {
     step: "05",
-    title: "Grow",
-    body: "Search, analytics and steady optimisation once real usage shows what actually happens. This is the stage most suppliers skip, and it is where the return is.",
+    title: "Support it",
+    body: "Handover, showing your team what they need to know, and being reachable when something changes. This is the stage most suppliers treat as over, and it is the one you feel every week.",
   },
 ];
 
@@ -95,25 +101,24 @@ export default function HomePage() {
       <OpeningSpread />
 
       {/* ── What we do ───────────────────────────────────────────────────── */}
-      {/* Heading only, deliberately. The deck, the six service cards and the
-          "All services" control were removed and nothing has replaced them
-          yet — this is a reserved slot for whatever goes here next, not an
-          accident. Until then the six disciplines are still reachable from the
-          masthead, the thumb bar and the footer, and /services is still the
-          canonical listing, so nothing has been orphaned. */}
+      {/* Heading and deck only — see the note at the top of this file for why
+          the slot beneath is reserved rather than filled. */}
       <section className="py-16 sm:py-20 lg:py-24">
         <Container size="wide">
-          <SectionHead title="What we do" />
+          <SectionHead
+            title="What we do"
+            deck="Equipment supplied and repaired, networks installed, software and websites built, systems moved, cameras fitted. Take one of them, or hand us the lot."
+          />
         </Container>
       </section>
 
-      {/* ── Why Nexora ────────────────────────────────────────────────────── */}
+      {/* ── Why Mojah ────────────────────────────────────────────────────── */}
       {/* The tinted band — the one warm surface per page. See globals.css. */}
       <section className="border-y border-rule bg-tint py-16 sm:py-20 lg:py-24">
         <Container size="wide">
           <SectionHead
-            title="Why businesses choose Nexora"
-            deck="Small enough that the person you meet is the person who builds it. Serious enough to hand you something you can run for years."
+            title="Why businesses choose Mojah"
+            deck="Close enough that you can walk in with the machine. Broad enough that the network, the software and the cameras are one supplier's problem rather than three."
           />
 
           <div className="mt-12 grid gap-5 sm:mt-16 lg:grid-cols-2">
@@ -144,7 +149,7 @@ export default function HomePage() {
         <Container size="wide">
           <SectionHead
             title="How we work"
-            deck="The same five stages on every engagement, whatever the discipline. You always know which one you are in."
+            deck="The same five stages on every job, from a printer repair to a full network. You always know which one you are in."
           />
           <ProcessSteps steps={howWeWork} className="mt-12 sm:mt-16" />
         </Container>
@@ -155,7 +160,7 @@ export default function HomePage() {
         <Container size="wide">
           <SectionHead
             title="Work we have done"
-            deck="Both of these are live and we have linked them. Open them and judge the work for yourself — that is the only reason they are here."
+            deck="Both of these are live and we have linked them. Open them and judge for yourself — that is the only reason they are here."
             action={
               <Button href="/work" variant="secondary" size="md">
                 View our work

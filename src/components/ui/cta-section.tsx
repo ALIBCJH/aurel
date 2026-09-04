@@ -13,8 +13,8 @@ import { primaryCta } from "@/config/site";
  * reaching for a gradient or a glow.
  */
 export function CtaSection({
-  title = "Your next digital chapter starts here.",
-  body = "Tell us where your business is going. We'll help you build the digital experience to get there.",
+  title = "Tell us what has stopped working.",
+  body = "A machine that will not start, a network that keeps dropping, a system nobody supports any more. Call, message us on WhatsApp, or send it in writing — we will tell you plainly what it needs.",
   action = primaryCta,
   secondary,
 }: {

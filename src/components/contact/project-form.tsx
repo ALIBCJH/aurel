@@ -4,7 +4,7 @@ import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRightIcon } from "@/components/icons";
-import { siteConfig } from "@/config/site";
+import { businessInfo, siteConfig } from "@/config/site";
 
 /**
  * ProjectForm — the brief.
@@ -20,34 +20,35 @@ import { siteConfig } from "@/config/site";
  * resort, not the mechanism: on its own it loses every lead whose device has no
  * mail client configured, and tells neither party that anything went missing.
  */
-// Mirrors the disciplines actually sold, plus an escape hatch. It listed
-// eight — including three that no longer exist as services — so a visitor could
-// tick "Strategy" and receive a reply explaining it is not a thing we sell.
-// It then drifted the other way: it still offered "AI & automation" after that
-// discipline was retired, and offered none of the three added with it.
-// Hand-written rather than mapped from `services`, because these are phrased as
-// the thing a client wants ("Website") not as the discipline ("Websites"); keep
-// it in step when a service is added or dropped.
+// Mirrors the disciplines actually sold, plus an escape hatch. This list has
+// twice drifted out of step with `services.ts` and offered things nobody could
+// buy, so: keep it in step whenever a service is added or dropped.
+//
+// Hand-written rather than mapped from `services`, because these are phrased
+// as the thing a customer wants ("Repair a machine") rather than as the
+// discipline ("Hardware Supply & Repair"). Somebody with a dead laptop does
+// not recognise themselves in a service name.
 const NEEDS = [
+  "Repair a machine",
+  "Buy equipment",
+  "Network or Wi-Fi",
+  "CCTV or security",
+  "Software",
   "Website",
-  "Mobile app",
-  "SEO",
-  "Google Business Profile",
-  "Digital strategy",
-  "Analytics",
+  "Move or upgrade a system",
   "Not sure yet",
 ];
 
-// KES, and the brackets have to straddle the floors published in
-// `services.ts` — a visitor reads the price and then picks a band, so if the
-// lowest band sits above the cheapest service every enquiry lands in it and
-// the field tells us nothing. Rescaled when prices moved: the old bands began
-// at "Under KES 150,000", which swallowed all four disciplines at once.
+// KES. Optional, and deliberately wide at the bottom: a great deal of what
+// comes through here is a single repair, and a lowest band of "Under KES
+// 50,000" would put almost every enquiry in one bucket and tell us nothing.
+// If published prices ever land in `services.ts`, check these still straddle
+// them — a visitor reads a price and then picks a band.
 const BUDGETS = [
-  "Under KES 50,000",
-  "KES 50,000 – 100,000",
-  "KES 100,000 – 250,000",
-  "KES 250,000+",
+  "Under KES 10,000",
+  "KES 10,000 – 50,000",
+  "KES 50,000 – 150,000",
+  "KES 150,000+",
   "Not sure yet",
 ];
 
@@ -109,8 +110,17 @@ export function ProjectForm() {
     );
   }
 
-  /** Last resort when the network is unreachable — see the component note. */
-  function openMailClient(payload: Record<string, string>) {
+  /**
+   * Last resort when the network is unreachable — see the component note.
+   *
+   * Returns false when there is no address to send to, so the caller can offer
+   * the phone number instead. Opening `mailto:?subject=…` with no recipient
+   * hands the visitor a blank compose window and looks like a bug, which is
+   * the worst possible thing to show somebody whose enquiry has just failed.
+   */
+  function openMailClient(payload: Record<string, string>): boolean {
+    if (!siteConfig.email) return false;
+
     const lines = [
       `Name: ${payload.name}`,
       `Email: ${payload.email}`,
@@ -122,10 +132,11 @@ export function ProjectForm() {
       payload.message,
     ];
     const subject = encodeURIComponent(
-      `Project brief — ${payload.name || "New enquiry"}`,
+      `Enquiry — ${payload.name || "New enquiry"}`,
     );
     const body = encodeURIComponent(lines.join("\n"));
     window.location.href = `mailto:${siteConfig.email}?subject=${subject}&body=${body}`;
+    return true;
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -173,16 +184,19 @@ export function ProjectForm() {
       setStatus("error");
       setNotice(
         result.error ??
-          "Something went wrong sending that. Please try again, or email us directly.",
+          `Something went wrong sending that. Please try again, or call ${businessInfo.telephone}.`,
       );
     } catch {
       // The request never left the device. Hand the visitor their mail client
-      // so the brief is not simply lost.
+      // so the enquiry is not simply lost — or, where there is no address to
+      // send to, the phone number, which is never not an option.
       setStatus("error");
+      const opened = openMailClient(payload);
       setNotice(
-        "We couldn't reach the studio from here. We've opened your email client instead.",
+        opened
+          ? "We couldn't reach us from here. We've opened your email client instead."
+          : `We couldn't reach us from here — your connection may be down. Please call ${businessInfo.telephone} or send us a WhatsApp message instead.`,
       );
-      openMailClient(payload);
     }
   }
 
@@ -195,17 +209,35 @@ export function ProjectForm() {
       >
         <span className="text-sm font-medium text-ink-mute">Received</span>
         <h3 className="mt-4 text-[clamp(1.5rem,3.4vw,2.25rem)] font-semibold leading-[1.1] tracking-[-0.03em]">
-          Thank you — your brief is with us.
+          Thank you — your enquiry is with us.
         </h3>
+        {/* The urgent route is whichever channel exists. Email is blank in
+            config until Mojah supplies an address, so this falls back to the
+            phone rather than rendering an empty `mailto:`. */}
         <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-ink-soft">
           We read every enquiry ourselves and reply within one business day. If
-          it is urgent, write to{" "}
-          <a
-            href={`mailto:${siteConfig.email}`}
-            className="tap font-medium text-ink underline underline-offset-4"
-          >
-            {siteConfig.email}
-          </a>
+          it is urgent,{" "}
+          {siteConfig.email ? (
+            <>
+              write to{" "}
+              <a
+                href={`mailto:${siteConfig.email}`}
+                className="tap font-medium text-ink underline underline-offset-4"
+              >
+                {siteConfig.email}
+              </a>
+            </>
+          ) : (
+            <>
+              call{" "}
+              <a
+                href={`tel:${businessInfo.telephone}`}
+                className="tap font-medium text-ink underline underline-offset-4"
+              >
+                {businessInfo.telephone}
+              </a>
+            </>
+          )}
           .
         </p>
       </div>
@@ -325,13 +357,13 @@ export function ProjectForm() {
         </select>
       </Field>
 
-      <Field index={7} label="Where you want to go" htmlFor="message">
+      <Field index={7} label="What do you need?" htmlFor="message">
         <textarea
           id="message"
           name="message"
           rows={4}
           enterKeyHint="enter"
-          placeholder="Tell us a little about your project…"
+          placeholder="What has stopped working, or what you are trying to set up…"
           className="field-rule resize-y leading-relaxed"
         />
       </Field>
@@ -344,7 +376,7 @@ export function ProjectForm() {
           aria-busy={busy}
           className="w-full sm:w-auto"
         >
-          {busy ? "Sending…" : "Send project brief"}
+          {busy ? "Sending…" : "Send enquiry"}
           {!busy && <ArrowUpRightIcon width={14} height={14} />}
         </Button>
 

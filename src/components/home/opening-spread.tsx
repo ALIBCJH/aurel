@@ -19,7 +19,7 @@ import { primaryCta, siteConfig } from "@/config/site";
  * searched, and asserted figures ("120+ projects", "98% client satisfaction")
  * that this studio has nowhere else been willing to invent.
  *
- * So the art is art now, and only art. `nexora-hero-desktop.webp` is the frame
+ * So the art is art now, and only art. `mojah-hero-desktop.webp` is the frame
  * that never had type in it, and it is composed for exactly this: the devices
  * sit in the right half and the left half is empty ground. The copy goes in
  * that empty half, where the composition already made room for it.
@@ -72,7 +72,7 @@ export function OpeningSpread() {
           devices, so the artwork is never veiled where it is doing the work. */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-[color:var(--nexora-black)] from-15% via-[color:color-mix(in_srgb,var(--nexora-black)_72%,transparent)] via-45% to-transparent to-70% md:block"
+        className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-[color:var(--mojah-black)] from-15% via-[color:color-mix(in_srgb,var(--mojah-black)_72%,transparent)] via-45% to-transparent to-70% md:block"
       />
 
       {/* And a short one at the foot, so the frame meets the page ground
@@ -84,7 +84,7 @@ export function OpeningSpread() {
           so there is very little to hide. */}
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 -z-10 hidden h-16 bg-gradient-to-b from-transparent to-[color:var(--nexora-black)] md:block"
+        className="absolute inset-x-0 bottom-0 -z-10 hidden h-16 bg-gradient-to-b from-transparent to-[color:var(--mojah-black)] md:block"
       />
 
       <Container size="wide" className="relative z-10 w-full">
@@ -106,12 +106,18 @@ export function OpeningSpread() {
             {siteConfig.location}
           </p>
 
+          {/* Plain, and deliberately not the company's own tagline.
+              "Flipping the ICT switch" is Mojah's line and it is a good one,
+              but it tells a stranger nothing about what can be bought here —
+              and this is the first sentence on the site, read by people who
+              have never heard the name. The tagline is on /about, where a
+              reader has already worked out who they are dealing with. */}
           <h1
             data-reveal="fade"
             style={{ ["--reveal-delay" as string]: "0.05s" }}
             className="mt-8 text-[clamp(2.25rem,4.8vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.04em]"
           >
-            We build digital experiences that move businesses forward.
+            Your computers, your network, your security — one supplier.
           </h1>
 
           <p
@@ -119,8 +125,8 @@ export function OpeningSpread() {
             style={{ ["--reveal-delay" as string]: "0.1s" }}
             className="mt-6 max-w-md text-[1.0625rem] leading-[1.7] text-ink-soft"
           >
-            Websites, applications, SEO and digital presence for ambitious
-            businesses.
+            Supply, repair, installation and support for businesses in Nyeri and
+            across the Mount Kenya region.
           </p>
 
           <div
@@ -159,12 +165,12 @@ export function OpeningSpread() {
                 where emission order decides and the caller loses. Heights
                 measured at both breakpoints to confirm. */}
             <Button
-              href="/work"
+              href="/services"
               variant="foil"
               size="md"
               className="md:h-14 md:px-8 md:text-base"
             >
-              Explore our work
+              What we do
             </Button>
           </div>
         </div>

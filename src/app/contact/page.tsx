@@ -11,15 +11,16 @@ import {
   buildBreadcrumbSchema,
   buildContactPageSchema,
 } from "@/components/seo/json-ld";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Contact Nexora",
+  title: "Contact Mojah Investments, Nyeri",
   description:
-    "Tell us what you want to build. Call, email or WhatsApp Nexora in Nyeri and Nairobi. We read every message ourselves and reply within one business day.",
+    "Call, WhatsApp or visit Mojah Investments at Old Batian House, ground floor, Nyeri. Open Mon–Sat 8am–7pm and Sun 10am–5pm. We read every message ourselves.",
   alternates: { canonical: "/contact" },
 };
 
-/** "+254797942186" → "+254 797 942 186". Display only; links use raw E.164. */
+/** "+254727477328" → "+254 727 477 328". Display only; links use raw E.164. */
 function formatPhone(e164: string): string {
   const match = e164.match(/^(\+\d{3})(\d{3})(\d{3})(\d{3})$/);
   return match ? `${match[1]} ${match[2]} ${match[3]} ${match[4]}` : e164;
@@ -27,54 +28,64 @@ function formatPhone(e164: string): string {
 
 const expectations = [
   {
-    title: "A reply within one business day",
-    body: "From a person who has read your brief, not an autoresponder. If it will take longer than that, we say so.",
+    title: "A person, not an autoresponder",
+    body: "Somebody who has actually read what you sent. If an answer will take longer than a day, we tell you that rather than leaving you wondering.",
   },
   {
-    title: "A conversation, not a pitch deck",
-    body: "Half an hour on where you want to get to and whether we are the right studio to take you there. No slides.",
+    title: "A look before a number",
+    body: "For anything beyond a simple supply, we want to see the machine or walk the site before quoting. A price given down the phone is a guess, and guesses are what turn into surprises.",
   },
   {
     title: "An honest answer",
-    body: "If the work is not right for us, or the thing you need is smaller and cheaper than you expected, we will tell you and point you somewhere sensible.",
+    body: "If a machine is not worth repairing, if you need less than you asked for, or if this is not work for us at all, we will say so and point you somewhere sensible.",
   },
 ];
 
 /**
  * The contact page.
  *
- * The form is the considered route in, but it is not the only one, and on this
+ * The form is the considered route in, but it is not the only one, and in this
  * market it is not even the most likely: WhatsApp is where Kenyan businesses
- * actually open a conversation. It gets equal billing with email and phone
- * rather than being tucked into a footer as an unlabelled icon.
+ * actually open a conversation, and for a repair shop the phone is where most
+ * of them start. Both get equal billing rather than being tucked into a footer
+ * as an unlabelled icon.
+ *
+ * The channels are assembled rather than hardcoded so that a blank value in
+ * config drops the card entirely — a contact page advertising a route that
+ * does not work is worse than one with two cards on it. Email is currently
+ * blank; see `siteConfig.email`.
  */
 export default function ContactPage() {
   const channels = [
-    {
-      label: "Email",
-      value: siteConfig.email,
-      href: `mailto:${siteConfig.email}`,
-      note: "Best for detail and attachments",
-      external: false,
-    },
-    ...(businessInfo.whatsapp
-      ? [
-          {
-            label: "WhatsApp",
-            value: "Start a chat",
-            href: `https://wa.me/${businessInfo.whatsapp}`,
-            note: "Fastest — how most enquiries here begin",
-            external: true,
-          },
-        ]
-      : []),
     ...(businessInfo.telephone
       ? [
           {
             label: "Phone",
             value: formatPhone(businessInfo.telephone),
             href: `tel:${businessInfo.telephone}`,
-            note: "Weekdays, 9am–5pm EAT",
+            note: businessInfo.openingHoursText.join(" · "),
+            external: false,
+          },
+        ]
+      : []),
+    ...(businessInfo.whatsapp
+      ? [
+          {
+            label: "WhatsApp",
+            value: "Start a chat",
+            href: `https://wa.me/${businessInfo.whatsapp}`,
+            note: "Easiest way to send a photo of the fault",
+            external: true,
+          },
+        ]
+      : []),
+    ...(siteConfig.email
+      ? [
+          {
+            label: "Email",
+            value: siteConfig.email,
+            href: `mailto:${siteConfig.email}`,
+            note: "Best for detail and attachments",
             external: false,
           },
         ]
@@ -100,7 +111,7 @@ export default function ContactPage() {
               style={{ ["--reveal-delay" as string]: "0.05s" }}
               className="mt-5 text-[clamp(2.5rem,7vw,5.25rem)] font-semibold leading-[1] tracking-[-0.04em]"
             >
-              Tell us what you are trying to build
+              Tell us what needs sorting
             </h1>
             <p
               data-reveal="fade"
@@ -108,8 +119,8 @@ export default function ContactPage() {
               className="mt-7 max-w-2xl text-[1.0625rem] leading-[1.6] text-ink-soft sm:text-xl"
             >
               Describe the problem rather than the solution — a paragraph about
-              where you are stuck is a perfectly good brief. We read every
-              enquiry ourselves.
+              what has stopped working is a perfectly good place to start. Or
+              bring the machine to Old Batian House and we will look at it.
             </p>
           </div>
         </Container>
@@ -118,9 +129,15 @@ export default function ContactPage() {
       {/* ── Direct channels ──────────────────────────────────────────────── */}
       <section className="pt-12 sm:pt-14">
         <Container size="wide">
+          {/* Columns follow the channel count. Hardcoding three left a
+              third-width void whenever a channel was dropped for having no
+              value in config, which reads as a card that failed to render. */}
           <ul
             data-reveal="fade"
-            className="grid gap-4 sm:gap-5 lg:grid-cols-3"
+            className={cn(
+              "grid gap-4 sm:gap-5",
+              channels.length >= 3 ? "lg:grid-cols-3" : "lg:grid-cols-2",
+            )}
           >
             {channels.map((channel) => (
               <li key={channel.label}>
@@ -158,12 +175,12 @@ export default function ContactPage() {
           <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-7">
               <h2 className="text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-[1.06] tracking-[-0.035em]">
-                Or send the brief
+                Or send us the details
               </h2>
               <p className="mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-ink-soft">
                 Six fields, about two minutes. Only your name and email are
-                required — everything else just helps us come to the first call
-                already useful.
+                required — everything else just means we arrive at the first
+                call already useful.
               </p>
 
               <div className="mt-10">
@@ -183,50 +200,68 @@ export default function ContactPage() {
                     will work out which discipline it belongs to — or whether it
                     needs one at all.
                   </p>
+                  {/* The price column that sat opposite each name is gone.
+                      With every discipline quoted on request it printed "On
+                      request" six times down the right-hand edge, which read
+                      as a rendering fault rather than a pricing policy. The
+                      one-line summary is the useful thing to show instead, and
+                      it is what actually helps somebody pick. If real figures
+                      land in `services.ts`, this is a sensible place to put
+                      them back — guarded on `hasPublishedFloor`. */}
                   <ul className="mt-6 space-y-1">
                     {services.map((service) => (
                       <li key={service.slug}>
                         <Link
                           href={`/services/${service.slug}`}
-                          className="tap flex items-center justify-between gap-4 py-2.5 text-[0.9375rem] transition-opacity hover:opacity-70"
+                          className="tap block py-2.5 text-[0.9375rem] transition-opacity hover:opacity-70"
                         >
                           <span className="font-medium">{service.name}</span>
-                          <span className="shrink-0 text-sm text-ink-mute">
-                            {service.pricing.from}
+                          <span className="mt-0.5 block text-sm leading-snug text-ink-mute">
+                            {service.summary}
                           </span>
                         </Link>
                       </li>
                     ))}
                   </ul>
                   <p className="mt-5 text-sm leading-relaxed text-ink-mute">
-                    Starting points, not quotes.{" "}
+                    Everything is quoted after we have seen it.{" "}
                     <Link
                       href="/services"
                       className="tap font-medium text-ink underline underline-offset-4"
                     >
-                      See what moves them
+                      See how each one runs
                     </Link>
                     .
                   </p>
                 </div>
 
+                {/* Address and hours read from config, so this panel, the
+                    footer and the LocalBusiness schema cannot disagree about
+                    when the shop is open. */}
                 <dl className="mt-6 rounded-[var(--radius-xl)] border border-rule p-6 sm:p-7">
                   <div>
                     <dt className="text-sm text-ink-mute">Where we are</dt>
-                    <dd className="mt-1.5 text-base font-medium">
-                      {siteConfig.location}
+                    <dd className="mt-1.5 text-base font-medium leading-relaxed">
+                      {businessInfo.streetAddress}
+                      <br />
+                      {businessInfo.addressLocality},{" "}
+                      {businessInfo.addressRegion}
                     </dd>
                   </div>
                   <div className="mt-5">
                     <dt className="text-sm text-ink-mute">Hours</dt>
                     <dd className="mt-1.5 text-base font-medium">
-                      Mon–Fri, 9am–5pm EAT
+                      {businessInfo.openingHoursText.map((line) => (
+                        <span key={line} className="block">
+                          {line}
+                        </span>
+                      ))}
                     </dd>
                   </div>
                   <div className="mt-5">
-                    <dt className="text-sm text-ink-mute">Working</dt>
+                    <dt className="text-sm text-ink-mute">Covering</dt>
                     <dd className="mt-1.5 text-base font-medium">
-                      Across Kenya and remote
+                      Nyeri and the Mount Kenya region
                     </dd>
                   </div>
                 </dl>

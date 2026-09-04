@@ -1,11 +1,11 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
-import type { NexoraImage } from "@/config/imagery";
+import type { BrandImage } from "@/config/imagery";
 import { cn } from "@/lib/utils";
 
 /**
- * Renders a commissioned Nexora image, or a reserved slot where it will go.
+ * Renders a commissioned brand image, or a reserved slot where it will go.
  *
  * This is a server component and the existence check runs at build time, which
  * is the only reason the approach is affordable: no client bundle, no request,
@@ -48,7 +48,7 @@ export function Figure({
   className,
   imageClassName,
 }: {
-  image: NexoraImage;
+  image: BrandImage;
   /** True only for the image above the fold. */
   priority?: boolean;
   sizes?: string;
@@ -119,7 +119,7 @@ function PendingAsset({
   hasMobile,
   className,
 }: {
-  image: NexoraImage;
+  image: BrandImage;
   hasMobile: boolean;
   className?: string;
 }) {

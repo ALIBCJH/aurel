@@ -137,9 +137,9 @@ export function Hero() {
             variants={itemV}
             className="mt-8 max-w-xl text-lg leading-relaxed text-muted"
           >
-            Nexora helps ambitious businesses modernise, grow, and lead — custom
-            software, AI, and design, crafted end to end by a partner you can
-            trust.
+            Mojah supplies, installs and supports the technology a business
+            runs on — equipment, networks, software and security, from one
+            supplier you can walk in and talk to.
           </motion.p>
 
           <motion.div

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { siteConfig } from "@/config/site";
+import { businessInfo, siteConfig } from "@/config/site";
 
 /**
  * The default social card, inherited by every route that does not define its
@@ -8,8 +8,12 @@ import { siteConfig } from "@/config/site";
  * travels — rendered as a bare grey box.
  *
  * Drawn rather than shipped as a static file so it stays in step with the
- * brand: the palette below is the Night edition's, and the mark is the same
- * reduced four-stroke "A" the masthead uses at small sizes.
+ * brand: the palette below is the site's, and the mark is the same reduced
+ * letterform the masthead uses at small sizes.
+ *
+ * It is also, for now, the only rendered Mojah lockup that exists as an image —
+ * which is why `buildLocalBusinessSchema` points its `image` at this route
+ * rather than at a logo file.
  *
  * Kept to flexbox and inline styles on purpose — this is rendered by Satori,
  * which supports neither CSS grid nor external stylesheets, and silently
@@ -19,13 +23,13 @@ export const alt = `${siteConfig.name} — ${siteConfig.tagline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// The Nexora palette, inlined because Satori cannot read CSS custom properties.
-// These must track --nexora-* in globals.css; a share card in last season's
+// The palette, inlined because Satori cannot read CSS custom properties.
+// These must track --mojah-* in globals.css; a share card in last season's
 // colours is the most public possible place for the palette to drift.
-const PAPER = "#080808"; /* --nexora-black */
-const INK = "#f2efe8"; /* --nexora-white */
-const INK_MUTE = "#b8b5ae"; /* --nexora-gray */
-const FOIL = "#d39a45"; /* --nexora-gold */
+const PAPER = "#080808"; /* --mojah-black */
+const INK = "#f2efe8"; /* --mojah-white */
+const INK_MUTE = "#b8b5ae"; /* --mojah-gray */
+const FOIL = "#d39a45"; /* --mojah-gold */
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -53,16 +57,21 @@ export default function OpengraphImage() {
             color: INK_MUTE,
           }}
         >
-          <span>Issue 01 — MMXXVI</span>
-          <span>Nairobi · Working worldwide</span>
+          <span>ICT Solutions</span>
+          <span>{businessInfo.addressLocality} · Kenya</span>
         </div>
 
         {/* the lockup */}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
+            {/* The compact "M" from `components/brand/gem-mark.tsx`, restated
+                rather than imported: Satori renders this at build time and
+                cannot take a React component that relies on `currentColor`,
+                so the stroke has to be a literal. Keep the two in step — the
+                path is `GEM_PATH_COMPACT` scaled to this stroke weight. */}
             <svg width="64" height="66" viewBox="0 0 120 124" fill="none">
               <path
-                d="M60 12 L18 112 M60 12 L102 112 M36 84 L84 84 M60 12 L60 84"
+                d="M32 100 L32 24 M88 100 L88 24 M32 24 L60 62 L88 24"
                 stroke={FOIL}
                 strokeWidth="7"
                 strokeLinecap="round"
@@ -76,7 +85,7 @@ export default function OpengraphImage() {
                 color: INK,
               }}
             >
-              AUREL
+              {siteConfig.shortName.toUpperCase()}
             </span>
           </div>
 
@@ -90,7 +99,7 @@ export default function OpengraphImage() {
               maxWidth: 900,
             }}
           >
-            Websites, mobile apps, AI &amp; SEO for ambitious businesses.
+            Computers, networks, software &amp; security for Kenyan businesses.
           </div>
         </div>
 
@@ -117,7 +126,10 @@ export default function OpengraphImage() {
             }}
           >
             <span>{siteConfig.url.replace(/^https?:\/\//, "")}</span>
-            <span style={{ color: FOIL }}>{siteConfig.email}</span>
+            {/* The phone number, not the email. This card is unfurled mostly in
+                WhatsApp, where the reader is one tap from calling and there is
+                no email address published yet anyway. */}
+            <span style={{ color: FOIL }}>{businessInfo.telephone}</span>
           </div>
         </div>
       </div>
