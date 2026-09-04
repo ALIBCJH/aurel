@@ -198,6 +198,15 @@ export function ServiceSwitchboard({ services }: { services: Service[] }) {
         >
           {services.map((entry, index) => {
             if (!seen.includes(index)) return null;
+            // `showcase` is optional: only the two disciplines with a real
+            // screen from delivered work carry one, because there is no honest
+            // capture of a repaired machine or a cable run to attach to the
+            // others. Skipped rather than substituted — an unrelated
+            // screenshot beside a discipline name is worse than an empty plate,
+            // since it teaches the reader the pictures here are decorative.
+            const shot = entry.showcase;
+            if (!shot) return null;
+
             const isActive = index === active;
             return (
               <div
@@ -208,28 +217,27 @@ export function ServiceSwitchboard({ services }: { services: Service[] }) {
                   isActive ? "opacity-100" : "opacity-0",
                   // The phone captures are portrait. They sit centred and whole
                   // on the plate instead of being cropped to a strip.
-                  entry.showcase.portrait &&
-                    "flex items-center justify-center p-5 sm:p-6",
+                  shot.portrait && "flex items-center justify-center p-5 sm:p-6",
                 )}
               >
                 {/* A portrait capture leaves most of a 16:10 plate empty. One
                     warm bloom behind it turns that space into a lit stage
                     rather than a gap where a wider screenshot should have
                     been. */}
-                {entry.showcase.portrait && (
+                {shot.portrait && (
                   <span
                     aria-hidden
                     className="band-bloom absolute left-1/2 top-1/2 h-[85%] w-[60%] -translate-x-1/2 -translate-y-1/2 opacity-70"
                   />
                 )}
                 <Image
-                  src={entry.showcase.src}
-                  alt={entry.showcase.alt}
-                  width={entry.showcase.portrait ? 780 : 1440}
-                  height={entry.showcase.portrait ? 1688 : 900}
+                  src={shot.src}
+                  alt={shot.alt}
+                  width={shot.portrait ? 780 : 1440}
+                  height={shot.portrait ? 1688 : 900}
                   sizes="(min-width: 1024px) 52vw, 100vw"
                   className={cn(
-                    entry.showcase.portrait
+                    shot.portrait
                       ? "relative h-full w-auto rounded-[var(--radius-lg)] object-contain shadow-[0_30px_60px_-30px_rgb(0_0_0/0.45)]"
                       : "h-full w-full object-cover",
                   )}

@@ -36,7 +36,7 @@ export function Colophon() {
           <div className="lg:col-span-4">
             <Link
               href="/"
-              aria-label="Nexora — home"
+              aria-label={`${siteConfig.name} — home`}
               className="tap inline-flex items-center gap-3"
             >
               <GemMark
@@ -45,13 +45,26 @@ export function Colophon() {
                 className="h-5 w-5 shrink-0 text-ink"
               />
               <span className="text-lg font-semibold tracking-[-0.02em]">
-                Nexora
+                {siteConfig.shortName}
               </span>
             </Link>
             <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed text-ink-soft">
-              A software studio in {siteConfig.location}. Websites, mobile apps,
-              AI automation and search — built end to end.
+              An ICT solutions provider in {siteConfig.location}. Equipment,
+              networks, software and security — supplied, installed and
+              supported.
             </p>
+
+            {/* The address, spelled out.
+                A footer address on every page is one of the cheapest local
+                signals available, and unlike the structured data a person can
+                read it. `address` rather than a div because that is what this
+                is; the browser italicises it by default, hence `not-italic`. */}
+            <address className="mt-6 space-y-1 text-[0.9375rem] not-italic leading-relaxed text-ink-soft">
+              <p>{businessInfo.streetAddress}</p>
+              <p>
+                {businessInfo.addressLocality}, {businessInfo.addressRegion}
+              </p>
+            </address>
           </div>
 
           {/* pages */}
@@ -92,14 +105,19 @@ export function Colophon() {
           <div className="lg:col-span-3">
             <h2 className="text-sm text-ink-mute">Contact</h2>
             <ul className="mt-4 space-y-1">
-              <li>
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="tap inline-flex break-all py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
-                >
-                  {siteConfig.email}
-                </a>
-              </li>
+              {/* Only rendered once a real address exists — see the note on
+                  `siteConfig.email`. A `mailto:` to an invented address is a
+                  lead that vanishes without either party noticing. */}
+              {siteConfig.email && (
+                <li>
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="tap inline-flex break-all py-2 text-[0.9375rem] transition-opacity hover:opacity-70"
+                  >
+                    {siteConfig.email}
+                  </a>
+                </li>
+              )}
               {businessInfo.telephone && (
                 <li>
                   <a
@@ -125,9 +143,18 @@ export function Colophon() {
                 </li>
               )}
             </ul>
-            <p className="mt-4 text-sm text-ink-mute">
-              Replies within one business day.
-            </p>
+            {/* Opening hours belong beside the phone number, not buried on the
+                contact page: the question behind "can I call them" is almost
+                always "are they open". Rendered from the same config the
+                LocalBusiness schema uses, so the two cannot disagree. */}
+            <div className="mt-5">
+              <h3 className="text-sm text-ink-mute">Open</h3>
+              <ul className="mt-2 space-y-0.5 text-[0.9375rem] text-ink-soft">
+                {businessInfo.openingHoursText.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 

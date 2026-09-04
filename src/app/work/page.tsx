@@ -12,9 +12,9 @@ import { Testimonials } from "@/components/ui/testimonial";
 import { JsonLd, buildBreadcrumbSchema } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = {
-  title: "Nexora Digital Projects & Case Studies",
+  title: "Our Work — Projects & Case Studies",
   description:
-    "Work Nexora has built in Kenya: a 3D showroom for R&J Interiors and a product-by-product website for Datani Insurance Agency. Both are live, and both are linked here so you can open them.",
+    "Work Mojah has delivered in Kenya: a 3D showroom for R&J Interiors and a product-by-product website for Datani Insurance Agency. Both are live, and both are linked here so you can open them.",
   alternates: { canonical: "/work" },
 };
 
@@ -55,8 +55,10 @@ export default function WorkPage() {
               className="max-w-xl text-[1.0625rem] leading-[1.7] text-ink-soft lg:col-span-5 lg:col-start-8"
             >
               We do not build technology for the sake of technology. We build
-              digital experiences that solve real business problems — and both
-              of these are live and linked, so you can open them and judge.
+              things that solve a real business problem — and both of these are
+              live and linked, so you can open them and judge for yourself.
+              Much of our work is equipment, networks and cameras that cannot
+              be linked to; these are the two you can go and check.
             </p>
           </div>
         </Container>
@@ -187,9 +189,9 @@ export default function WorkPage() {
                   with the method behind them.
                 </p>
                 <p className="mt-5 text-[0.9375rem] leading-[1.8] text-ink-mute">
-                  Every entry also states plainly what our involvement was —
-                  commissioned work, or our own venture. Ask any studio for that
-                  distinction; it is often more informative than the portfolio
+                  Every entry also states plainly what our involvement was. Ask
+                  any supplier for that distinction before you read their
+                  portfolio; it is often more informative than the portfolio
                   itself.
                 </p>
               </div>

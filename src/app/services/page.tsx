@@ -5,7 +5,7 @@ import { ServiceReel } from "@/components/services/service-reel";
 import { Eyebrow, SectionHead } from "@/components/layout/section-head";
 import { ArrowUpRightIcon } from "@/components/icons";
 import { ServiceIcon } from "@/components/brand/service-icons";
-import { hasPublishedFloor, services } from "@/config/services";
+import { anyPublishedFloor, hasPublishedFloor, services } from "@/config/services";
 import { primaryCta } from "@/config/site";
 import {
   JsonLd,
@@ -15,47 +15,51 @@ import {
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Web Development, Mobile Apps & SEO Services in Kenya",
+  title: "ICT Services in Nyeri — Repair, Networks, Software & CCTV",
   description:
-    "What Nexora builds for Kenyan businesses: websites, mobile apps, SEO, Google Business Profile, digital strategy and analytics. One team for all six, with starting prices published up front.",
+    "What Mojah Investments does: computer and printer supply and repair, network installation, software development, websites, system migration and CCTV. Nyeri, Kenya.",
   alternates: { canonical: "/services" },
 };
 
 /**
  * The services page.
  *
- * Structure: a claim, an interactive reel of the four disciplines, then one
+ * Structure: a claim, an interactive reel of the six disciplines, then one
  * full-bleed band per service alternating between the page tone and its
- * inverse. Each band carries a real screenshot, so the page argues from
- * evidence rather than adjectives.
+ * inverse. Each band carries the concrete deliverables rather than a picture,
+ * so the page argues from specifics rather than adjectives — there is no
+ * honest photograph of a repaired laptop or a cable run in this repository,
+ * and an unrelated stock image would teach the reader that the pictures here
+ * are decorative.
  *
- * The pricing strip near the end is the part most competitors omit. Publishing
- * ranges filters out bad-fit enquiries before they cost anyone a call, and
- * "how much does a website cost in Kenya" is among the highest-intent things
- * anyone in this market types into Google.
+ * The commercials block near the end explains how quoting works rather than
+ * printing figures, because no figures have been published. See the note at
+ * the top of `config/services.ts` for why an invented one would be worse than
+ * none, and `anyPublishedFloor` for how the price grid switches itself back on
+ * when real numbers land.
  */
 
-/** The shared four-stage shape every engagement follows, whatever the discipline. */
+/** The shared four-stage shape every job follows, whatever the discipline. */
 const engagement = [
   {
     step: "01",
-    title: "Discovery",
-    body: "Half a day on your business, your customer, and the outcome that matters. It is the cheapest hour in the project and it changes everything downstream.",
+    title: "Understand",
+    body: "What the business actually needs the technology to do. The cheapest conversation in the job, and the one skipping which is why so much equipment gets bought and then worked around.",
   },
   {
     step: "02",
-    title: "Design",
-    body: "Structure and words first, then interface. Designing before the content exists is how projects end up beautiful and mute.",
+    title: "Look at it",
+    body: "A diagnosis on the bench or a walk round the building. We do not price work we have not seen — a quote written from a phone description is a guess with a number on it.",
   },
   {
     step: "03",
-    title: "Build",
-    body: "Two-week cycles with something you can open at the end of each. You watch it take shape rather than waiting months for a reveal.",
+    title: "Do the work",
+    body: "Supplied, installed, repaired or built — and labelled and documented as we go rather than afterwards, because that is what decides how the next fault goes.",
   },
   {
     step: "04",
-    title: "Live",
-    body: "Launch, measurement, handover, and a first round of changes driven by what real usage shows. You own everything at the end of it.",
+    title: "Hand over",
+    body: "Tested doing the actual job, your team shown what they need to know, and every login and password in your name. Then we are reachable when something changes.",
   },
 ];
 
@@ -81,7 +85,7 @@ export default function ServicesPage() {
                 style={{ ["--reveal-delay" as string]: "0.05s" }}
                 className="mt-5 text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1] tracking-[-0.04em]"
               >
-                Digital solutions built around your business
+                All aspects of your technology, from the major to the minor
               </h1>
             </div>
             <p
@@ -89,10 +93,10 @@ export default function ServicesPage() {
               style={{ ["--reveal-delay" as string]: "0.1s" }}
               className="max-w-xl text-[1.0625rem] leading-[1.7] text-ink-soft lg:col-span-5 lg:col-start-8"
             >
-              From your first website to a complete digital ecosystem, we
-              design and build technology that helps businesses become more
-              visible, accessible and competitive. Six disciplines — take one of
-              them, or take all of them.
+              Equipment supplied and repaired, networks installed and
+              maintained, software and websites built, systems moved, cameras
+              fitted. Six disciplines — take one of them, or hand us the lot and
+              have a single supplier answerable for the whole thing.
             </p>
           </div>
 
@@ -295,7 +299,7 @@ export default function ServicesPage() {
         <Container size="wide">
           <SectionHead
             title="How we work with you"
-            deck="The same four stages whatever the discipline, so you always know where a project is and what happens next."
+            deck="The same four stages whatever the discipline, so you always know where a job is and what happens next."
           />
 
           <ol className="mt-12 grid gap-4 sm:mt-16 sm:gap-5 lg:grid-cols-4">
@@ -322,6 +326,12 @@ export default function ServicesPage() {
       </section>
 
       {/* ── What it costs ────────────────────────────────────────────────── */}
+      {/* Two shapes, chosen by whether any discipline publishes a figure.
+          While none do, printing a grid of six identical "On request" cells at
+          2rem would read as a broken render rather than a policy — so the
+          block explains the quoting method instead, which is the genuinely
+          useful thing to tell somebody comparing suppliers. Put real numbers
+          in `services.ts` and the grid returns on its own. */}
       <section className="pb-20 sm:pb-24 lg:pb-32">
         <Container size="wide">
           <div className="rounded-[var(--radius-card)] bg-paper-deep p-7 sm:p-10 lg:p-14">
@@ -330,32 +340,71 @@ export default function ServicesPage() {
                 What it costs
               </h2>
               <p className="max-w-md text-[0.9375rem] leading-relaxed text-ink-mute">
-                Published because most agencies hide it, and because hiding it
-                wastes everyone&apos;s first call. These are honest starting
-                points, not quotes.
+                {anyPublishedFloor()
+                  ? "Published because most suppliers hide it, and because hiding it wastes everyone's first call. These are honest starting points, not quotes."
+                  : "Every job is quoted after we have seen it, which is the only way to give you a number that will still be the number at the end."}
               </p>
             </div>
 
-            {/* The hairline dividers are a `gap-px` over a `bg-rule` ground,
-                which means any cell the services do not fill shows up as a
-                grey slab rather than as nothing. So the column count has to
-                divide the number of disciplines exactly. At six that is 1, 2
-                or 3 — six columns would give each price about 190px and break
-                the figures onto two lines. If the service count changes again,
-                change these with it. */}
-            <dl className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius-lg)] bg-rule sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
-              {services.map((service) => (
-                <div key={service.slug} className="bg-paper-deep p-6 sm:p-7">
-                  <dt className="text-sm text-ink-mute">{service.name}</dt>
-                  <dd className="mt-3 text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.035em]">
-                    {service.pricing.from}
-                  </dd>
-                  <dd className="mt-3 text-sm leading-relaxed text-ink-soft">
-                    {service.pricing.note}
-                  </dd>
+            {anyPublishedFloor() ? (
+              /* The hairline dividers are a `gap-px` over a `bg-rule` ground,
+                 which means any cell the services do not fill shows up as a
+                 grey slab rather than as nothing. So the column count has to
+                 divide the number of disciplines exactly. At six that is 1, 2
+                 or 3 — six columns would give each price about 190px and break
+                 the figures onto two lines. If the service count changes
+                 again, change these with it. */
+              <dl className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius-lg)] bg-rule sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
+                {services.map((service) => (
+                  <div key={service.slug} className="bg-paper-deep p-6 sm:p-7">
+                    <dt className="text-sm text-ink-mute">{service.name}</dt>
+                    <dd className="mt-3 text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.035em]">
+                      {service.pricing.from}
+                    </dd>
+                    <dd className="mt-3 text-sm leading-relaxed text-ink-soft">
+                      {service.pricing.note}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <div className="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-3 lg:gap-12">
+                <div>
+                  <h3 className="text-lg font-semibold tracking-[-0.02em]">
+                    We look before we price
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink-soft">
+                    The same fault can be a loose cable or a failed mainboard,
+                    and the same building can be an afternoon of cabling or a
+                    week of it. A figure produced before anyone has looked is a
+                    guess, and a guess is how a quote doubles halfway through
+                    the job.
+                  </p>
                 </div>
-              ))}
-            </dl>
+                <div>
+                  <h3 className="text-lg font-semibold tracking-[-0.02em]">
+                    The quote shows its reasoning
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink-soft">
+                    What we propose, what it costs, and why — itemised, so you
+                    can compare it fairly against another supplier&apos;s
+                    instead of comparing two bottom lines that cover different
+                    work.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold tracking-[-0.02em]">
+                    Including the cheaper answer
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-[1.7] text-ink-soft">
+                    Where a repair beats a replacement, four cameras beat eight,
+                    or the system you already have is fine, that is what the
+                    quote will say. It costs us the bigger sale and it is the
+                    reason people come back.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </Container>
       </section>
@@ -375,9 +424,9 @@ export default function ServicesPage() {
               style={{ ["--reveal-delay" as string]: "0.08s" }}
               className="mx-auto mt-6 max-w-xl text-[1.0625rem] leading-[1.6] text-ink-soft"
             >
-              Tell us the problem rather than the solution. Half the time the
-              answer is smaller and cheaper than people expect — and we will say
-              so.
+              Tell us what has stopped working rather than what you think you
+              need to buy. Half the time the answer is smaller and cheaper than
+              people expect — and we will say so.
             </p>
             <div
               data-reveal="fade"

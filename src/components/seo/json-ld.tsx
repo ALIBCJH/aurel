@@ -4,17 +4,35 @@ import type { Service } from "@/config/services";
 /**
  * Structured data.
  *
- * A studio that sells SEO and ships no schema is answering a sales objection it
- * did not need to create. These builders emit the types that actually earn
- * something in search results — rich snippets, knowledge-panel eligibility,
- * local pack entry — rather than every type that technically validates.
+ * These builders emit the types that actually earn something in search results
+ * — rich snippets, knowledge-panel eligibility, local pack entry — rather than
+ * every type that technically validates.
  *
  * Everything is derived from config, so the schema cannot drift from the copy
  * on the page. That drift is the usual reason structured data quietly stops
  * matching reality and gets ignored.
+ *
+ * EVERY OPTIONAL FIELD IS SPREAD CONDITIONALLY. That is not fussiness: a blank
+ * email, an empty price band or a missing logo emitted as `""` is a claim that
+ * the business has no such thing, and Google is more likely to distrust the
+ * whole node than to ignore one bad field. Silence beats a placeholder in
+ * every one of these positions.
  */
 
 const BASE = siteConfig.url.replace(/\/$/, "");
+
+/**
+ * Is there a published email address to emit?
+ *
+ * A named boolean rather than `siteConfig.email && …` inline, for a reason
+ * that is compiler-level rather than stylistic: `siteConfig` is declared `as
+ * const`, so while the address is blank its type is the literal `""` and
+ * `"" && { … }` narrows to `""` — a string, which TypeScript refuses to spread
+ * ("Spread types may only be created from object types"). Comparing the length
+ * yields a plain boolean, so the spread type is `false | { … }`, which is
+ * legal and still erases the key at runtime.
+ */
+const hasEmail = siteConfig.email.length > 0;
 
 /** Stable @ids so nodes can reference each other across pages. */
 export const ORG_ID = `${BASE}/#organization`;
@@ -76,7 +94,7 @@ function areaServedNodes(): JsonLdValue[] {
   }));
 }
 
-/** The studio as an entity. Safe to emit everywhere; needs no address. */
+/** The business as an entity. Safe to emit everywhere; needs no address. */
 export function buildOrganizationSchema(): JsonLdValue {
   const sameAs = businessInfo.profiles.filter(Boolean);
 
@@ -85,22 +103,36 @@ export function buildOrganizationSchema(): JsonLdValue {
     "@type": "Organization",
     "@id": ORG_ID,
     name: siteConfig.name,
+    /**
+     * The short form, so a search engine can connect "Mojah" and "Mojah
+     * Investments" as one entity rather than treating the shorter one as an
+     * unrelated string. Customers, directories and reviews will use both.
+     */
+    alternateName: siteConfig.shortName,
     url: BASE,
     description: siteConfig.description,
-    email: siteConfig.email,
-    logo: {
-      "@type": "ImageObject",
-      // The delivered brand artwork. Kept on its white plate deliberately: this
-      // is the file Google renders in search surfaces, usually on white, and a
-      // transparent PNG whose wordmark is near-black disappears there.
-      url: `${BASE}/companylogo.png`,
-    },
-    // The towns served, stated explicitly. Without a published street address
-    // this is the only thing telling Google where the studio operates, and it
-    // is what makes a Nyeri query winnable rather than conceded to Nairobi.
+    ...(hasEmail && { email: siteConfig.email }),
+    /**
+     * NO LOGO IS EMITTED YET, and that is a real gap rather than an oversight.
+     *
+     * `logo` is what Google uses in knowledge panels and several other
+     * surfaces, so it is worth having. What is not worth having is the
+     * previous owner's artwork: `public/companylogo.png` and the files in
+     * `public/images/` are another company's mark, and pointing this at any of
+     * them would publish their identity as Mojah's.
+     *
+     * TO FIX: put a square-ish Mojah logo on a white plate — white, because
+     * this is rendered on white in search surfaces and a near-black wordmark
+     * on transparency disappears there — at `public/mojah-logo.png`, then
+     * restore:
+     *
+     *   logo: { "@type": "ImageObject", url: `${BASE}/mojah-logo.png` },
+     */
+    // The towns served, stated explicitly, alongside the street address on the
+    // LocalBusiness node. This is what makes a Karatina or Nanyuki query
+    // reachable rather than conceded — the shop is in Nyeri but the work
+    // travels.
     areaServed: areaServedNodes(),
-    // English and Swahili. A genuine separator from the offshore agencies
-    // bidding on the same Kenyan search terms.
     knowsLanguage: businessInfo.languages,
     // A contact point rather than a bare telephone field: this is the shape
     // that can surface as a callable number beside the result, and it carries
@@ -109,9 +141,9 @@ export function buildOrganizationSchema(): JsonLdValue {
       telephone: businessInfo.telephone,
       contactPoint: {
         "@type": "ContactPoint",
-        contactType: "sales",
+        contactType: "customer service",
         telephone: businessInfo.telephone,
-        email: siteConfig.email,
+        ...(hasEmail && { email: siteConfig.email }),
         availableLanguage: businessInfo.languages,
         areaServed: "KE",
       },
@@ -134,30 +166,33 @@ export function buildWebSiteSchema(): JsonLdValue {
 }
 
 /**
- * The local entry, for a business that travels to its customers.
+ * The local entry — the single most valuable node on this site.
  *
  * Returns null until there is a real phone number: Google cross-references this
  * against your Google Business Profile, and publishing a placeholder does not
  * earn a provisional listing, it earns a mismatch that suppresses local
  * ranking. Silence beats a guess.
  *
- * WHY THERE IS NO STREET ADDRESS. This is modelled as a service-area business,
- * which is what a studio without a staffed, visitable office actually is. Two
- * consequences worth understanding before anyone "fixes" this by adding an
- * address:
+ * THE STREET ADDRESS IS PUBLISHED, and that is the point. Mojah has a staffed,
+ * visitable shopfront, which makes it a bricks-and-mortar business rather than
+ * a service-area one — so it is eligible for the local pack on proximity, which
+ * is where the walk-in and "computer repair near me" traffic comes from. That
+ * eligibility is worth more than everything else in this file combined.
  *
- *  - A service-area business cannot rank in the local pack on proximity, so
- *    `areaServed` carries the geography instead. That is why the towns are
- *    listed individually rather than collapsed to "Kenya" — each named place is
- *    a place this business can be matched against.
- *  - Publishing a home address to game proximity is the most common way Kenyan
- *    businesses get their Google Business Profile suspended. The address field
- *    stays empty until an office genuinely exists, and if one does it must be
- *    byte-identical here and on the profile.
+ * Two things it depends on absolutely:
  *
- * `address` is still emitted with locality, region and country. That is valid
- * without a street line and tells search engines where the business is based,
- * which is a different claim from where it will travel.
+ *  - The address must be byte-identical to the Google Business Profile. Not
+ *    equivalent — identical. This is the most common reason a legitimate
+ *    listing fails to rank.
+ *  - `areaServed` still carries the wider geography, because the work travels
+ *    beyond the shop. Each town is named individually rather than collapsed
+ *    into "Kenya", since each named place is something a local query can be
+ *    matched against.
+ *
+ * `@type` is ProfessionalService — a valid LocalBusiness subtype that covers a
+ * mixed supply, repair and services business. Do not narrow it to
+ * `ComputerStore`: it would describe the retail half and quietly disclaim the
+ * networks, software and CCTV work.
  */
 export function buildLocalBusinessSchema(): JsonLdValue | null {
   if (!businessInfo.telephone) return null;
@@ -167,20 +202,29 @@ export function buildLocalBusinessSchema(): JsonLdValue | null {
     "@type": "ProfessionalService",
     "@id": `${BASE}/#localbusiness`,
     name: siteConfig.name,
+    alternateName: siteConfig.shortName,
     url: BASE,
-    email: siteConfig.email,
+    ...(hasEmail && { email: siteConfig.email }),
     telephone: businessInfo.telephone,
     description: siteConfig.description,
-    image: `${BASE}/companylogo.png`,
-    priceRange: businessInfo.priceRange,
-    // Both are named because a business owner comparing quotes wants to know
-    // their customers can pay the way they already pay. M-Pesa leads for that
-    // reason, and the currency states that published prices are shillings.
+    // The social card, which is drawn from config and always renders the
+    // current name and details — see app/opengraph-image.tsx. Deliberately not
+    // the previous owner's logo file; see `buildOrganizationSchema` above for
+    // what to put here once Mojah artwork exists.
+    image: `${BASE}/opengraph-image`,
+    // Omitted while blank. An empty `priceRange` renders as a stray separator
+    // beside the business in some surfaces, and a made-up band is a price
+    // promise nobody here has agreed to honour.
+    ...(businessInfo.priceRange && { priceRange: businessInfo.priceRange }),
+    // Both are named because a customer wants to know they can pay the way
+    // they already pay. M-Pesa leads for that reason.
     paymentAccepted: businessInfo.paymentAccepted.join(", "),
     currenciesAccepted: businessInfo.currenciesAccepted,
     knowsLanguage: businessInfo.languages,
     // Derived, not restated. Spelling the hours out here would let the schema
-    // drift from config the first time the studio changes them.
+    // drift from config the first time the shop changes them. The array form
+    // carries the six-day week and the shorter Sunday as separate rules, which
+    // is what makes "open now" correct on a Sunday afternoon.
     openingHours: businessInfo.openingHours,
     areaServed: areaServedNodes(),
     address: {
@@ -230,11 +274,14 @@ export function buildServiceSchema(service: Service): JsonLdValue {
     // place is something a local query can be matched against, and Nyeri is
     // ground the Nairobi agencies are not contesting.
     areaServed: areaServedNodes(),
-    // A real starting figure in shillings. "How much does a website cost in
-    // Kenya" is among the highest-intent things anyone in this market types,
-    // and this is what makes the page eligible to answer it with a number.
+    // A real starting figure in shillings, where one is published. Nothing is
+    // emitted today because no discipline publishes a floor — `parsePriceFloor`
+    // returns null for "On request" and the whole offer is dropped rather than
+    // advertising a price of zero. "How much does X cost in Kenya" is among
+    // the highest-intent things anyone in this market types, so this becomes
+    // valuable the moment real figures land in `services.ts`.
     // `minPrice` rather than `price`, because it is a floor and saying
-    // otherwise would be a promise the studio has not made.
+    // otherwise would be a promise nobody here has made.
     ...(floor !== null && {
       offers: {
         "@type": "Offer",
@@ -349,9 +396,9 @@ export function buildContactPageSchema(): JsonLdValue {
     ...(businessInfo.telephone && {
       mainEntity: {
         "@type": "ContactPoint",
-        contactType: "sales",
+        contactType: "customer service",
         telephone: businessInfo.telephone,
-        email: siteConfig.email,
+        ...(hasEmail && { email: siteConfig.email }),
         availableLanguage: businessInfo.languages,
         areaServed: "KE",
       },

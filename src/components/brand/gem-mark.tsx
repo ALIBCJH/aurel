@@ -1,30 +1,33 @@
 import { cn } from "@/lib/utils";
 
 /**
- * GemMark — the faceted "N" gem, drawn in fine line strokes.
+ * GemMark — the faceted "M", drawn in fine line strokes.
  *
- * A theme-aware SVG reproduction of the Nexora mark: the letter set inside a
- * facetted frame, echoing the containing shape of the supplied artwork. Drawn
- * rather than embedded because the delivered logo is a raster whose wordmark
- * is near-black — on this site's #080808 ground it is invisible, and keying it
- * to a light colour would mean recolouring somebody else's artwork. A vector
- * that inherits `currentColor` scales to any size, tints with the palette and
- * carries no background plate. The delivered raster is kept for the contexts
- * that need a literal logo file — see `public/companylogo.png`.
+ * A drawn mark rather than an embedded raster. A vector that inherits
+ * `currentColor` scales to any size, tints with the palette, carries no
+ * background plate, and — the reason it matters here — costs nothing and
+ * belongs to nobody else. This site has no supplied Mojah artwork, so this is
+ * the mark, not a stand-in for one.
  *
- * Was a faceted "A" until the 2026-08-10 rename from Nexora.
+ * IF REAL ARTWORK ARRIVES: it should be added as a logo file rather than by
+ * editing these paths, and the structured data in `components/seo/json-ld.tsx`
+ * has a note describing exactly where it goes and why it wants a white plate.
+ *
+ * The letterform was an "N" under the previous owner and is now an "M" — two
+ * stems and the two diagonals that meet between them.
  *
  * Size is controlled by the caller via `className` (e.g. `h-6 w-6`). Colour
  * defaults to the gold accent via `currentColor`.
  */
 /** The gem's facet path data, shared with the animated variant. */
 export const GEM_PATH = [
-  // the containing facet — the slanted frame the supplied mark sits inside
+  // the containing facet — the slanted frame the mark sits inside
   "M16 16 L104 16 L104 108 L16 108 Z",
-  // the letterform: two stems and the diagonal that joins them
+  // the letterform: two stems and the vee that joins them
   "M34 94 L34 30",
   "M86 94 L86 30",
-  "M34 30 L86 94",
+  "M34 30 L60 66",
+  "M60 66 L86 30",
   // corner facets, fanning frame to letter — the gem's depth
   "M16 16 L34 30",
   "M104 16 L86 30",
@@ -43,15 +46,20 @@ export const GEM_PATH = [
  * company name, not as a gem.
  *
  * This variant is the bare letterform — the containing frame and the corner
- * facets are dropped. At small sizes the frame closes up around the N and the
- * mark reads as a filled box with a scratch in it; three strokes still read as
- * a letter at 16px.
+ * facets are dropped. At small sizes the frame closes up around the letter and
+ * the mark reads as a filled box with a scratch in it; the bare strokes still
+ * read as an M at 16px.
+ *
+ * The vee is drawn shallower than in the full mark (bottoming at 62 rather
+ * than 66) because at 16px a deep vee touches the baseline of the stems and
+ * the three counters close into a solid block.
  */
 export const GEM_PATH_COMPACT = [
   // the letterform alone — the frame and facets are dropped
   "M32 100 L32 24",
   "M88 100 L88 24",
-  "M32 24 L88 100",
+  "M32 24 L60 62",
+  "M60 62 L88 24",
 ].join(" ");
 
 type GemMarkProps = {

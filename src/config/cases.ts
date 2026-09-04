@@ -6,12 +6,12 @@
  *
  * A NOTE ON HONESTY, because it governs what may be written here.
  *
- * `relationship` states plainly what our involvement was on each project. R&J
- * Interiors is a venture Simon founded and builds for rather than a client
- * engagement, and simonjuma.me says so publicly — writing round it would be
- * trivially disprovable by anyone who searches his name before signing a
- * contract, which is exactly what people do. Stated accurately it is a stronger
- * entry anyway: a whole product business built end to end.
+ * `relationship` states plainly what the involvement was on each project, and
+ * it is never omitted or softened. Both entries below are live sites with
+ * public URLs, which is the point of publishing them — a portfolio a prospect
+ * can open and check in ten seconds is worth more than one they have to take
+ * on trust. That cuts both ways: it also means anything overstated here is
+ * trivially disprovable by the same ten seconds of checking.
  *
  * `metrics` and `quote` are optional and MUST stay empty until the numbers are
  * measured and the client has actually said the words. The detail in these
@@ -83,8 +83,8 @@ export const cases: Case[] = [
     location: "Nyeri, Kenya",
     year: "2025",
     relationship:
-      "Our own venture. Simon is founder and technical lead — R&J Interiors was designed, engineered, and is operated by us end to end.",
-    services: ["websites", "ai-automation"],
+      "Designed, engineered and delivered by Mojah end to end. The site is live and in production.",
+    services: ["websites", "software-development"],
     headline: "A showroom you can walk through before anything is cut.",
     summary:
       "A real-time 3D showroom that lets a customer stand in a furnished room and change the curtains.",
@@ -185,8 +185,8 @@ export const cases: Case[] = [
     location: "Nyeri, Kenya",
     year: "2024",
     relationship:
-      "Commissioned by the agency and delivered as a contracted engagement. The site is live and in production.",
-    services: ["websites", "seo"],
+      "Commissioned by the agency and delivered by Mojah as a contracted engagement. The site is live and in production.",
+    services: ["websites"],
     headline: "Making a good broker easy to find online.",
     summary:
       "A product-by-product site and quote path for an agency that ran entirely on referral.",

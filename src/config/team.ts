@@ -1,27 +1,26 @@
 /**
  * Who actually does the work.
  *
- * The About page previously listed three unnamed roles — "Founder & Principal
- * Engineer", "Design Lead", "AI & Automation" — under a note promising names
- * "as the studio grows". For a business asking for six-figure KES engagements
- * that is the weakest possible trust signal: it reads as either a solo
- * operator inflating headcount, or a team with something to hide. People buy
- * from people, and the first thing a serious prospect does is search the
- * founder's name.
+ * People buy from people, and the first thing a serious prospect does is search
+ * the name of whoever they would be dealing with. An unnamed roster reads as
+ * either a one-person operation inflating headcount or a team with something to
+ * hide, so the people listed here are named.
  *
- * Only add an entry here for a real person who has agreed to be listed. An
- * empty roster is honest; an invented one is discoverable.
+ * Only add an entry for a real person who has agreed to be listed. An empty
+ * roster is honest; an invented one is discoverable.
  *
- * `photo` is optional. Without it the page falls back to a monogram, which
- * looks deliberate rather than unfinished — but a real photograph outperforms
- * every other asset on this page for trust, so it is worth chasing.
+ * `photo`, `credentials`, `focus` and `links` are all optional in practice —
+ * the About page renders each block only when it has something to put in it, so
+ * a sparse entry looks deliberate rather than broken. A real photograph
+ * outperforms every other asset on that page for trust, so it is worth chasing:
+ * without one the page falls back to a monogram set in foil.
  */
 export type Person = {
   name: string;
   role: string;
   /** Where they are, in plain terms. */
   location: string;
-  /** Two or three sentences, in the studio's voice. */
+  /** Two or three sentences, in the company's voice. */
   bio: string;
   /** Something they have actually said, if it is worth quoting. */
   quote?: string;
@@ -35,44 +34,29 @@ export type Person = {
 
 export const team: Person[] = [
   {
-    name: "Simon Juma",
-    role: "Founder · Engineer",
-    location: "Nyeri & Nairobi, Kenya",
-    bio: "Simon started Nexora and builds most of the work himself. He handles every part of a project — the servers, the systems behind the scenes, and the screens you actually see. His main focus is AI tools that hold up in daily use, not just in a demo.",
+    name: "Marcus Mugo",
+    role: "Chief Executive Officer",
+    location: "Nyeri, Kenya",
+    bio: "Marcus leads Mojah Investments. He works directly with clients on what their business needs from technology before any of it is bought or built, and he is the person accountable for the work being what was promised.",
+    // Verbatim from Marcus, as published in the company's own material.
     quote:
-      "Build systems that hold up for people who can't afford for them to fail.",
-    photo: {
-      src: "/simonjuma.jpeg",
-      alt: "Simon Juma, founder of Nexora, photographed outdoors in Nyeri in a three-piece suit with his arms folded.",
-    },
-    credentials: [
-      "BSc Information Technology, Dedan Kimathi University of Technology",
-      "Founder & technical lead, R&J Interiors",
-      "Previously engineering at Britam Insurance and Datani Insurance",
-    ],
-    focus: [
-      "TypeScript",
-      "Next.js",
-      "React Native",
-      "Node.js",
-      "Python",
-      "FastAPI",
-      "PostgreSQL",
-      "AWS",
-      "Terraform",
-      "Docker",
-      "AI assistants",
-      "Automation",
-    ],
-    links: [
-      { label: "GitHub", href: "https://github.com/ALIBCJH" },
-      { label: "LinkedIn", href: "https://www.linkedin.com/in/simonjuma" },
-      { label: "Personal site", href: "https://simonjuma.me" },
-    ],
+      "This is your chance to partner with a company that will redefine your view and use of technology in your business.",
+    // Blank on purpose. No photograph, qualifications or public profiles have
+    // been supplied, and inventing any of them would put an unverifiable claim
+    // on the page whose entire job is trust. Each block below is hidden while
+    // it is empty and appears the moment it is filled — see app/about/page.tsx.
+    //
+    // TO FILL IN: `credentials` takes qualifications and prior posts, one
+    // string each. `focus` takes the areas Marcus personally works in.
+    // `photo` takes a file in `public/` plus alt text describing the person.
+    // `links` takes a LinkedIn or profile URL as { label, href }.
+    credentials: [],
+    focus: [],
+    links: [],
   },
 ];
 
-/** Initials for the monogram fallback: "Simon Juma" → "SJ". */
+/** Initials for the monogram fallback: "Marcus Mugo" → "MM". */
 export function initials(name: string): string {
   return name
     .split(/\s+/)

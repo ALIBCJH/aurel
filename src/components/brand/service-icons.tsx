@@ -6,6 +6,10 @@ import type { SVGProps } from "react";
  * One consistent geometric system: 24×24 grid, ~1.5px gold strokes (via
  * currentColor), round joins, no fills. Minimal and abstract — no photos,
  * cartoons, gears, or robots.
+ *
+ * Several icons here are keyed to slugs that no longer exist. They are kept on
+ * purpose: `next.config.ts` still redirects those URLs, and an old link that
+ * reaches a redirect should not lose its icon on the way through.
  */
 const base = {
   width: 28,
@@ -140,22 +144,84 @@ function AnalyticsIcon(props: IconProps) {
   );
 }
 
+// Hardware supply & repair — a monitor and a screwdriver crossing it. The
+// tool is what separates this from a generic "computer" icon: the discipline
+// is supply *and* repair, and the repair half is the harder sell.
+function HardwareIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="2.5" y="4" width="19" height="12" rx="1.6" />
+      <path d="M9 20h6M12 16v4" />
+      <path d="M8 12.5l3.2-3.2M11.2 9.3l2-2a2 2 0 1 1 2.6 2.6l-2 2z" />
+    </svg>
+  );
+}
+
+// Networks — a switch feeding three points. Deliberately hierarchical rather
+// than a mesh of dots: the thing being sold is structured cabling from a known
+// centre, which is exactly what an office's tangle of ad-hoc links is not.
+function NetworkIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="8.5" y="2.5" width="7" height="4.5" rx="1" />
+      <rect x="2" y="17" width="5" height="4.5" rx="1" />
+      <rect x="9.5" y="17" width="5" height="4.5" rx="1" />
+      <rect x="17" y="17" width="5" height="4.5" rx="1" />
+      <path d="M12 7v5M4.5 17v-2.5h15V17M12 12v2.5" />
+    </svg>
+  );
+}
+
+// System migration & integration — two stores with traffic in both directions.
+// Two arrows, not one: the discipline covers integration (systems that keep
+// talking) as well as migration (a one-way move), and a single arrow would
+// picture only half of it.
+function MigrationIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2.5 6.5c0-1.4 1.6-2.5 3.5-2.5s3.5 1.1 3.5 2.5-1.6 2.5-3.5 2.5-3.5-1.1-3.5-2.5z" />
+      <path d="M2.5 6.5v5c0 1.4 1.6 2.5 3.5 2.5s3.5-1.1 3.5-2.5v-5" />
+      <path d="M14.5 17.5c0-1.4 1.6-2.5 3.5-2.5s3.5 1.1 3.5 2.5-1.6 2.5-3.5 2.5-3.5-1.1-3.5-2.5z" />
+      <path d="M13 6.5h5.5M16.5 4.5l2 2-2 2" />
+      <path d="M11 17.5H5.5M7.5 15.5l-2 2 2 2" />
+    </svg>
+  );
+}
+
+// Security systems & CCTV — a body-and-lens camera on its bracket, aimed
+// downward. The aim is the whole argument of that service page, so the icon
+// shows a camera pointing somewhere rather than a symmetrical box.
+function CctvIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M3 6.5l13.5-3 1.4 5.2-13.5 3z" />
+      <path d="M18.5 6.2l2.6-.6.9 3.4-2.6.6" />
+      <path d="M8.5 11.2l1 3.6" />
+      <path d="M6 20.5a3.2 3.2 0 0 1 6.2-1.2" />
+      <circle cx="9.5" cy="16" r="1.2" />
+    </svg>
+  );
+}
+
 /**
- * Keyed by the live service slugs. The retired slugs (software, branding,
- * process, immersive, ai-automation) are kept here on purpose: `next.config.ts`
- * still redirects their URLs, and an old link that reaches a redirect should
- * not also lose its icon on the way through.
+ * Keyed by slug. The live disciplines come first; everything below them is a
+ * retired slug still reachable through a redirect.
  */
 const iconBySlug = {
   // Live disciplines.
+  hardware: HardwareIcon,
+  networks: NetworkIcon,
+  "software-development": SoftwareIcon,
   websites: WebsitesIcon,
+  "system-migration": MigrationIcon,
+  "security-systems": CctvIcon,
+  // Retired, still reachable through redirects.
+  software: SoftwareIcon,
   "mobile-apps": MobileAppsIcon,
   seo: SeoIcon,
   "online-presence": PresenceIcon,
   "digital-strategy": StrategyIcon,
   "analytics-growth": AnalyticsIcon,
-  // Retired, still reachable through redirects.
-  software: SoftwareIcon,
   "ai-automation": AiIcon,
   strategy: StrategyIcon,
   branding: BrandingIcon,

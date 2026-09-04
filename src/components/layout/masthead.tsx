@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Container } from "@/components/layout/container";
 import { Pebble, usePebble } from "@/components/layout/pebble";
-import Image from "next/image";
+import { GemMark } from "@/components/brand/gem-mark";
 import { mainNav, siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -72,41 +72,32 @@ export function Masthead() {
       <Container size="wide" className="relative">
         <div className="flex h-16 items-center justify-between gap-6 lg:h-20">
           {/* the mark */}
+          {/* Drawn, not an image file.
+              This slot used to render `nexora-logo-foil.png` — the previous
+              owner's raster lockup, recoloured to sit on this ground. It is
+              gone rather than swapped, because there is no Mojah logo file to
+              swap in and continuing to serve somebody else's mark under a new
+              name is the one thing a rebrand must not do.
+              The vector lockup below has no plate, tints with the palette,
+              stays sharp at any density, and adds nothing to the page weight —
+              so this is a real mark rather than a placeholder. If artwork is
+              commissioned later, see the note in `components/seo/json-ld.tsx`
+              for where a logo file needs to go. */}
           <Link
             href="/"
-            aria-label="Nexora — home"
+            aria-label={`${siteConfig.name} — home`}
             className="group/mark -ml-1 flex h-12 shrink-0 items-center gap-2.5 rounded-full px-1"
           >
-            {/* The delivered lockup, in its foil edition — this ground only.
-                The supplied file has a near-black wordmark on a white plate,
-                which is invisible here; `nexora-logo-reversed.png` keys the
-                plate out and lifts the wordmark to warm white.
-                `nexora-logo-foil.png` goes one step further and remaps the N
-                mark's blue-violet gradient onto the palette's gold, keeping
-                the gradient's own light-to-dark structure. The mark was the
-                only cool colour anywhere on a site that is otherwise gold end
-                to end, and it read as an asset from another brand.
-
-                This is a screen edition, not a new identity:
-                `public/companylogo.png` remains the master and is what the
-                structured data still points at, so search results, social
-                cards and anything printed keep the delivered colours. If the
-                artwork changes, regenerate both derivatives from the master
-                rather than editing either by hand. */}
-            <Image
-              src="/images/nexora-logo-foil.png"
-              alt={`${siteConfig.name} — home`}
-              width={1171}
-              height={225}
-              priority
-              // Without a `sizes` hint next/image emits the full device
-              // srcset and the browser picks w=3840 — a 3.3x upscale of a
-              // 1171px source that the optimiser stalls on, leaving the
-              // masthead with no logo at all. The lockup renders ~117px wide,
-              // so 160px covers it at 2x on the widest breakpoint.
-              sizes="160px"
-              className="h-5 w-auto shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:-translate-y-0.5 sm:h-[1.4rem]"
+            <GemMark
+              compact
+              strokeWidth={1.75}
+              className="h-[1.15rem] w-[1.15rem] shrink-0 text-foil transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/mark:rotate-[8deg]"
             />
+            {/* The short name. "Mojah Investments" at this tracking overruns a
+                390px masthead once the nav is beside it. */}
+            <span className="text-lg font-semibold tracking-[-0.02em] sm:text-xl">
+              {siteConfig.shortName}
+            </span>
           </Link>
 
           {/* the index */}

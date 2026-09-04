@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ServiceIcon } from "@/components/brand/service-icons";
-import { services } from "@/config/services";
+import { hasPublishedFloor, services } from "@/config/services";
 import { cn } from "@/lib/utils";
 
 /**
@@ -156,8 +156,12 @@ export function ServiceReel() {
           </div>
 
           <div className="flex items-baseline justify-between gap-4 border-t border-rule px-8 py-5">
+            {/* "From" only where a real figure follows it. Hardcoded, this
+                rendered "From On request" on every discipline. */}
             <span className="text-[0.9375rem]">
-              <span className="text-ink-mute">From </span>
+              {hasPublishedFloor(current) && (
+                <span className="text-ink-mute">From </span>
+              )}
               <span className="font-medium">{current.pricing.from}</span>
             </span>
             <span className="text-label-sm text-ink-mute">

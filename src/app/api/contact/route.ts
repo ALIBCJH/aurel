@@ -15,8 +15,13 @@ import { siteConfig } from "@/config/site";
  *   CONTACT_WEBHOOK_URL  → POST the JSON payload (Slack, Zapier, a CRM, …)
  *   neither              → log and accept, so local development works offline
  *
- * `CONTACT_TO_EMAIL` overrides the recipient; it defaults to the address in
- * site config. `CONTACT_FROM_EMAIL` must be a domain you have verified with
+ * `CONTACT_TO_EMAIL` sets the recipient. It falls back to the address in site
+ * config, which is currently blank on purpose — so until a real Mojah address
+ * exists, `CONTACT_TO_EMAIL` is REQUIRED for email delivery to work at all.
+ * Without it (and without a webhook) the route accepts the enquiry and logs a
+ * warning rather than failing in front of the visitor, which keeps the form
+ * usable but means nobody is reading what it collects. Set one of the two
+ * before launch. `CONTACT_FROM_EMAIL` must be a domain you have verified with
  * Resend — their sandbox sender only delivers to your own account address.
  */
 
@@ -68,7 +73,12 @@ async function deliver(payload: Payload): Promise<void> {
   const to = process.env.CONTACT_TO_EMAIL || siteConfig.email;
   const body = render(payload);
 
-  if (process.env.RESEND_API_KEY) {
+  // `to` can legitimately be empty: `siteConfig.email` is blank until a real
+  // Mojah address exists. Guarded rather than left to Resend, which would
+  // reject `to: [""]` and surface a 502 to a visitor whose enquiry was
+  // perfectly valid. Falling through sends it to the webhook if one is
+  // configured, and otherwise logs it loudly — the enquiry is still accepted.
+  if (process.env.RESEND_API_KEY && to) {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -76,10 +86,12 @@ async function deliver(payload: Payload): Promise<void> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL || "Nexora <onboarding@resend.dev>",
+        from:
+          process.env.CONTACT_FROM_EMAIL ||
+          "Mojah Investments <onboarding@resend.dev>",
         to: [to],
         reply_to: payload.email,
-        subject: `Project brief — ${payload.name}`,
+        subject: `Enquiry — ${payload.name}`,
         text: body,
       }),
     });
@@ -105,10 +117,11 @@ async function deliver(payload: Payload): Promise<void> {
     return;
   }
 
-  // No channel configured. Accept the brief rather than fail in front of the
+  // No usable channel. Accept the enquiry rather than fail in front of the
   // visitor, but make the gap loud in the server log.
   console.warn(
-    "[contact] No RESEND_API_KEY or CONTACT_WEBHOOK_URL set — brief not delivered:\n" +
+    "[contact] No delivery channel — set CONTACT_TO_EMAIL (with RESEND_API_KEY) " +
+      "or CONTACT_WEBHOOK_URL. Enquiry NOT delivered:\n" +
       body,
   );
 }

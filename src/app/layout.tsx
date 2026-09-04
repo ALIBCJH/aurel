@@ -113,7 +113,7 @@ export const metadata: Metadata = {
 // Browser chrome matches the page. One value, because there is one palette —
 // keying this off the OS setting would put a light page inside dark chrome.
 export const viewport: Viewport = {
-  // Must equal --nexora-black in globals.css. It cannot read the custom
+  // Must equal --mojah-black in globals.css. It cannot read the custom
   // property: this is serialised into a <meta> tag at build time, long before
   // any stylesheet is parsed. If the brand ground changes, change it here too.
   themeColor: "#080808",

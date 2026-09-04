@@ -1,10 +1,17 @@
 import Link from "next/link";
 import { GemMark } from "@/components/brand/gem-mark";
+import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /**
- * Wordmark — AUREL, set in the display serif with the wide letterspacing of a
- * title page, preceded by the faceted mark.
+ * Wordmark — MOJAH, set with the wide letterspacing of a title page, preceded
+ * by the faceted mark.
+ *
+ * The short name rather than the full "Mojah Investments": at this tracking a
+ * two-word lockup is roughly 340px wide, which does not fit a phone masthead
+ * and reads as a letterhead rather than a mark. The full legal name is on the
+ * About page, in the footer copyright and throughout the structured data, so
+ * nothing is lost by the mark being short.
  *
  * `size` controls the whole lockup; the gem scales with the lettering. On hover
  * the letters tighten very slightly and the mark warms to full foil — a small
@@ -82,7 +89,7 @@ export function Wordmark({
         )}
         style={{ letterSpacing: s.track, paddingLeft: "0.1em" }}
       >
-        AUREL
+        {siteConfig.shortName.toUpperCase()}
       </span>
     </span>
   );
@@ -92,7 +99,7 @@ export function Wordmark({
   return (
     <Link
       href={href}
-      aria-label="Nexora — home"
+      aria-label={`${siteConfig.name} — home`}
       className="tap -ml-1 inline-flex items-center px-1"
     >
       {content}

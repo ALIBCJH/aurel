@@ -22,30 +22,50 @@ export type NavItem = {
  * deindex itself.
  *
  * `NEXT_PUBLIC_` because canonical URLs are rendered into client-visible HTML.
- * The fallback is the current working domain, so nothing breaks while unset.
+ *
+ * THE FALLBACK BELOW IS A GUESS AND MUST BE CONFIRMED. Nobody has told this
+ * codebase what domain Mojah actually owns. Set `NEXT_PUBLIC_SITE_URL` at
+ * deploy time to the real one before launch — every canonical tag, sitemap
+ * entry and schema `@id` is built from it.
  *
  * ON THE DOMAIN ITSELF: a `.co.ke` address is a real ranking signal for
  * Kenya-targeted queries — Google reads a country-code domain as an explicit
- * geographic target, which a generic `.studio` cannot express. If the domain is
- * still open, that is the cheapest local-SEO decision available here.
+ * geographic target. For a business trading only in Nyeri that is the cheapest
+ * local-SEO decision available here.
  */
 const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://aurel.studio"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://mojahinvestments.co.ke"
 ).replace(/\/$/, "");
 
 export const siteConfig = {
-  name: "Nexora",
-  // The tagline is the default page title after the studio name, so it has to
-  // be a phrase somebody would actually type into Google. "Digital
-  // transformation studio" was neither searched for nor understood — it told a
-  // business owner nothing about what they could buy here.
-  tagline: "Websites, apps and software for Kenyan businesses",
+  name: "Mojah Investments",
+  /** The name on its own, for lockups and tight spaces. */
+  shortName: "Mojah",
+  // The tagline is the default page title after the company name, so it has to
+  // be a phrase somebody would actually type into Google. It names the things
+  // people search for — computer repair, networks — and the town, rather than
+  // describing a position nobody queries.
+  tagline: "ICT solutions, computer repair and networks in Nyeri",
   description:
-    "Nexora builds websites, mobile apps, AI automation and SEO for businesses in Kenya. Based in Nyeri and Nairobi. Clear prices, work you own, and a reply within one business day.",
+    "Mojah Investments is an ICT solutions provider in Nyeri, Kenya — computer, printer and photocopier supply and repair, network installation, software development, system migration and CCTV.",
   url: SITE_URL,
-  email: "hello@aurel.studio",
-  location: "Nyeri & Nairobi, Kenya",
-  copyright: "© 2026 Nexora — Nyeri & Nairobi, Kenya",
+  /**
+   * The public enquiry address.
+   *
+   * DELIBERATELY EMPTY. No email address has been supplied for Mojah, and an
+   * invented one is worse than none: it renders as a live `mailto:` on four
+   * pages and into the structured data, so every enquiry sent to it is a lead
+   * that silently disappears. Every render site checks this before drawing
+   * anything, so the site is coherent while it is blank — contact runs on the
+   * phone number and WhatsApp, both of which are real.
+   *
+   * Fill it in and the email routes reappear everywhere at once. Note that
+   * `CONTACT_TO_EMAIL` in the environment overrides this for form delivery, so
+   * the brief form works either way.
+   */
+  email: "",
+  location: "Nyeri, Kenya",
+  copyright: "© 2026 Mojah Investments — Nyeri, Kenya",
   /**
    * BCP-47 tag for `<html lang>`.
    *
@@ -71,13 +91,15 @@ export const siteConfig = {
  * listings, and a mismatch actively suppresses local ranking rather than merely
  * failing to help it.
  *
- * `streetAddress` and `postalCode` are blank on purpose — this is a
- * service-area business, not a shopfront. `buildLocalBusinessSchema` (see
- * components/seo/json-ld.tsx) handles that case properly: it advertises the
- * towns served via `areaServed` and omits the street line entirely, which is
- * the shape Google documents for a business that travels to its customers.
- * Fill the address in only if a real, staffed, visitable office exists — and if
- * one does, make it byte-identical to the Google Business Profile.
+ * Mojah has a staffed, visitable shopfront, so unlike a service-area business
+ * the street line IS published here and `buildLocalBusinessSchema` emits it.
+ * That is what makes the business eligible for the local pack on proximity —
+ * the single largest source of walk-in and call traffic for a repair business.
+ *
+ * CRITICAL: these five lines must be byte-identical to the Google Business
+ * Profile. Not "close enough" — identical. A profile reading "Old Batian
+ * House, Ground Floor" against a site reading "ground floor" is the most
+ * common reason a correct listing fails to rank.
  */
 export type BusinessInfo = {
   /** e.g. "+254712345678" — E.164, no spaces. Required for LocalBusiness. */
@@ -89,75 +111,82 @@ export type BusinessInfo = {
   addressRegion: string;
   addressCountry: string;
   postalCode: string;
-  /** Opening hours in schema.org format, e.g. "Mo-Fr 09:00-17:00". */
-  openingHours: string;
+  /**
+   * Opening hours in schema.org format, e.g. "Mo-Fr 09:00-17:00".
+   *
+   * An array because Mojah keeps two different schedules — a long six-day week
+   * and a shorter Sunday. Collapsing those into one string would either drop
+   * Sunday trading (losing every weekend "open now" query) or overstate the
+   * Sunday hours, which is worse: somebody drives to Old Batian House at 6pm
+   * on a Sunday and finds it shut.
+   */
+  openingHours: string[];
+  /** Human-readable version of the same, for the page. */
+  openingHoursText: string[];
+  /**
+   * Indicative price band, rendered verbatim by Google in some surfaces.
+   *
+   * Empty because Mojah publishes no prices — see `services.ts`. Emitting a
+   * band the site does not stand behind would put a figure beside the business
+   * in search results that nobody here has agreed to honour.
+   */
   priceRange: string;
   /** Public profiles — feeds schema.org `sameAs`. */
   profiles: string[];
   /**
    * The towns and counties served, most specific first.
    *
-   * This is what makes the studio findable without a shopfront. A business with
-   * no published street address cannot enter Google's local pack on proximity,
-   * so the towns it serves have to be stated explicitly instead — as
-   * `areaServed` in structured data and in the visible copy. "Nairobi" alone
-   * would forfeit every Nyeri and Mount Kenya query, which is exactly the
-   * ground a Nairobi-based competitor is not contesting.
+   * Nyeri leads because that is where the shop is and where the winnable
+   * queries are. The wider entries exist because a hardware and networks
+   * business genuinely travels — an installation in Nanyuki or Karatina is an
+   * ordinary job — and stating that is what makes those searches reachable.
    */
   serviceAreas: string[];
   /**
-   * Languages the studio can actually do business in, as BCP-47 tags.
+   * Languages the business can actually do business in, as BCP-47 tags.
    *
    * Honest, not aspirational: it is a claim a caller can test in one sentence.
-   * English and Swahili are the working languages here, and stating Swahili is
-   * a real differentiator against the offshore agencies bidding on the same
-   * Kenyan search terms.
    */
   languages: string[];
   /**
    * Payment methods, in the words a Kenyan customer uses.
    *
-   * M-Pesa leads because it is the question behind the question — a business
-   * owner comparing developers wants to know their customers can pay the way
-   * they already pay. Naming it in structured data and on the page answers that
-   * before anyone has to ask.
+   * M-Pesa leads because it is the question behind the question — a customer
+   * bringing in a laptop wants to know they can pay the way they already pay.
    */
   paymentAccepted: string[];
-  /** ISO 4217. Kenyan shillings — the currency every published price is in. */
+  /** ISO 4217. Kenyan shillings. */
   currenciesAccepted: string;
 };
 
-// Deliberately typed rather than `as const`: these fields are placeholders
+// Deliberately typed rather than `as const`: several fields are placeholders
 // waiting to be filled, and `as const` would give the empty ones the literal
 // type `""`, which TypeScript then knows can never be truthy — breaking the
 // conditional spreads that omit them from the schema while they are blank.
 export const businessInfo: BusinessInfo = {
-  telephone: "+254797942186",
-  whatsapp: "254797942186",
-  streetAddress: "",
-  addressLocality: "Nairobi",
-  addressRegion: "Nairobi County",
+  telephone: "+254727477328",
+  whatsapp: "254727477328",
+  streetAddress: "Old Batian House, ground floor",
+  addressLocality: "Nyeri",
+  addressRegion: "Nyeri County",
   addressCountry: "KE",
   postalCode: "",
-  openingHours: "Mo-Fr 09:00-17:00",
-  // Google renders this verbatim in some surfaces, so it is written in the
-  // currency the customer thinks in rather than as the "$$" band, which means
-  // nothing to a Nairobi business owner and implies US pricing.
-  // Must track the lowest published `pricing.from` in `services.ts` — this is
-  // the figure Google may show beside the business, and a floor higher than
-  // the one on the page reads as a bait-and-switch.
-  priceRange: "KES 25,000+",
+  // Mon–Sat 8am–7pm, Sun 10am–5pm. Kept in schema.org's 24-hour form here and
+  // in plain English below, from one place, so the two cannot drift.
+  openingHours: ["Mo-Sa 08:00-19:00", "Su 10:00-17:00"],
+  openingHoursText: ["Mon–Sat, 8am–7pm", "Sun, 10am–5pm"],
+  priceRange: "",
   profiles: [],
   serviceAreas: [
     "Nyeri",
-    "Nairobi",
     "Nyeri County",
-    "Nairobi County",
+    "Karatina",
+    "Nanyuki",
     "Mount Kenya region",
     "Kenya",
   ],
   languages: ["en", "sw"],
-  paymentAccepted: ["M-Pesa", "Bank transfer", "Card"],
+  paymentAccepted: ["M-Pesa", "Bank transfer", "Card", "Cash"],
   currenciesAccepted: "KES",
 };
 
@@ -172,7 +201,7 @@ export const mainNav: NavItem[] = [
 
 /** Primary call-to-action, reused across the site. */
 export const primaryCta: NavItem = {
-  label: "Start a project",
+  label: "Talk to us",
   href: "/contact",
 };
 

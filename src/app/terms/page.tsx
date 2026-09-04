@@ -5,7 +5,7 @@ import { Lead } from "@/components/editorial/typography";
 
 export const metadata: Metadata = {
   title: "Terms",
-  description: "The terms governing use of the Nexora website.",
+  description: "The terms governing use of the Mojah Investments website.",
   alternates: { canonical: "/terms" },
 };
 
